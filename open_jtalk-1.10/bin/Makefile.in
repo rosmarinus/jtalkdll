@@ -103,18 +103,22 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_open_jtalk_OBJECTS = open_jtalk.$(OBJEXT)
 open_jtalk_OBJECTS = $(am_open_jtalk_OBJECTS)
-open_jtalk_DEPENDENCIES = @top_srcdir@/text2mecab/libtext2mecab.a \
-	@top_srcdir@/mecab/src/libmecab.a \
-	@top_srcdir@/mecab2njd/libmecab2njd.a \
-	@top_srcdir@/njd/libnjd.a \
-	@top_srcdir@/njd_set_pronunciation/libnjd_set_pronunciation.a \
-	@top_srcdir@/njd_set_digit/libnjd_set_digit.a \
-	@top_srcdir@/njd_set_accent_phrase/libnjd_set_accent_phrase.a \
-	@top_srcdir@/njd_set_accent_type/libnjd_set_accent_type.a \
-	@top_srcdir@/njd_set_unvoiced_vowel/libnjd_set_unvoiced_vowel.a \
-	@top_srcdir@/njd_set_long_vowel/libnjd_set_long_vowel.a \
-	@top_srcdir@/njd2jpcommon/libnjd2jpcommon.a \
-	@top_srcdir@/jpcommon/libjpcommon.a
+open_jtalk_DEPENDENCIES = @top_srcdir@/text2mecab/libtext2mecab.la \
+	@top_srcdir@/mecab/src/libmecab.la \
+	@top_srcdir@/mecab2njd/libmecab2njd.la \
+	@top_srcdir@/njd/libnjd.la \
+	@top_srcdir@/njd_set_pronunciation/libnjd_set_pronunciation.la \
+	@top_srcdir@/njd_set_digit/libnjd_set_digit.la \
+	@top_srcdir@/njd_set_accent_phrase/libnjd_set_accent_phrase.la \
+	@top_srcdir@/njd_set_accent_type/libnjd_set_accent_type.la \
+	@top_srcdir@/njd_set_unvoiced_vowel/libnjd_set_unvoiced_vowel.la \
+	@top_srcdir@/njd_set_long_vowel/libnjd_set_long_vowel.la \
+	@top_srcdir@/njd2jpcommon/libnjd2jpcommon.la \
+	@top_srcdir@/jpcommon/libjpcommon.la
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -133,12 +137,18 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
 am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
 am__v_CC_0 = @echo "  CC      " $@;
 am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
@@ -175,6 +185,7 @@ ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
+AS = @AS@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -186,17 +197,23 @@ CHARSET = @CHARSET@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
+CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DICDIR = @DICDIR@
 DIC_VERSION = @DIC_VERSION@
+DLLTOOL = @DLLTOOL@
+DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+FGREP = @FGREP@
 GREP = @GREP@
 HTS_ENGINE_HEADER = @HTS_ENGINE_HEADER@
 HTS_ENGINE_HEADER_DIR = @HTS_ENGINE_HEADER_DIR@
@@ -207,18 +224,29 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBTOOL = @LIBTOOL@
+LIPO = @LIPO@
+LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MECAB_CHARSET = @MECAB_CHARSET@
 MECAB_DEFAULT_CHARSET = @MECAB_DEFAULT_CHARSET@
 MECAB_DEFAULT_RC = @MECAB_DEFAULT_RC@
 MECAB_LIBS = @MECAB_LIBS@
 MECAB_USE_UTF8_ONLY = @MECAB_USE_UTF8_ONLY@
 MKDIR_P = @MKDIR_P@
+NM = @NM@
+NMEDIT = @NMEDIT@
+OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -228,6 +256,7 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -236,8 +265,10 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -301,25 +332,25 @@ AM_CPPFLAGS = -I @top_srcdir@/text2mecab \
               -I @top_srcdir@/jpcommon \
               -I @HTS_ENGINE_HEADER_DIR@
 
-open_jtalk_LDADD = @top_srcdir@/text2mecab/libtext2mecab.a \
-                   @top_srcdir@/mecab/src/libmecab.a \
-                   @top_srcdir@/mecab2njd/libmecab2njd.a \
-                   @top_srcdir@/njd/libnjd.a \
-                   @top_srcdir@/njd_set_pronunciation/libnjd_set_pronunciation.a \
-                   @top_srcdir@/njd_set_digit/libnjd_set_digit.a \
-                   @top_srcdir@/njd_set_accent_phrase/libnjd_set_accent_phrase.a \
-                   @top_srcdir@/njd_set_accent_type/libnjd_set_accent_type.a \
-                   @top_srcdir@/njd_set_unvoiced_vowel/libnjd_set_unvoiced_vowel.a \
-                   @top_srcdir@/njd_set_long_vowel/libnjd_set_long_vowel.a \
-                   @top_srcdir@/njd2jpcommon/libnjd2jpcommon.a \
-                   @top_srcdir@/jpcommon/libjpcommon.a \
+open_jtalk_LDADD = @top_srcdir@/text2mecab/libtext2mecab.la \
+                   @top_srcdir@/mecab/src/libmecab.la \
+                   @top_srcdir@/mecab2njd/libmecab2njd.la \
+                   @top_srcdir@/njd/libnjd.la \
+                   @top_srcdir@/njd_set_pronunciation/libnjd_set_pronunciation.la \
+                   @top_srcdir@/njd_set_digit/libnjd_set_digit.la \
+                   @top_srcdir@/njd_set_accent_phrase/libnjd_set_accent_phrase.la \
+                   @top_srcdir@/njd_set_accent_type/libnjd_set_accent_type.la \
+                   @top_srcdir@/njd_set_unvoiced_vowel/libnjd_set_unvoiced_vowel.la \
+                   @top_srcdir@/njd_set_long_vowel/libnjd_set_long_vowel.la \
+                   @top_srcdir@/njd2jpcommon/libnjd2jpcommon.la \
+                   @top_srcdir@/jpcommon/libjpcommon.la \
                    @HTS_ENGINE_LIBRARY@ -lstdc++
 
 open_jtalk_SOURCES = open_jtalk.c
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj
+.SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -359,6 +390,7 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	for p in $$list; do echo "$$p $$p"; done | \
 	sed 's/$(EXEEXT)$$//' | \
 	while read p p1; do if test -f $$p \
+	 || test -f $$p1 \
 	  ; then echo "$$p"; echo "$$p"; else :; fi; \
 	done | \
 	sed -e 'p;s,.*/,,;n;h' \
@@ -373,8 +405,8 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	while read type dir files; do \
 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
 	    test -z "$$files" || { \
-	      echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	      $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
 	    } \
 	; done
 
@@ -390,7 +422,13 @@ uninstall-binPROGRAMS:
 	cd "$(DESTDIR)$(bindir)" && rm -f $$files
 
 clean-binPROGRAMS:
-	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
 
 open_jtalk$(EXEEXT): $(open_jtalk_OBJECTS) $(open_jtalk_DEPENDENCIES) $(EXTRA_open_jtalk_DEPENDENCIES) 
 	@rm -f open_jtalk$(EXEEXT)
@@ -417,6 +455,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.c.lo:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -541,7 +592,7 @@ maintainer-clean-generic:
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -596,7 +647,8 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic
+mostlyclean-am: mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool
 
 pdf: pdf-am
 
@@ -611,18 +663,18 @@ uninstall-am: uninstall-binPROGRAMS
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean \
-	clean-binPROGRAMS clean-generic cscopelist-am ctags ctags-am \
-	distclean distclean-compile distclean-generic distclean-tags \
-	distdir dvi dvi-am html html-am info info-am install \
-	install-am install-binPROGRAMS install-data install-data-am \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
-	ps ps-am tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS
+	clean-binPROGRAMS clean-generic clean-libtool cscopelist-am \
+	ctags ctags-am distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 

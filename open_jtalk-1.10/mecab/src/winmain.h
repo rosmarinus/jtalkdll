@@ -46,7 +46,7 @@
 /* for Open JTalk
 #if defined(_WIN32) || defined(__CYGWIN__)
 */
-#if defined(_WIN32) && !defined(__CYGWIN__) /* for Open JTalk */
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__) /* for Open JTalk */
 
 #include <windows.h>
 #include <string>

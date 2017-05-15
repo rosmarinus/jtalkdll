@@ -7,9 +7,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = -I @top_srcdir@/njd @CHARSET@
 
-noinst_LIBRARIES = libnjd_set_digit.a
+noinst_LTLIBRARIES = libnjd_set_digit.la
 
-libnjd_set_digit_a_SOURCES = njd_set_digit.h \
+libnjd_set_digit_la_SOURCES = njd_set_digit.h \
                              njd_set_digit.c \
                              njd_set_digit_rule_ascii_for_euc_jp.h \
                              njd_set_digit_rule_ascii_for_shift_jis.h \

@@ -7,8 +7,8 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = @CHARSET@
 
-noinst_LIBRARIES = libnjd.a
+noinst_LTLIBRARIES = libnjd.la
 
-libnjd_a_SOURCES = njd.h \
+libnjd_la_SOURCES = njd.h \
                    njd.c \
                    njd_node.c

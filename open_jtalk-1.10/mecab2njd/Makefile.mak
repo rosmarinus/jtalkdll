@@ -1,7 +1,7 @@
 
 CC = cl
 
-CFLAGS = /O2 /Ob2 /Oi /Ot /Oy /GT /GL /TC /I ../njd
+CFLAGS = /MD /O2 /Ob2 /Oi /Ot /Oy /GT /GL /TC /I ../njd
 LFLAGS = /LTCG
 
 CORES = mecab2njd.obj

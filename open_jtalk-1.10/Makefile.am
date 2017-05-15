@@ -12,6 +12,7 @@ SUBDIRS = text2mecab \
           njd2jpcommon \
           jpcommon \
           bin \
+          lib \
           mecab-naist-jdic
 
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL Makefile.mak NEWS README
@@ -21,4 +22,5 @@ DISTCLEANFILES = *.log *.out *~ config/*~
 MAINTAINERCLEANFILES = aclocal.m4 configure Makefile.in        \
                        config/config.guess config/config.sub   \
                        config/depcomp config/install-sh        \
-                       config/missing config/compile
+                       config/missing config/compile           \
+                       config/ltmain.sh

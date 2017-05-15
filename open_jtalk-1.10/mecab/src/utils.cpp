@@ -69,7 +69,7 @@
 #endif
 
 /* for Open JTalk */
-#if !defined(_WIN32) || defined(__CYGWIN__)
+#if !defined(_WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
 #include <stdint.h>
 #endif
 
@@ -86,7 +86,7 @@ extern HINSTANCE DllInstance;
 
 namespace MeCab {
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 std::wstring Utf8ToWide(const std::string &input) {
   int output_length = ::MultiByteToWideChar(CP_UTF8, 0,
                                             input.c_str(), -1, NULL, 0);
@@ -154,7 +154,7 @@ int decode_charset(const char *charset) {
 std::string create_filename(const std::string &path,
                             const std::string &file) {
   std::string s = path;
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
   if (s.size() && s[s.size()-1] != '\\') s += '\\';
 #else
   if (s.size() && s[s.size()-1] != '/') s += '/';
@@ -167,7 +167,7 @@ void remove_filename(std::string *s) {
   int len = static_cast<int>(s->size()) - 1;
   bool ok = false;
   for (; len >= 0; --len) {
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
     if ((*s)[len] == '\\') {
       ok = true;
       break;
@@ -189,7 +189,7 @@ void remove_pathname(std::string *s) {
   int len = static_cast<int>(s->size()) - 1;
   bool ok = false;
   for (; len >= 0; --len) {
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
     if ((*s)[len] == '\\') {
       ok = true;
       break;
@@ -220,7 +220,7 @@ void enum_csv_dictionaries(const char *path,
                            std::vector<std::string> *dics) {
   dics->clear();
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
   WIN32_FIND_DATAW wfd;
   HANDLE hFind;
   const std::wstring pat = Utf8ToWide(create_filename(path, "*.csv"));

@@ -31,7 +31,7 @@ extern "C" {
 #include <string.h>
 #endif
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #ifdef HAVE_WINDOWS_H
 #include <windows.h>
 #endif
@@ -63,7 +63,7 @@ template <class T> class Mmap {
   std::string  fileName;
   whatlog what_;
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
   HANDLE hFile;
   HANDLE hMap;
 #else
@@ -86,7 +86,7 @@ template <class T> class Mmap {
 
   // This code is imported from sufary, develoved by
   //  TATUO Yamashita <yto@nais.to> Thanks!
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
   bool open(const char *filename, const char *mode = "r") {
     this->close();
     unsigned long mode1, mode2, mode3;

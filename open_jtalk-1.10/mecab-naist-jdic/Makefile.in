@@ -153,6 +153,7 @@ ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
+AS = @AS@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -164,17 +165,23 @@ CHARSET = @CHARSET@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
+CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DICDIR = @DICDIR@
 DIC_VERSION = @DIC_VERSION@
+DLLTOOL = @DLLTOOL@
+DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+FGREP = @FGREP@
 GREP = @GREP@
 HTS_ENGINE_HEADER = @HTS_ENGINE_HEADER@
 HTS_ENGINE_HEADER_DIR = @HTS_ENGINE_HEADER_DIR@
@@ -185,18 +192,29 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBTOOL = @LIBTOOL@
+LIPO = @LIPO@
+LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MECAB_CHARSET = @MECAB_CHARSET@
 MECAB_DEFAULT_CHARSET = @MECAB_DEFAULT_CHARSET@
 MECAB_DEFAULT_RC = @MECAB_DEFAULT_RC@
 MECAB_LIBS = @MECAB_LIBS@
 MECAB_USE_UTF8_ONLY = @MECAB_USE_UTF8_ONLY@
 MKDIR_P = @MKDIR_P@
+NM = @NM@
+NMEDIT = @NMEDIT@
+OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -206,6 +224,7 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -214,8 +233,10 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -265,7 +286,7 @@ top_srcdir = @top_srcdir@
 EXTRA_DIST = COPYING Makefile.mak naist-jdic.csv matrix.def _left-id.def _pos-id.def _rewrite.def _right-id.def char.def unk.def feature.def
 DISTCLEANFILES = *.log *.out *~
 MAINTAINERCLEANFILES = Makefile.in char.bin matrix.bin sys.dic unk.dic left-id.def rewrite.def pos-id.def right-id.def
-dicdir = @prefix@/dic
+dicdir = @DICDIR@
 dic_DATA = char.bin matrix.bin sys.dic unk.dic left-id.def rewrite.def pos-id.def right-id.def
 all: all-am
 
@@ -299,6 +320,12 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
 install-dicDATA: $(dic_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(dic_DATA)'; test -n "$(dicdir)" || list=; \
@@ -396,7 +423,7 @@ maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
-clean-am: clean-generic mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -448,7 +475,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-generic
+mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
 pdf: pdf-am
 
@@ -462,17 +489,18 @@ uninstall-am: uninstall-dicDATA
 
 .MAKE: install-am install-strip
 
-.PHONY: all all-am check check-am clean clean-generic cscopelist-am \
-	ctags-am distclean distclean-generic distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dicDATA install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am tags-am uninstall uninstall-am \
-	uninstall-dicDATA
+.PHONY: all all-am check check-am clean clean-generic clean-libtool \
+	cscopelist-am ctags-am distclean distclean-generic \
+	distclean-libtool distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am \
+	install-dicDATA install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags-am uninstall \
+	uninstall-am uninstall-dicDATA
 
 .PRECIOUS: Makefile
 
@@ -482,11 +510,7 @@ char.bin matrix.bin sys.dic unk.dic left-id.def rewrite.def pos-id.def right-id.
 	cp _rewrite.def rewrite.def
 	cp _pos-id.def pos-id.def
 	cp _right-id.def right-id.def
-	../mecab/src/mecab-dict-index -d . -o . -f UTF-8 -t @MECAB_CHARSET@
-	iconv -f UTF-8 -t @MECAB_CHARSET@ < _left-id.def > left-id.def
-	iconv -f UTF-8 -t @MECAB_CHARSET@ < _rewrite.def > rewrite.def
-	iconv -f UTF-8 -t @MECAB_CHARSET@ < _pos-id.def > pos-id.def
-	iconv -f UTF-8 -t @MECAB_CHARSET@ < _right-id.def > right-id.def
+	../mecab/src/mecab-dict-index -d . -o . -f UTF-8 -t UTF-8
 
 clean:
 	rm -f char.bin matrix.bin sys.dic unk.dic left-id.def rewrite.def pos-id.def right-id.def

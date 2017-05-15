@@ -7,9 +7,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = -I @top_srcdir@/njd -I @top_srcdir@/jpcommon @CHARSET@
 
-noinst_LIBRARIES = libnjd2jpcommon.a
+noinst_LTLIBRARIES = libnjd2jpcommon.la
 
-libnjd2jpcommon_a_SOURCES = njd2jpcommon.h \
+libnjd2jpcommon_la_SOURCES = njd2jpcommon.h \
                             njd2jpcommon.c \
                             njd2jpcommon_rule_ascii_for_euc_jp.h \
                             njd2jpcommon_rule_ascii_for_shift_jis.h \

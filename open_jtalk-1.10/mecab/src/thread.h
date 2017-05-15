@@ -57,7 +57,7 @@
 /* for Open JTalk
 #ifdef _WIN32
 */
-#if (defined(_WIN32) && !defined(__CYGWIN__)) /* for Open JTalk */
+#if (defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)) /* for Open JTalk */
 #include <windows.h>
 #include <process.h>
 #endif
@@ -75,7 +75,7 @@
 #define MECAB_USE_THREAD 1
 #endif
 
-#if (defined(_WIN32) && !defined(__CYGWIN__))
+#if (defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__))
 #define MECAB_USE_THREAD 1
 #define BEGINTHREAD(src, stack, func, arg, flag, id)                    \
   (HANDLE)_beginthreadex((void *)(src), (unsigned)(stack),              \
@@ -85,7 +85,7 @@
 
 namespace MeCab {
 
-#if (defined(_WIN32) && !defined(__CYGWIN__))
+#if (defined(_WIN32) && !defined(__CYGWIN__)  && !defined(__MINGW32__))
 #undef atomic_add
 #undef compare_and_swap
 #undef yield_processor
@@ -192,7 +192,7 @@ class thread {
 /* for Open JTalk
 #ifdef _WIN32
 */
-#if (defined(_WIN32) && !defined(__CYGWIN__)) /* for Open JTalk */
+#if (defined(_WIN32) && !defined(__CYGWIN__)  && !defined(__MINGW32__)) /* for Open JTalk */
   HANDLE  hnd;
 #endif
 #endif
@@ -215,7 +215,7 @@ class thread {
 /* for Open JTalk
 #ifdef _WIN32
 */
-#if (defined(_WIN32) && !defined(__CYGWIN__)) /* for Open JTalk */
+#if (defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)) /* for Open JTalk */
     DWORD id;
     hnd = BEGINTHREAD(0, 0, &thread::wrapper, this, 0, &id);
 #endif
@@ -229,7 +229,7 @@ class thread {
 /* for Open JTalk
 #ifdef _WIN32
 */
-#if (defined(_WIN32) && !defined(__CYGWIN__)) /* for Open JTalk */
+#if (defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)) /* for Open JTalk */
     WaitForSingleObject(hnd, INFINITE);
     CloseHandle(hnd);
 #endif

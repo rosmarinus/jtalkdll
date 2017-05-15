@@ -38,6 +38,9 @@ all:
 	cd jpcommon
 	nmake /f Makefile.mak
 	cd ..
+	cd lib
+	nmake /f Makefile.mak
+	cd ..
 	cd bin
 	nmake /f Makefile.mak
 	cd ..
@@ -82,6 +85,9 @@ clean:
 	cd jpcommon
 	nmake /f Makefile.mak clean
 	cd ..
+	cd lib
+	nmake /f Makefile.mak clean
+	cd ..
 	cd bin
 	nmake /f Makefile.mak clean
 	cd ..
@@ -90,18 +96,25 @@ clean:
 	cd ..
 
 install::
+	@if not exist "$(INSTALLDIR)\include" mkdir "$(INSTALLDIR)\include"
 	@if not exist "$(INSTALLDIR)\bin" mkdir "$(INSTALLDIR)\bin"
+	@if not exist "$(INSTALLDIR)\dic_utf_8" mkdir "$(INSTALLDIR)\dic_utf_8"
+	@if not exist "$(INSTALLDIR)\lib" mkdir "$(INSTALLDIR)\lib"
+	cd lib
+	copy *.dll $(INSTALLDIR)\bin
+	copy *.lib $(INSTALLDIR)\lib
+	copy jtalk.h $(INSTALLDIR)\include
+	cd ..
 	cd bin
 	copy *.exe $(INSTALLDIR)\bin
 	cd ..
-	@if not exist "$(INSTALLDIR)\dic" mkdir "$(INSTALLDIR)\dic"
 	cd mecab-naist-jdic
-	copy char.bin $(INSTALLDIR)\dic
-	copy matrix.bin $(INSTALLDIR)\dic
-	copy sys.dic $(INSTALLDIR)\dic
-	copy unk.dic $(INSTALLDIR)\dic
-	copy left-id.def $(INSTALLDIR)\dic
-	copy right-id.def $(INSTALLDIR)\dic
-	copy rewrite.def $(INSTALLDIR)\dic
-	copy pos-id.def $(INSTALLDIR)\dic
+	copy char.bin $(INSTALLDIR)\dic_utf_8
+	copy matrix.bin $(INSTALLDIR)\dic_utf_8
+	copy sys.dic $(INSTALLDIR)\dic_utf_8
+	copy unk.dic $(INSTALLDIR)\dic_utf_8
+	copy left-id.def $(INSTALLDIR)\dic_utf_8
+	copy right-id.def $(INSTALLDIR)\dic_utf_8
+	copy rewrite.def $(INSTALLDIR)\dic_utf_8
+	copy pos-id.def $(INSTALLDIR)\dic_utf_8
 	cd ..

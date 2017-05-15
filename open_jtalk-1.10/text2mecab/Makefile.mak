@@ -1,7 +1,7 @@
 
 CC = cl
 
-CFLAGS = /O2 /Ob2 /Oi /Ot /Oy /GT /GL /TC /D CHARSET_SHIFT_JIS
+CFLAGS = /MD /O2 /Ob2 /Oi /Ot /Oy /GT /GL /TC /D ASCII_HEADER /D CHARSET_UTF_8
 LFLAGS = /LTCG
 
 CORES = text2mecab.obj
