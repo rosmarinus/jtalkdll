@@ -18,6 +18,7 @@ JTALK_H_START
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #define OPENJTALK_BLOCKSIZE 1024
 #if !defined(__cplusplus)

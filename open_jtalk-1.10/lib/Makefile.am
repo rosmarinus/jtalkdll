@@ -4,16 +4,16 @@ DISTCLEANFILES = *.log *.out *~
 
 MAINTAINERCLEANFILES = Makefile.in
 
-lib_LTLIBRARIES  = libojtalk.la
+lib_LTLIBRARIES  = libjtalk.la
 
-libojtalk_la_SOURCES = ojtalk.c
+libjtalk_la_SOURCES = jtalk.c
 
-#libojtalk_la_LIBADD = 	@top_srcdir@/lib/libopenjtalk.la 
-libojtalk_la_LIBADD = libopenjtalk.la 
+#libjtalk_la_LIBADD = 	@top_srcdir@/lib/libopenjtalk.la 
+libjtalk_la_LIBADD = libopenjtalk.la 
 
-libojtalk_la_LDFLAGS =  -fvisibility=hidden -no-undefined -version-info 0:0:0 -dn -liconv -lportaudio -lm -lstdc++ -lHTSEngine
+libjtalk_la_LDFLAGS =  -fvisibility=hidden -no-undefined -version-info 0:0:0 -dn -liconv -lportaudio -lm -lstdc++ -lHTSEngine
 
-libojtalk_la_CFLAGS = -I ../lib/
+libjtalk_la_CFLAGS = -I ../lib/
 
 noinst_LTLIBRARIES = libopenjtalk.la
 
@@ -51,5 +51,5 @@ bin_PROGRAMS = jsay
 
 jsay_SOURCES = jsay.c
 
-jsay_LDADD = libojtalk.la
+jsay_LDADD = libjtalk.la
 

@@ -101,6 +101,7 @@ install::
 	@if not exist "$(INSTALLDIR)\dic_utf_8" mkdir "$(INSTALLDIR)\dic_utf_8"
 	@if not exist "$(INSTALLDIR)\lib" mkdir "$(INSTALLDIR)\lib"
 	cd lib
+	copy *.exe $(INSTALLDIR)\bin
 	copy *.dll $(INSTALLDIR)\bin
 	copy *.lib $(INSTALLDIR)\lib
 	copy jtalk.h $(INSTALLDIR)\include

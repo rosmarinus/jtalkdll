@@ -1143,7 +1143,7 @@ bool search_directory_or_file(const char*path, const char*wildcard, bool isDirec
 	char temp[MAX_PATH];
 	struct dirent *entry;
 	bool found = false;
-	size_t len = strlen(wildcard);
+	//size_t len = strlen(wildcard);
 	while ((entry = readdir(dir)) != NULL)
 	{
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
@@ -2218,7 +2218,11 @@ bool set_parameters(OpenJTalk *openjtalk)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "sampling_frequency\t: %zd\n", openjtalk->sampling_frequency);
+#if !defined(__CYGWIN__) && !defined(__MINGW32__)
+			fprintf(stderr, "sampling_frequency\t: %zu\n", openjtalk->sampling_frequency);
+#else
+			fprintf(stderr, "sampling_frequency\t: %Iu\n", openjtalk->sampling_frequency);
+#endif
 		}
 		Open_JTalk_set_sampling_frequency(openjtalk->open_jtalk, openjtalk->sampling_frequency);
 	}
@@ -2226,7 +2230,11 @@ bool set_parameters(OpenJTalk *openjtalk)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "sampling_frequency\t: %zd\n", g_cf_sampling_frequency);
+#if !defined(__CYGWIN__) && !defined(__MINGW32__)
+			fprintf(stderr, "sampling_frequency\t: %zu\n", g_cf_sampling_frequency);
+#else
+			fprintf(stderr, "sampling_frequency\t: %Iu\n", g_cf_sampling_frequency);
+#endif
 		}
 		Open_JTalk_set_sampling_frequency(openjtalk->open_jtalk, g_cf_sampling_frequency);
 	}
@@ -2235,7 +2243,11 @@ bool set_parameters(OpenJTalk *openjtalk)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "fperiod\t: %zd\n", openjtalk->fperiod);
+#if !defined(__CYGWIN__) && !defined(__MINGW32__)
+			fprintf(stderr, "fperiod\t: %zu\n", openjtalk->fperiod);
+#else
+			fprintf(stderr, "fperiod\t: %Iu\n", openjtalk->fperiod);
+#endif
 		}
 		Open_JTalk_set_fperiod(openjtalk->open_jtalk, openjtalk->fperiod);
 	}
@@ -2243,7 +2255,11 @@ bool set_parameters(OpenJTalk *openjtalk)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "fperiod\t: %zd\n", g_cf_fperiod);
+#if !defined(__CYGWIN__) && !defined(__MINGW32__)
+			fprintf(stderr, "fperiod\t: %zu\n", g_cf_fperiod);
+#else
+			fprintf(stderr, "fperiod\t: %Iu\n", g_cf_fperiod);
+#endif
 		}
 		Open_JTalk_set_fperiod(openjtalk->open_jtalk, g_cf_fperiod);
 	}
@@ -4275,7 +4291,7 @@ OPENJTALK_DLL_API bool __stdcall OpenJTalk_setVoice_u16(OpenJTalk *openjtalk,
 	u16tosjis_path(path, temp);
 	return OpenJTalk_setVoice_sjis(openjtalk, temp);
 #else
-	u16toutf8_path(path, temp);
+	u16tou8_path(path, temp);
 	return OpenJTalk_setVoice(openjtalk, temp);
 #endif
 }
@@ -4354,7 +4370,7 @@ OPENJTALK_DLL_API bool __stdcall OpenJTalk_speakToFile_sjis(OpenJTalk *openjtalk
 	FILE *wavfp = fopen(file_sjis, "wb");
 #else
 	char file_utf8[MAX_PATH];
-	usjistou8_path(file_sjis, file_utf8);
+	sjistou8_path(file_sjis, file_utf8);
 	FILE *wavfp = fopen(file_utf8, "wb");
 #endif
 	if (wavfp == NULL)

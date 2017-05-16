@@ -129,16 +129,16 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
 LTLIBRARIES = $(lib_LTLIBRARIES) $(noinst_LTLIBRARIES)
-libojtalk_la_DEPENDENCIES = libopenjtalk.la
-am_libojtalk_la_OBJECTS = libojtalk_la-ojtalk.lo
-libojtalk_la_OBJECTS = $(am_libojtalk_la_OBJECTS)
+libjtalk_la_DEPENDENCIES = libopenjtalk.la
+am_libjtalk_la_OBJECTS = libjtalk_la-jtalk.lo
+libjtalk_la_OBJECTS = $(am_libjtalk_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-libojtalk_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libojtalk_la_CFLAGS) \
-	$(CFLAGS) $(libojtalk_la_LDFLAGS) $(LDFLAGS) -o $@
+libjtalk_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libjtalk_la_CFLAGS) \
+	$(CFLAGS) $(libjtalk_la_LDFLAGS) $(LDFLAGS) -o $@
 libopenjtalk_la_DEPENDENCIES =  \
 	@top_srcdir@/text2mecab/libtext2mecab.la \
 	@top_srcdir@/mecab/src/libmecab.la \
@@ -161,7 +161,7 @@ libopenjtalk_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 PROGRAMS = $(bin_PROGRAMS)
 am_jsay_OBJECTS = jsay.$(OBJEXT)
 jsay_OBJECTS = $(am_jsay_OBJECTS)
-jsay_DEPENDENCIES = libojtalk.la
+jsay_DEPENDENCIES = libjtalk.la
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -196,9 +196,9 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libojtalk_la_SOURCES) $(libopenjtalk_la_SOURCES) \
+SOURCES = $(libjtalk_la_SOURCES) $(libopenjtalk_la_SOURCES) \
 	$(jsay_SOURCES)
-DIST_SOURCES = $(libojtalk_la_SOURCES) $(libopenjtalk_la_SOURCES) \
+DIST_SOURCES = $(libjtalk_la_SOURCES) $(libopenjtalk_la_SOURCES) \
 	$(jsay_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -351,7 +351,6 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
-runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -363,13 +362,13 @@ top_srcdir = @top_srcdir@
 EXTRA_DIST = Makefile.mak
 DISTCLEANFILES = *.log *.out *~
 MAINTAINERCLEANFILES = Makefile.in
-lib_LTLIBRARIES = libojtalk.la
-libojtalk_la_SOURCES = ojtalk.c
+lib_LTLIBRARIES = libjtalk.la
+libjtalk_la_SOURCES = jtalk.c
 
-#libojtalk_la_LIBADD = 	@top_srcdir@/lib/libopenjtalk.la 
-libojtalk_la_LIBADD = libopenjtalk.la 
-libojtalk_la_LDFLAGS = -fvisibility=hidden -no-undefined -version-info 0:0:0 -dn -liconv -lportaudio -lm -lstdc++ -lHTSEngine
-libojtalk_la_CFLAGS = -I ../lib/
+#libjtalk_la_LIBADD = 	@top_srcdir@/lib/libopenjtalk.la 
+libjtalk_la_LIBADD = libopenjtalk.la 
+libjtalk_la_LDFLAGS = -fvisibility=hidden -no-undefined -version-info 0:0:0 -dn -liconv -lportaudio -lm -lstdc++ -lHTSEngine
+libjtalk_la_CFLAGS = -I ../lib/
 noinst_LTLIBRARIES = libopenjtalk.la
 libopenjtalk_la_LIBADD = @top_srcdir@/text2mecab/libtext2mecab.la \
 	@top_srcdir@/mecab/src/libmecab.la \
@@ -401,7 +400,7 @@ libopenjtalk_la_CFLAGS = -I @top_srcdir@/text2mecab \
 
 libopenjtalk_la_SOURCES = openjtalk.c
 jsay_SOURCES = jsay.c
-jsay_LDADD = libojtalk.la
+jsay_LDADD = libjtalk.la
 all: all-am
 
 .SUFFIXES:
@@ -482,8 +481,8 @@ clean-noinstLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 
-libojtalk.la: $(libojtalk_la_OBJECTS) $(libojtalk_la_DEPENDENCIES) $(EXTRA_libojtalk_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libojtalk_la_LINK) -rpath $(libdir) $(libojtalk_la_OBJECTS) $(libojtalk_la_LIBADD) $(LIBS)
+libjtalk.la: $(libjtalk_la_OBJECTS) $(libjtalk_la_DEPENDENCIES) $(EXTRA_libjtalk_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(libjtalk_la_LINK) -rpath $(libdir) $(libjtalk_la_OBJECTS) $(libjtalk_la_LIBADD) $(LIBS)
 
 libopenjtalk.la: $(libopenjtalk_la_OBJECTS) $(libopenjtalk_la_DEPENDENCIES) $(EXTRA_libopenjtalk_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libopenjtalk_la_LINK)  $(libopenjtalk_la_OBJECTS) $(libopenjtalk_la_LIBADD) $(LIBS)
@@ -548,7 +547,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jsay.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libojtalk_la-ojtalk.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjtalk_la-jtalk.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libopenjtalk_la-openjtalk.Plo@am__quote@
 
 .c.o:
@@ -572,12 +571,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-libojtalk_la-ojtalk.lo: ojtalk.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libojtalk_la_CFLAGS) $(CFLAGS) -MT libojtalk_la-ojtalk.lo -MD -MP -MF $(DEPDIR)/libojtalk_la-ojtalk.Tpo -c -o libojtalk_la-ojtalk.lo `test -f 'ojtalk.c' || echo '$(srcdir)/'`ojtalk.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libojtalk_la-ojtalk.Tpo $(DEPDIR)/libojtalk_la-ojtalk.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ojtalk.c' object='libojtalk_la-ojtalk.lo' libtool=yes @AMDEPBACKSLASH@
+libjtalk_la-jtalk.lo: jtalk.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjtalk_la_CFLAGS) $(CFLAGS) -MT libjtalk_la-jtalk.lo -MD -MP -MF $(DEPDIR)/libjtalk_la-jtalk.Tpo -c -o libjtalk_la-jtalk.lo `test -f 'jtalk.c' || echo '$(srcdir)/'`jtalk.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libjtalk_la-jtalk.Tpo $(DEPDIR)/libjtalk_la-jtalk.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='jtalk.c' object='libjtalk_la-jtalk.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libojtalk_la_CFLAGS) $(CFLAGS) -c -o libojtalk_la-ojtalk.lo `test -f 'ojtalk.c' || echo '$(srcdir)/'`ojtalk.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjtalk_la_CFLAGS) $(CFLAGS) -c -o libjtalk_la-jtalk.lo `test -f 'jtalk.c' || echo '$(srcdir)/'`jtalk.c
 
 libopenjtalk_la-openjtalk.lo: openjtalk.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libopenjtalk_la_CFLAGS) $(CFLAGS) -MT libopenjtalk_la-openjtalk.lo -MD -MP -MF $(DEPDIR)/libopenjtalk_la-openjtalk.Tpo -c -o libopenjtalk_la-openjtalk.lo `test -f 'openjtalk.c' || echo '$(srcdir)/'`openjtalk.c
