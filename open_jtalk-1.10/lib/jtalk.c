@@ -1,4 +1,4 @@
-ï»¿#ifndef JTALK_C
+#ifndef JTALK_C
 #define JTALK_C
 #ifdef __cplusplus
 #define JTALK_C_START extern "C" {
@@ -18,7 +18,7 @@ JTALK_C_START;
 #endif
 
 /*****************************************************************
-** ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰
+** ƒCƒ“ƒNƒ‹[ƒh
 */
 
 #include "openjtalk.h"
@@ -51,7 +51,7 @@ JTALK_C_START;
 #pragma comment(lib, "portaudio_static_x86.lib")
 #endif
 #else
-#error "WinOuté–¢æ•°ã«ã‚ˆã‚‹å‡¦ç†ã¯ã¾ã å®Ÿè£…ã—ã¦ã„ã¾ã›ã‚“ã€‚"
+#error "WinOutŠÖ”‚É‚æ‚éˆ—‚Í‚Ü‚¾À‘•‚µ‚Ä‚¢‚Ü‚¹‚ñB"
 #pragma comment(lib, "winmm.lib")
 #endif
 #else
@@ -70,7 +70,7 @@ JTALK_C_START;
 #endif
 
 /*****************************************************************
-** å®šæ•°
+** ’è”
 */
 
 #define MAXBUFLEN 1024
@@ -81,10 +81,10 @@ JTALK_C_START;
 #define VOICESEARCHMAX 1000
 
 /*****************************************************************
-** å‹
+** Œ^
 */
 
-// wavç”¨ãƒ‡ãƒ¼ã‚¿
+// wav—pƒf[ƒ^
 struct FormatChunk
 {
 	unsigned char chunkId[4];
@@ -104,7 +104,7 @@ struct DataChunk
 	unsigned long chunkSize;
 };
 
-// éŸ³å£°ãƒ‡ãƒ¼ã‚¿
+// ‰¹ºƒf[ƒ^
 typedef struct speakData_t
 {
 	short *data;
@@ -119,24 +119,24 @@ typedef struct speakData_t
 #endif
 } SpeakData;
 
-// ä¸»ãƒ‡ãƒ¼ã‚¿
+// åƒf[ƒ^
 typedef struct OpenJTalk_tag {
 
 	Open_JTalk *open_jtalk;
 
-	// åŸºæº–ãƒ‘ã‚¹
+	// Šî€ƒpƒX
 	//char dn_base_path[MAX_PATH];
 
-	// è¾æ›¸ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®ãƒ‘ã‚¹
+	// «‘ƒfƒBƒŒƒNƒgƒŠ‚ÌƒpƒX
 	char dn_dic_path[MAX_PATH];
 
-	// éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®ãƒ‘ã‚¹
+	// ‰¹‹¿ƒtƒ@ƒCƒ‹ƒfƒBƒŒƒNƒgƒŠ‚ÌƒpƒX
 	char dn_voice_dir_path[MAX_PATH];
 
-	// éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
+	// ‰¹‹¿ƒtƒ@ƒCƒ‹‚ÌƒpƒX
 	char fn_voice_path[MAX_PATH];
 
-	// æŒ‡å®šã®æœ‰ç„¡
+	// w’è‚Ì—L–³
 	bool fn_gv_weight0;
 	bool fn_gv_weight1;
 	bool fn_msd_threshold;
@@ -149,7 +149,7 @@ typedef struct OpenJTalk_tag {
 	bool fn_volume;
 	bool fn_audio_buff_size;
 
-	// æŒ‡å®šã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ï¼ˆæ–‡å­—åˆ—ä»¥å¤–ï¼‰
+	// w’è‚³‚ê‚½ƒf[ƒ^i•¶š—ñˆÈŠOj
 	double gv_weight0;
 	double gv_weight1;
 	double msd_threshold;
@@ -165,7 +165,7 @@ typedef struct OpenJTalk_tag {
 } OpenJTalk;
 
 /*****************************************************************
-** æ–‡å­—åˆ—å®šæ•°
+** •¶š—ñ’è”
 */
 
 #if defined(_WIN32) 
@@ -184,7 +184,7 @@ const char *G_SECTION_NAME = u8"open_jtalk_config";
 const char *G_DEFAULT_DIC_DIR_NAMES[] = { "open_jtalk_dic_utf_8-*","dic_utf_8*","dic*",NULL };
 const char *G_DEFAULT_VOICE_DIR_NAMES[] = { "voice","voice*","hts_voice*",NULL };
 
-// çµ¶å¯¾æŒ‡å®šã®çœç•¥å€¤
+// â‘Îw’è‚ÌÈ—ª’l
 #if (defined(_WIN32) && !defined(__CYGWIN__))
 const char *G_DN_DIC_PATH_DEFAULT = "C:\\open_jtalk";
 const char *G_DN_VOICE_DIR_PATH_DEFAULT = "C:\\open_jtalk";
@@ -194,10 +194,10 @@ const char *G_DN_VOICE_DIR_PATH_DEFAULT = "/usr/local/OpenJTalk";
 #endif
 
 /*****************************************************************
-** å¤§åŸŸå¤‰æ•°
+** ‘åˆæ•Ï”
 */
 
-// è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚ˆã‚‹æŒ‡å®šã®æœ‰ç„¡
+// İ’èƒtƒ@ƒCƒ‹‚É‚æ‚éw’è‚Ì—L–³
 bool g_op_gv_weight0 = false;
 bool g_op_gv_weight1 = false;
 bool g_op_msd_threshold = false;
@@ -210,7 +210,7 @@ bool g_op_additional_half_tone = false;
 bool g_op_volume = false;
 bool g_op_audio_buff_size = false;
 
-// è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚ˆã‚‹ãƒ‡ãƒ¼ã‚¿ï¼ˆæ–‡å­—åˆ—ä»¥å¤–ï¼‰
+// İ’èƒtƒ@ƒCƒ‹‚É‚æ‚éƒf[ƒ^i•¶š—ñˆÈŠOj
 double g_cf_gv_weight0 = 0;
 double g_cf_gv_weight1 = 0;
 double g_cf_msd_threshold = 0;
@@ -223,36 +223,36 @@ double g_cf_additional_half_tone = 0;
 double g_cf_volume = 0;
 size_t g_cf_audio_buff_size = 0;
 
-// å‡ºåŠ›å†—é•·
+// o—Íç’·
 bool g_verbose = false;
 
-// å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
+// Àsƒtƒ@ƒCƒ‹‚ÌƒpƒX
 char g_current_path[MAX_PATH];
 
-// è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
+// İ’èƒtƒ@ƒCƒ‹‚ÌƒpƒX
 char g_ini_path[MAX_PATH];
 
-// åˆæœŸå€¤ã‚‚ã—ãã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚ˆã‚‹éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«å
+// ‰Šú’l‚à‚µ‚­‚Íİ’èƒtƒ@ƒCƒ‹‚É‚æ‚é‰¹‹¿ƒtƒ@ƒCƒ‹–¼
 char g_voice_ini[MAX_PATH];
 
-// åˆæœŸå€¤ã‚‚ã—ãã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚ˆã‚‹éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå
+// ‰Šú’l‚à‚µ‚­‚Íİ’èƒtƒ@ƒCƒ‹‚É‚æ‚é‰¹‹¿ƒtƒ@ƒCƒ‹ƒfƒBƒŒƒNƒgƒŠ–¼
 char g_voice_dir_ini[MAX_PATH];
 
-// åˆæœŸå€¤ã‚‚ã—ãã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚ˆã‚‹è¾æ›¸ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå
+// ‰Šú’l‚à‚µ‚­‚Íİ’èƒtƒ@ƒCƒ‹‚É‚æ‚é«‘ƒfƒBƒŒƒNƒgƒŠ–¼
 char g_dic_dir_ini[MAX_PATH];
 
-// éŸ³å£°ãƒ‡ãƒ¼ã‚¿
+// ‰¹ºƒf[ƒ^
 SpeakData g_speakData, *g_psd = &g_speakData;
 
-// ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
+// ƒGƒ‰[ƒR[ƒh
 //long int OpenJTalk_ERRORCODE = 0;
 
-// ã“ã®dllåœ°éœ‡ã®å ´æ‰€ï¼ˆDllMainå†…ã§ä»£å…¥ï¼‰
+// ‚±‚Ìdll’nk‚ÌêŠiDllMain“à‚Å‘ã“üj
 char g_dll_path[MAX_PATH];
 
 
 /*****************************************************************
-** å‰æ–¹å®£è¨€
+** ‘O•ûéŒ¾
 */
 
 bool set_ini_path(OpenJTalk*oj);
@@ -262,7 +262,7 @@ bool set_default_voice_path(OpenJTalk *oj);
 bool set_default_voice_dir_path(OpenJTalk *oj);
 
 /*****************************************************************
-** å˜ç´”è£œåŠ©é–¢æ•°
+** ’Pƒ•â•ŠÖ”
 */
 
 void clear_path_string(char*str, size_t len)
@@ -333,7 +333,7 @@ size_t GetUTF8Length(char firstbyte)
 
 
 /******************************************************************
-** ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç®¡ç†é–¢æ•°
+** ƒIƒuƒWƒFƒNƒgŠÇ—ŠÖ”
 */
 
 bool JTalkData_initialize(OpenJTalk *data)
@@ -368,7 +368,7 @@ bool JTalkData_initialize(OpenJTalk *data)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚\n");
+			fprintf(stderr, "İ’èƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB\n");
 		}
 	}
 
@@ -381,7 +381,7 @@ bool JTalkData_initialize(OpenJTalk *data)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "æ¨™æº–ã®è¾æ›¸ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚\n");
+			fprintf(stderr, "•W€‚Ì«‘ƒfƒBƒŒƒNƒgƒŠ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB\n");
 		}
 	}
 
@@ -391,7 +391,7 @@ bool JTalkData_initialize(OpenJTalk *data)
 		{
 			if (g_verbose)
 			{
-				fprintf(stderr, "æ¨™æº–ã®éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚\n");
+				fprintf(stderr, "•W€‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB\n");
 			}
 		}
 	}
@@ -399,7 +399,7 @@ bool JTalkData_initialize(OpenJTalk *data)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "æ¨™æº–ã®éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚\n");
+			fprintf(stderr, "•W€‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB\n");
 		}
 	}
 
@@ -417,7 +417,7 @@ void JTalkData_Clear(OpenJTalk *data)
 
 
 /******************************************************************
-** æ–‡å­—åˆ—å¤‰æ›é–¢æ•°
+** •¶š—ñ•ÏŠ·ŠÖ”
 */
 
 #if defined(ICONV_ENABLE)
@@ -643,7 +643,7 @@ char* sjistou8(const char*source)
 #endif /* ELSE ICONV_ENABLE */
 
 /*****************************************************************
-** split_path ã®å®Ÿè£…
+** split_path ‚ÌÀ‘•
 */
 
 char *point_basename(const char *path)
@@ -813,7 +813,7 @@ void split_path(const char *path, char *drive, char *dir, char *fname, char *ext
 }
 
 /*****************************************************************
-** ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªé–¢é€£æ±ç”¨é–¢æ•°
+** ƒtƒ@ƒCƒ‹EƒfƒBƒŒƒNƒgƒŠŠÖ˜A”Ä—pŠÖ”
 */
 
 char *add_slash(char*path)
@@ -1113,13 +1113,13 @@ bool wildcard_match(const char *wildcard, const char *target)
 	}
 }
 
-// æŒ‡å®šã®ãƒ‘ã‚¹ã‹ã‚‰ã€æŒ‡å®šã®ãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰æ–‡å­—åˆ—ã«ãƒãƒƒãƒã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã‚‚ã—ãã¯ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’æ¢ã—ã€
-// ã‚ã‚Œã°çµæœã‚’resultã«ã‹ãˆã™ã€‚
-// resultã«ã¯ãƒ‘ã‚¹æ–‡å­—åˆ—ã«ååˆ†ãªé ˜åŸŸãŒç¢ºä¿ã•ã‚Œã¦ã„ã‚‹ã¨ã™ã‚‹
-// path ã®æœ€å¾Œã«ã¯ã‚¹ãƒ©ãƒƒã‚·ãƒ¥ã¯ãªã„
-// ãªãŠå†å¸°çš„ã«ã¯æ¢ã•ãªã„ã€
-// å€™è£œãŒè¤‡æ•°ã‚ã£ã¦ã‚‚æœ€åˆã«è¦‹ã¤ã‘ãŸã‚‚ã®ã®ã¿ã‚’è¿”ã™
-// ã“ã®ã¨ãä½•ã‚’æœ€åˆã«è¦‹ã¤ã‘ã‚‹ã‹ã¯readdirã®å‹•ä½œã«ä¾å­˜ã™ã‚‹
+// w’è‚ÌƒpƒX‚©‚çAw’è‚ÌƒƒCƒ‹ƒhƒJ[ƒh•¶š—ñ‚Éƒ}ƒbƒ`‚·‚éƒtƒ@ƒCƒ‹‚à‚µ‚­‚ÍƒfƒBƒŒƒNƒgƒŠ‚ğ’T‚µA
+// ‚ ‚ê‚ÎŒ‹‰Ê‚ğresult‚É‚©‚¦‚·B
+// result‚É‚ÍƒpƒX•¶š—ñ‚É\•ª‚È—Ìˆæ‚ªŠm•Û‚³‚ê‚Ä‚¢‚é‚Æ‚·‚é
+// path ‚ÌÅŒã‚É‚ÍƒXƒ‰ƒbƒVƒ…‚Í‚È‚¢
+// ‚È‚¨Ä‹A“I‚É‚Í’T‚³‚È‚¢A
+// Œó•â‚ª•¡”‚ ‚Á‚Ä‚àÅ‰‚ÉŒ©‚Â‚¯‚½‚à‚Ì‚Ì‚İ‚ğ•Ô‚·
+// ‚±‚Ì‚Æ‚«‰½‚ğÅ‰‚ÉŒ©‚Â‚¯‚é‚©‚Íreaddir‚Ì“®ì‚ÉˆË‘¶‚·‚é
 
 bool search_directory_or_file(const char*path, const char*wildcard, bool isDirectory, char*result)
 {
@@ -1538,7 +1538,7 @@ bool set_current_path()
 	bool res = get_current_path(g_current_path);
 	if (g_verbose)
 	{
-		fprintf(stderr, "ã‚«ãƒ¬ãƒ³ãƒˆãƒ‘ã‚¹: %s\n", g_current_path);
+		fprintf(stderr, "ƒJƒŒƒ“ƒgƒpƒX: %s\n", g_current_path);
 	}
 	if (res)
 	{
@@ -1549,7 +1549,7 @@ bool set_current_path()
 }
 
 /******************************************************************
-** éãƒ•ã‚¡ã‚¤ãƒ«é–¢é€£è£œåŠ©é–¢æ•°
+** ”ñƒtƒ@ƒCƒ‹ŠÖ˜A•â•ŠÖ”
 */
 
 bool sleep_internal(unsigned long time)
@@ -1572,7 +1572,7 @@ bool sleep_internal(unsigned long time)
 
 
 /*****************************************************************
-** éŸ³å£°è¨­å®šé–¢æ•°
+** ‰¹ºİ’èŠÖ”
 */
 
 bool set_voice_path(OpenJTalk *oj, const char*path)
@@ -1585,20 +1585,20 @@ bool set_voice_path(OpenJTalk *oj, const char*path)
 	char temp[MAX_PATH];
 	clear_path_string(temp, MAX_PATH);
 
-	// ãƒ‘ã‚¹ãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã„ã¨ãã€
+	// ƒpƒX‚ªw’è‚³‚ê‚Ä‚¢‚È‚¢‚Æ‚«A
 	if (path == NULL || strlen(path) == 0)
 	{
-		// éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€ãŒç¢ºå®šã•ã‚Œã¦ã„ã‚Œã°
+		// ‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_‚ªŠm’è‚³‚ê‚Ä‚¢‚ê‚Î
 		if (oj->dn_voice_dir_path != NULL && strlen(oj->dn_voice_dir_path) != 0)
 		{
-			// æ¨™æº–åã®éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¢ã™
+			// •W€–¼‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹‚ğ’T‚·
 			unsigned int c = 0;
 			if (search_file_recursive(oj->dn_voice_dir_path, G_VOICE_DEFAULT, temp, &c, VOICESEARCHMAX))
 			{
 				goto return_true;
 			}
 
-			// ç„¡ã‘ã‚Œã°ã€ä½•ã‹éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¢ã™
+			// –³‚¯‚ê‚ÎA‰½‚©‰¹‹¿ƒtƒ@ƒCƒ‹‚ğ’T‚·
 			c = 0;
 			if (search_file_recursive(oj->dn_voice_dir_path, G_VOICE_WILDCARD, temp, &c, VOICESEARCHMAX))
 			{
@@ -1606,13 +1606,13 @@ bool set_voice_path(OpenJTalk *oj, const char*path)
 			}
 		}
 
-		// ãƒ‘ã‚¹ãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã„ã¨ãã€æ±ºã¾ã‚‰ãªã‘ã‚Œã°ã€å½ã‚’è¿”ã™
+		// ƒpƒX‚ªw’è‚³‚ê‚Ä‚¢‚È‚¢‚Æ‚«AŒˆ‚Ü‚ç‚È‚¯‚ê‚ÎA‹U‚ğ•Ô‚·
 		return false;
 	}
-	// ãƒ‘ã‚¹ãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚‹ã¨ã
+	// ƒpƒX‚ªw’è‚³‚ê‚Ä‚¢‚é‚Æ‚«
 	else
 	{
-		// åå‰ã®ã¿ã®è¡¨è¨˜ã®å ´åˆã€
+		// –¼‘O‚Ì‚İ‚Ì•\‹L‚Ìê‡A
 		if (is_name_only(path))
 		{
 			if (strlen(path) + strlen(G_VOICE_EXT) + 1 > MAX_PATH)
@@ -1630,7 +1630,7 @@ bool set_voice_path(OpenJTalk *oj, const char*path)
 			return false;
 		}
 
-		// ç›¸å¯¾æŒ‡å®šã®å ´åˆã€
+		// ‘Š‘Îw’è‚Ìê‡A
 		if (is_relative(path))
 		{
 			if (oj->dn_voice_dir_path != NULL && strlen(oj->dn_voice_dir_path) != 0)
@@ -1644,7 +1644,7 @@ bool set_voice_path(OpenJTalk *oj, const char*path)
 				}
 			}
 		}
-		// çµ¶å¯¾æŒ‡å®šã®å ´åˆã€
+		// â‘Îw’è‚Ìê‡A
 		else
 		{
 			strcpy(temp, path);
@@ -1673,7 +1673,7 @@ bool set_voice_dir_path(OpenJTalk *oj, const char *path)
 	// g_voice_dir_ini = path
 	if (path != NULL && strlen(path) != 0)
 	{
-		// çµ¶å¯¾ãƒ‘ã‚¹ãªã‚‰ã°
+		// â‘ÎƒpƒX‚È‚ç‚Î
 		if (!is_relative(path))
 		{
 			strcpy(temp, path);
@@ -1686,10 +1686,10 @@ bool set_voice_dir_path(OpenJTalk *oj, const char *path)
 				return false;
 			}
 		}
-		// ç›¸å¯¾ãƒ‘ã‚¹ãªã‚‰ã°
+		// ‘Š‘ÎƒpƒX‚È‚ç‚Î
 		else
 		{
-			// ã¾ãšã‚«ãƒ¬ãƒ³ãƒˆãƒ‘ã‚¹ã‚’åŸºæº–ã«ã—ã¦æ¢ã™
+			// ‚Ü‚¸ƒJƒŒƒ“ƒgƒpƒX‚ğŠî€‚É‚µ‚Ä’T‚·
 			if (g_current_path != NULL && strlen(g_current_path) != 0)
 			{
 				strcpy(temp, g_current_path);
@@ -1702,7 +1702,7 @@ bool set_voice_dir_path(OpenJTalk *oj, const char *path)
 			}
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-			// æ¬¡ã«ã€Windows ã®ã¨ãã¯ dllã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‚’åŸºæº–ã«ã—ã¦æ¢ã™
+			// Ÿ‚ÉAWindows ‚Ì‚Æ‚«‚Í dll‚Ì‚ ‚éƒtƒHƒ‹ƒ_‚ğŠî€‚É‚µ‚Ä’T‚·
 			if (g_dll_path != NULL && strlen(g_dll_path) != 0)
 			{
 				strcpy(temp, g_dll_path);
@@ -1731,12 +1731,12 @@ bool set_default_voice_dir_path(OpenJTalk *oj)
 		return false;
 	}
 
-	// è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã« voice_dir ãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚‹ã¨ã
+	// İ’èƒtƒ@ƒCƒ‹‚É voice_dir ‚ªw’è‚³‚ê‚Ä‚¢‚é‚Æ‚«
 	char temp[MAX_PATH];
 	clear_path_string(temp, MAX_PATH);
 	if (g_voice_dir_ini != NULL && strlen(g_voice_dir_ini) != 0)
 	{
-		// çµ¶å¯¾ãƒ‘ã‚¹ãªã‚‰ã°
+		// â‘ÎƒpƒX‚È‚ç‚Î
 		if (!is_relative(g_voice_dir_ini))
 		{
 			strcpy(temp, g_voice_dir_ini);
@@ -1749,10 +1749,10 @@ bool set_default_voice_dir_path(OpenJTalk *oj)
 				return false;
 			}
 		}
-		// ç›¸å¯¾ãƒ‘ã‚¹ãªã‚‰ã°
+		// ‘Š‘ÎƒpƒX‚È‚ç‚Î
 		else
 		{
-			// ã¾ãšã‚«ãƒ¬ãƒ³ãƒˆãƒ‘ã‚¹ã‚’åŸºæº–ã«ã—ã¦æ¢ã™
+			// ‚Ü‚¸ƒJƒŒƒ“ƒgƒpƒX‚ğŠî€‚É‚µ‚Ä’T‚·
 			if (g_current_path != NULL && strlen(g_current_path) != 0)
 			{
 				strcpy(temp, g_current_path);
@@ -1765,7 +1765,7 @@ bool set_default_voice_dir_path(OpenJTalk *oj)
 			}
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-			// æ¬¡ã«ã€Windows ã®ã¨ãã¯ dllã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‚’åŸºæº–ã«ã—ã¦æ¢ã™
+			// Ÿ‚ÉAWindows ‚Ì‚Æ‚«‚Í dll‚Ì‚ ‚éƒtƒHƒ‹ƒ_‚ğŠî€‚É‚µ‚Ä’T‚·
 			if (g_dll_path != NULL && strlen(g_dll_path) != 0)
 			{
 				strcpy(temp, g_dll_path);
@@ -1778,14 +1778,14 @@ bool set_default_voice_dir_path(OpenJTalk *oj)
 			}
 #endif
 		}
-		// è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«è¨˜è¿°ãŒã‚ã‚‹ã¨ãã€è¦‹ã¤ã‹ã‚‰ãªã‘ã‚Œã°ãã‚Œä»¥ä¸Šæ¢ã•ãªã„ã€‚
+		// İ’èƒtƒ@ƒCƒ‹‚É‹Lq‚ª‚ ‚é‚Æ‚«AŒ©‚Â‚©‚ç‚È‚¯‚ê‚Î‚»‚êˆÈã’T‚³‚È‚¢B
 		return false;
 	}
 
-	// ä»¥é™ã€è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«è¨˜è¿°ãŒãªã„ã¨ã
+	// ˆÈ~Aİ’èƒtƒ@ƒCƒ‹‚É‹Lq‚ª‚È‚¢‚Æ‚«
 
 
-	// ã‚«ãƒ¬ãƒ³ãƒˆãƒ‘ã‚¹ã‹ã‚‰ã€å¯èƒ½æ€§ã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‚’æ¢ã™
+	// ƒJƒŒƒ“ƒgƒpƒX‚©‚çA‰Â”\«‚Ì‚ ‚éƒtƒHƒ‹ƒ_‚ğ’T‚·
 	if (g_current_path != NULL && strlen(g_current_path) != 0)
 	{
 		for (const char**d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
@@ -1798,7 +1798,7 @@ bool set_default_voice_dir_path(OpenJTalk *oj)
 	}
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	// Windows ã®ã¨ãã¯ dllã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ã‚‚æ¢ã™
+	// Windows ‚Ì‚Æ‚«‚Í dll‚Ì‚ ‚éƒtƒHƒ‹ƒ_‚©‚ç‚à’T‚·
 	if (g_dll_path != NULL && strlen(g_dll_path) != 0)
 	{
 		for (const char**d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
@@ -1811,7 +1811,7 @@ bool set_default_voice_dir_path(OpenJTalk *oj)
 	}
 #endif
 
-	// çœç•¥æ™‚ã®éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€ã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ã€å¯èƒ½æ€§ã®ã‚ã‚‹åå‰ã‚’æ¢ã™
+	// È—ª‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_‚Ì‚ ‚éƒtƒHƒ‹ƒ_‚©‚çA‰Â”\«‚Ì‚ ‚é–¼‘O‚ğ’T‚·
 	if (G_DN_VOICE_DIR_PATH_DEFAULT != NULL && strlen(G_DN_VOICE_DIR_PATH_DEFAULT) != 0)
 	{
 		for (const char**d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
@@ -1840,7 +1840,7 @@ bool set_default_voice_path(OpenJTalk *oj)
 	clear_path_string(temp, MAX_PATH);
 	unsigned int c = 0;
 
-	// è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ã®æŒ‡å®šãŒã‚ã‚‹ã¨ãã€
+	// İ’èƒtƒ@ƒCƒ‹‚É‰¹‹¿ƒtƒ@ƒCƒ‹‚Ìw’è‚ª‚ ‚é‚Æ‚«A
 	if (g_voice_ini != NULL && strlen(g_voice_ini) != 0)
 	{
 		if (is_name_only(g_voice_ini))
@@ -1879,21 +1879,21 @@ bool set_default_voice_path(OpenJTalk *oj)
 			}
 		}
 
-		// è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ã®æŒ‡å®šãŒã‚ã‚‹ã¨ãã¯ã€è¦‹ã¤ã‹ã‚‰ãªã‘ã‚Œã°å½ã‚’è¿”ã™ã€‚
+		// İ’èƒtƒ@ƒCƒ‹‚É‰¹‹¿ƒtƒ@ƒCƒ‹‚Ìw’è‚ª‚ ‚é‚Æ‚«‚ÍAŒ©‚Â‚©‚ç‚È‚¯‚ê‚Î‹U‚ğ•Ô‚·B
 		return false;
 	}
 
-	// éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€ãŒç¢ºå®šã—ã¦ã„ã‚Œã°ã€
+	// ‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_‚ªŠm’è‚µ‚Ä‚¢‚ê‚ÎA
 	if (oj->dn_voice_dir_path != NULL && strlen(oj->dn_voice_dir_path) != 0)
 	{
-		// æ¨™æº–ã®éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¢ã™ã€‚
+		// •W€‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹‚ğ’T‚·B
 		c = 0;
 		if (search_file_recursive(oj->dn_voice_dir_path, G_VOICE_DEFAULT, temp, &c, VOICESEARCHMAX))
 		{
 			goto return_true;
 		}
 
-		// ä½•ã‹éŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¢ã™
+		// ‰½‚©‰¹‹¿ƒtƒ@ƒCƒ‹‚ğ’T‚·
 		c = 0;
 		if (search_file_recursive(oj->dn_voice_dir_path, G_VOICE_WILDCARD, temp, &c, VOICESEARCHMAX))
 		{
@@ -1912,12 +1912,12 @@ return_true:
 // set_dic_path
 
 /******************************************************************
-** è¾æ›¸ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªè¨­å®šé–¢æ•°
+** «‘ƒfƒBƒŒƒNƒgƒŠİ’èŠÖ”
 */
 
 
-// è¾æ›¸ãŒUTF-8å‘ã‘ã‹ã©ã†ã‹
-// unk.dic ã® 0x28ã‹ã‚‰ã®æ–‡å­—åˆ—ã‚’èª¿ã¹ã‚‹
+// «‘‚ªUTF-8Œü‚¯‚©‚Ç‚¤‚©
+// unk.dic ‚Ì 0x28‚©‚ç‚Ì•¶š—ñ‚ğ’²‚×‚é
 bool check_dic_utf_8(const char *path)
 {
 	if (path == NULL || strlen(path) == 0)
@@ -1974,7 +1974,7 @@ bool set_dic_path(OpenJTalk *oj, const char *path)
 
 	if (path != NULL && strlen(path) != 0)
 	{
-		// ãƒ‘ã‚¹ãŒçµ¶å¯¾æŒ‡å®šãªã‚‰ã°
+		// ƒpƒX‚ªâ‘Îw’è‚È‚ç‚Î
 		if (!is_relative(path))
 		{
 			strcpy(temp, path);
@@ -1983,10 +1983,10 @@ bool set_dic_path(OpenJTalk *oj, const char *path)
 				goto check_charset;
 			}
 		}
-		// ãƒ‘ã‚¹ãŒç›¸å¯¾æŒ‡å®šãªã‚‰ã°
+		// ƒpƒX‚ª‘Š‘Îw’è‚È‚ç‚Î
 		else
 		{
-			// ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã‚’æ¢ã™
+			// ƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_‚ğ’T‚·
 			if (g_current_path != NULL && strlen(g_current_path) != 0)
 			{
 				strcpy(temp, g_current_path);
@@ -1999,7 +1999,7 @@ bool set_dic_path(OpenJTalk *oj, const char *path)
 			}
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-			// æ¬¡ã«ã€DLLã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‚’æ¢ã™
+			// Ÿ‚ÉADLL‚Ì‚ ‚éƒtƒHƒ‹ƒ_‚ğ’T‚·
 			if (g_dll_path != NULL && strlen(g_dll_path) != 0)
 			{
 				strcpy(temp, g_dll_path);
@@ -2025,10 +2025,10 @@ check_charset:
 }
 
 /// <summary>
-/// çœç•¥æ™‚ã®è¾æ›¸ãƒ•ã‚©ãƒ«ãƒ€ã‚’è¨­å®šã™ã‚‹
+/// È—ª‚Ì«‘ƒtƒHƒ‹ƒ_‚ğİ’è‚·‚é
 /// </summary>
-/// <param name="oj">æ§‹é€ ä½“ãƒ‡ãƒ¼ã‚¿</param>
-/// <returns>è¨­å®šã®æˆå¦</returns>
+/// <param name="oj">\‘¢‘Ìƒf[ƒ^</param>
+/// <returns>İ’è‚Ì¬”Û</returns>
 bool set_default_dic_path(OpenJTalk *oj)
 {
 	if (oj == NULL)
@@ -2039,10 +2039,10 @@ bool set_default_dic_path(OpenJTalk *oj)
 	char temp[MAX_PATH];
 	clear_path_string(temp, MAX_PATH);
 
-	// è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«è¾æ›¸ãƒ•ã‚©ãƒ«ãƒ€ãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚Œã°ã€
+	// İ’èƒtƒ@ƒCƒ‹‚É«‘ƒtƒHƒ‹ƒ_‚ªw’è‚³‚ê‚Ä‚¢‚ê‚ÎA
 	if (g_dic_dir_ini != NULL && strlen(g_dic_dir_ini) != 0)
 	{
-		// çµ¶å¯¾æŒ‡å®šãªã‚‰ã°ã€‚
+		// â‘Îw’è‚È‚ç‚ÎB
 		if (!is_relative(g_dic_dir_ini))
 		{
 			strcpy(temp, g_dic_dir_ini);
@@ -2051,10 +2051,10 @@ bool set_default_dic_path(OpenJTalk *oj)
 				goto check_charset;
 			}
 		}
-		// ç›¸å¯¾æŒ‡å®šãªã‚‰ã°ã€
+		// ‘Š‘Îw’è‚È‚ç‚ÎA
 		else
 		{
-			// ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰æ¢ã™
+			// ƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_ƒtƒHƒ‹ƒ_‚©‚ç’T‚·
 			if (g_current_path != NULL && strlen(g_current_path) != 0)
 			{
 				strcpy(temp, g_current_path);
@@ -2066,7 +2066,7 @@ bool set_default_dic_path(OpenJTalk *oj)
 				}
 			}
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-			// æ¬¡ã«ã€DLLã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‚’æ¢ã™
+			// Ÿ‚ÉADLL‚Ì‚ ‚éƒtƒHƒ‹ƒ_‚ğ’T‚·
 			if (g_dll_path != NULL && strlen(g_dll_path) != 0)
 			{
 				strcpy(temp, g_dll_path);
@@ -2079,11 +2079,11 @@ bool set_default_dic_path(OpenJTalk *oj)
 			}
 #endif
 		}
-		// è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«è¾æ›¸ãƒ•ã‚©ãƒ«ãƒ€ã®æŒ‡å®šãŒã‚ã‚‹ã¨ãã¯ã€è¦‹ã¤ã‹ã‚‰ãªã‘ã‚Œã°å½ã‚’è¿”ã™ã€‚
+		// İ’èƒtƒ@ƒCƒ‹‚É«‘ƒtƒHƒ‹ƒ_‚Ìw’è‚ª‚ ‚é‚Æ‚«‚ÍAŒ©‚Â‚©‚ç‚È‚¯‚ê‚Î‹U‚ğ•Ô‚·B
 		return false;
 	}
 
-	// ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰å¯èƒ½æ€§ã®ã‚ã‚‹åå‰ã‚’æ¢ã™
+	// ƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_‚©‚ç‰Â”\«‚Ì‚ ‚é–¼‘O‚ğ’T‚·
 	if (g_current_path != NULL && strlen(g_current_path) != 0)
 	{
 		for (const char**d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
@@ -2096,7 +2096,7 @@ bool set_default_dic_path(OpenJTalk *oj)
 	}
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	//Windowsã®å ´åˆã¯ã€ DLL ã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰å¯èƒ½æ€§ã®ã‚ã‚‹åå‰ã‚’æ¢ã™
+	//Windows‚Ìê‡‚ÍA DLL ‚Ì‚ ‚éƒtƒHƒ‹ƒ_‚©‚ç‰Â”\«‚Ì‚ ‚é–¼‘O‚ğ’T‚·
 	if (g_dll_path != NULL && strlen(g_dll_path) != 0)
 	{
 		for (const char**d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
@@ -2109,7 +2109,7 @@ bool set_default_dic_path(OpenJTalk *oj)
 	}
 #endif
 
-	// çœç•¥æ™‚ã®è¾æ›¸ãƒ•ã‚©ãƒ«ãƒ€ã®ã‚ã‚‹ã¹ããƒ•ã‚©ãƒ«ãƒ€ã§å¯èƒ½æ€§ã®ã‚ã‚‹åå‰ã‚’æ¢ã™ã€‚
+	// È—ª‚Ì«‘ƒtƒHƒ‹ƒ_‚Ì‚ ‚é‚×‚«ƒtƒHƒ‹ƒ_‚Å‰Â”\«‚Ì‚ ‚é–¼‘O‚ğ’T‚·B
 	if (G_DN_DIC_PATH_DEFAULT != NULL && strlen(G_DN_DIC_PATH_DEFAULT) != 0)
 	{
 		for (const char**d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
@@ -2132,7 +2132,7 @@ check_charset:
 }
 
 /******************************************************************
-** ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒ‡ãƒ¼ã‚¿å‡ºåŠ›é–¢é€£é–¢æ•°
+** ƒI[ƒfƒBƒIƒf[ƒ^o—ÍŠÖ˜AŠÖ”
 */
 
 bool set_parameters(OpenJTalk *openjtalk)
@@ -2363,7 +2363,7 @@ void speak_sync(OpenJTalk *oj)
 {
 	if (g_verbose)
 	{
-		fprintf(stderr, "åŒæœŸç™ºå£°é–‹å§‹\n");
+		fprintf(stderr, "“¯Šú”­ºŠJn\n");
 	}
 	g_psd->speaking = true;
 	PaStreamParameters outputParameters;
@@ -2399,7 +2399,7 @@ exit_func:
 	g_psd->speaking = false;
 	if (g_verbose)
 	{
-		fprintf(stderr, "åŒæœŸç™ºå£°å®Œäº†\n\n");
+		fprintf(stderr, "“¯Šú”­ºŠ®—¹\n\n");
 	}
 }
 #else
@@ -2457,7 +2457,7 @@ static void speak_pa_finished(void* userData)
 	data->speaking = false;
 	if (g_verbose)
 	{
-		fprintf(stderr, "éåŒæœŸç™ºå£°å®Œäº†\n\n");
+		fprintf(stderr, "”ñ“¯Šú”­ºŠ®—¹\n\n");
 	}
 }
 
@@ -2466,7 +2466,7 @@ void speak_async(OpenJTalk *oj)
 {
 	if (g_verbose)
 	{
-		fprintf(stderr, "éåŒæœŸç™ºå£°é–‹å§‹\n");
+		fprintf(stderr, "”ñ“¯Šú”­ºŠJn\n");
 	}
 	g_psd->speaking = true;
 	PaStreamParameters outputParameters;
@@ -2603,7 +2603,7 @@ void synthesis_u16(OpenJTalk *openjtalk, const char16_t *txt)
 }
 
 /*****************************************************************
-** è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«è§£æé–¢æ•°
+** İ’èƒtƒ@ƒCƒ‹‰ğÍŠÖ”
 */
 
 typedef struct SectionList_t
@@ -3439,7 +3439,7 @@ bool get_ini_data(OpenJTalk*oj)
 	}
 	if (g_verbose)
 	{
-		fprintf(stderr, "***** è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«è§£é‡ˆã€€é–‹å§‹ *****\n");
+		fprintf(stderr, "***** İ’èƒtƒ@ƒCƒ‹‰ğß@ŠJn *****\n");
 	}
 
 	char *temp;
@@ -3666,7 +3666,7 @@ bool get_ini_data(OpenJTalk*oj)
 	config_free(sc);
 	if (g_verbose)
 	{
-		fprintf(stderr, "***** è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«è§£é‡ˆã€€çµ‚äº† *****\n\n");
+		fprintf(stderr, "***** İ’èƒtƒ@ƒCƒ‹‰ğß@I—¹ *****\n\n");
 	}
 	return true;
 }
@@ -3681,13 +3681,13 @@ bool set_ini_path(OpenJTalk *oj)
 
 	if (g_verbose)
 	{
-		fprintf(stderr, "è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«: %s\n", g_ini_path);
+		fprintf(stderr, "İ’èƒtƒ@ƒCƒ‹: %s\n", g_ini_path);
 	}
 	return true;
 }
 
 /******************************************************************
-** EXPORTé–¢æ•°å®šç¾©ï¼ˆéŸ³éŸ¿ãƒ•ã‚¡ã‚¤ãƒ«é–¢é€£ï¼‰
+** EXPORTŠÖ”’è‹`i‰¹‹¿ƒtƒ@ƒCƒ‹ŠÖ˜Aj
 */
 
 OPENJTALK_DLL_API HtsVoiceFilelist* __stdcall OpenJTalk_getHTSVoiceList(OpenJTalk *openjtalk)
@@ -3713,7 +3713,7 @@ OPENJTALK_DLL_API void __stdcall OpenJTalk_clearHTSVoiceList(OpenJTalk *openjtal
 }
 
 /******************************************************************
-** EXPORTé–¢æ•°å®šç¾©ï¼ˆä¸€èˆ¬ï¼‰
+** EXPORTŠÖ”’è‹`iˆê”Êj
 */
 
 OPENJTALK_DLL_API OpenJTalk* __stdcall OpenJTalk_initialize()
@@ -3731,7 +3731,7 @@ OPENJTALK_DLL_API OpenJTalk* __stdcall OpenJTalk_initialize()
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "PortAudioã®åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸã€‚\n");
+			fprintf(stderr, "PortAudio‚Ì‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½B\n");
 		}
 		return NULL;
 	}
@@ -3941,7 +3941,7 @@ OPENJTALK_DLL_API void __stdcall OpenJTalk_waitUntilDone(OpenJTalk *openjtalk)
 }
 
 /*****************************************************************
-** EXPORTé–¢æ•°å®šç¾©ï¼ˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿è¨­å®šï¼‰
+** EXPORTŠÖ”’è‹`iƒpƒ‰ƒ[ƒ^İ’èj
 */
 
 OPENJTALK_DLL_API void __stdcall OpenJTalk_setSamplingFrequency(OpenJTalk *openjtalk, size_t i)
@@ -4306,11 +4306,11 @@ OPENJTALK_DLL_API void __stdcall OpenJTalk_test(OpenJTalk *openjtalk, void *text
 
 	bool temp = g_verbose;
 	g_verbose = true;
-	fprintf(stderr, "***** ç™ºå£°ãƒ†ã‚¹ãƒˆé–‹å§‹ *****\n");
+	fprintf(stderr, "***** ”­ºƒeƒXƒgŠJn *****\n");
 
 	if (text != NULL)
 	{
-		fprintf(stderr, "* å¼•æ•°æ–‡å­—åˆ—ã®16é€²ãƒ€ãƒ³ãƒ—\n");
+		fprintf(stderr, "* ˆø”•¶š—ñ‚Ì16iƒ_ƒ“ƒv\n");
 		char *temp_char = (char*)text;
 		for (int i = 0; i <= 127; i++)
 		{
@@ -4322,23 +4322,23 @@ OPENJTALK_DLL_API void __stdcall OpenJTalk_test(OpenJTalk *openjtalk, void *text
 		}
 		fprintf(stderr, "\n");
 
-		fprintf(stderr, "* UTF-16ã¨ã—ã¦è§£é‡ˆ\n");
+		fprintf(stderr, "* UTF-16‚Æ‚µ‚Ä‰ğß\n");
 		char16_t *temp_char16 = (char16_t*)text;
 		OpenJTalk_speakSync_u16(openjtalk, temp_char16);
 
-		fprintf(stderr, "* UTF-8ã¨ã—ã¦è§£é‡ˆ\n");
+		fprintf(stderr, "* UTF-8‚Æ‚µ‚Ä‰ğß\n");
 		char *temp_char_utf8 = (char*)text;
 		OpenJTalk_speakSync(openjtalk, temp_char_utf8);
 
-		fprintf(stderr, "* SHIFT_JISã¨ã—ã¦è§£é‡ˆ\n");
+		fprintf(stderr, "* SHIFT_JIS‚Æ‚µ‚Ä‰ğß\n");
 		char *temp_char_sjis = (char*)text;
 		OpenJTalk_speakSync_sjis(openjtalk, temp_char_sjis);
 	}
 	else
 	{
-		OpenJTalk_speakSync(openjtalk, u8"èã“ãˆã¾ã™ã‹ï¼Ÿ");
+		OpenJTalk_speakSync(openjtalk, u8"•·‚±‚¦‚Ü‚·‚©H");
 	}
-	fprintf(stderr, "***** ç™ºå£°ãƒ†ã‚¹ãƒˆçµ‚äº† *****\n\n");
+	fprintf(stderr, "***** ”­ºƒeƒXƒgI—¹ *****\n\n");
 	g_verbose = temp;
 }
 

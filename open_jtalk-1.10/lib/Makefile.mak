@@ -17,14 +17,14 @@ PORTAUDIOLIB = ..\..\portaudio\portaudio_static_x86.lib
 !ENDIF
 
 DLLFILE = $(DLLNAME)$(ARCH).dll
+DEFFILE = $(DLLNAME).def
 MANAGEDDLLFILE =  $(MDLLNAME)$(ARCH).dll
 IMPORTLIB = $(DLLNAME)$(ARCH).lib
-DEFFILE = $(DLLNAME)$(ARCH).def
-LIBFILE = $(LIBNAME).lib
-SAMPLES = test_lib.exe test_c.exe test_cpp.exe
+LIBFILE = $(LIBNAME)$(ARCH).lib
 SNKFILE = $(MDLLNAME)$(ARCH).snk
 TLBFILE = $(MDLLNAME)$(ARCH).tlb
 DOCFILE = $(MDLLNAME)$(ARCH).xdc
+SAMPLES = test_lib.exe test_c.exe test_cpp.exe
 TARGET = $(DLLFILE) $(MANAGEDDLLFILE) jsay.exe $(SAMPLES)
 
 !IF EXIST($(SNKFILE))
@@ -43,33 +43,33 @@ all: $(TARGET)
 .c.obj:
 	$(CC) $(CFLAGS) /c $<
 
-$(LIBFILE) : $(@B).obj
-	$(AR) $(LFLAGS) /OUT:$@ $(@B).obj $(LIBS)
+$(LIBFILE) : $(LIBNAME).obj
+	$(AR) $(LFLAGS) /OUT:$@ $(LIBNAME).obj $(LIBS)
 
-$(DLLFILE) : $(DLLNAME).obj $(LIBNAME).lib
-	$(CL) /DEF:$(DEFFILE) /DLL /LTCG /OUT:$@ $(DLLNAME).obj $(LIBNAME).lib $(LIBS) $(PORTAUDIOLIB) user32.lib Advapi32.lib winmm.lib Shell32.lib
+$(DLLFILE) : $(DLLNAME).obj $(LIBFILE)
+	$(CL) /DEF:$(DEFFILE) /DLL /LTCG /OUT:$@ $(DLLNAME).obj $(LIBFILE) $(LIBS) $(PORTAUDIOLIB) user32.lib Advapi32.lib winmm.lib Shell32.lib
 
 $(MANAGEDDLLFILE) : $(MDLLNAME).cpp $(DLLNAME).obj
 	$(CC) /clr /c  $(MDLLNAME).cpp  $(DLLMACROS) /doc"$(DOCFILE)"
-	$(CL) /LTCG /DLL /OUT:$@ $(MDLLNAME).obj $(DLLNAME).obj $(LIBNAME).lib $(PORTAUDIOLIB) user32.lib Advapi32.lib winmm.lib $(OPTKEY)  Shell32.lib
+	$(CL) /LTCG /DLL /OUT:$@ $(MDLLNAME).obj $(DLLNAME).obj $(LIBFILE) $(PORTAUDIOLIB) user32.lib Advapi32.lib winmm.lib $(OPTKEY)  Shell32.lib
 
 jsay.exe : $(@B).c
 	$(CC) /MD /I ..\lib /O2 /c $(@B).c
-	$(CL) $(LFLAGS) /OUT:$@ $(@B).obj $(DLLNAME).obj $(LIBNAME).lib $(PORTAUDIOLIB) User32.lib Advapi32.lib Shell32.lib
+	$(CL) $(LFLAGS) /OUT:$@ $(@B).obj $(DLLNAME).obj $(LIBFILE) $(PORTAUDIOLIB) User32.lib Advapi32.lib Shell32.lib
 #	$(CL) /OUT:$@ $(@B).obj $(IMPORTLIB)
 
 test_lib.exe : $(@B).c
 	$(CC) /MD /I ..\..\portaudio /O2 /c $(@B).c
-	$(CL) $(LFLAGS) /OUT:$@ $(@B).obj $(LIBNAME).lib $(PORTAUDIOLIB) User32.lib Advapi32.lib
+	$(CL) $(LFLAGS) /OUT:$@ $(@B).obj $(LIBFILE) $(PORTAUDIOLIB) User32.lib Advapi32.lib
 
 test_c.exe : $(@B).c
 	$(CC) /MD /I ..\lib /O2 /c $(@B).c
-#	$(CL) $(LFLAGS) /OUT:$@ $(@B).obj $(DLLNAME).obj $(LIBNAME).lib $(PORTAUDIOLIB) User32.lib Advapi32.lib
+#	$(CL) $(LFLAGS) /OUT:$@ $(@B).obj $(DLLNAME).obj $(LIBFILE) $(PORTAUDIOLIB) User32.lib Advapi32.lib
 	$(CL) /OUT:$@ $(@B).obj $(IMPORTLIB)
 
 test_cpp.exe : $(@B).cpp
 	$(CC) /MD /I ..\lib /O2 /c /EHsc $(@B).cpp
-#	$(CL) $(LFLAGS) /OUT:$@ $(@B).obj $(DLLNAME).obj $(LIBNAME).lib $(PORTAUDIOLIB) User32.lib Advapi32.lib
+#	$(CL) $(LFLAGS) /OUT:$@ $(@B).obj $(DLLNAME).obj $(LIBFILE) $(PORTAUDIOLIB) User32.lib Advapi32.lib
 	$(CL) /OUT:$@ $(@B).obj $(IMPORTLIB)
 
 clean:
