@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #include <io.h>
 #else
 //#include <sys/io.h>

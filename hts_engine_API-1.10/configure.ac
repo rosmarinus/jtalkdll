@@ -9,7 +9,7 @@ AC_COPYRIGHT(Copyright 2001-2008 Tokyo Institute of Technology)
 AM_INIT_AUTOMAKE
 
 # Checks for C compiler
-AC_LIBTOOL_WIN32_DLL
+#AC_LIBTOOL_WIN32_DLL
 #AC_DISABLE_SHARED
 AC_PROG_LIBTOOL
 AC_PROG_CC
@@ -74,7 +74,7 @@ case "$host_os" in
 	;;
 esac
 
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([config.h:config.h.in])
 AC_CONFIG_FILES([Makefile bin/Makefile lib/Makefile])
 
 AC_OUTPUT

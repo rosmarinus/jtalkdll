@@ -53,3 +53,4 @@ jsay_SOURCES = jsay.c
 
 jsay_LDADD = libjtalk.la
 
+jsay_LDFLAGS =  -all-static -no-undefined -o jsay

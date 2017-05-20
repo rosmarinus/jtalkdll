@@ -162,6 +162,9 @@ PROGRAMS = $(bin_PROGRAMS)
 am_jsay_OBJECTS = jsay.$(OBJEXT)
 jsay_OBJECTS = $(am_jsay_OBJECTS)
 jsay_DEPENDENCIES = libjtalk.la
+jsay_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(jsay_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -401,6 +404,7 @@ libopenjtalk_la_CFLAGS = -I @top_srcdir@/text2mecab \
 libopenjtalk_la_SOURCES = openjtalk.c
 jsay_SOURCES = jsay.c
 jsay_LDADD = libjtalk.la
+jsay_LDFLAGS = -all-static -no-undefined -version-info 1:0:0  -o jsay
 all: all-am
 
 .SUFFIXES:
@@ -538,7 +542,8 @@ clean-binPROGRAMS:
 
 jsay$(EXEEXT): $(jsay_OBJECTS) $(jsay_DEPENDENCIES) $(EXTRA_jsay_DEPENDENCIES) 
 	@rm -f jsay$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(jsay_OBJECTS) $(jsay_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(jsay_LINK) $(jsay_OBJECTS) $(jsay_LDADD) $(LIBS)
+	strip --strip-all jsay$(EXEEXT)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
