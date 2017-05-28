@@ -47,6 +47,7 @@ AC_CHECK_FUNCS(setjmp)
 MECAB_DEFAULT_RC="dummy"
 AC_SUBST(MECAB_DEFAULT_RC)
 AC_CONFIG_HEADERS([mecab/config.h:mecab/config.h.in])
+AC_CONFIG_HEADERS([lib/config.h:lib/config.h.in])
 DIC_VERSION="102"
 AC_SUBST(DIC_VERSION)
 AC_PROG_GCC_TRADITIONAL
@@ -58,6 +59,7 @@ AC_LANG(C)
 AC_TYPE_OFF_T
 if test "$use_libiconv" == "yes"; then
    MECAB_LIBS="$MECAB_LIBS -liconv"
+   LIB_ICONV="-liconv"
    AC_DEFINE(HAVE_ICONV,1,Define to 1 if you have the `iconv_open' library(-liconv).)
    AC_DEFINE(ICONV_CONST,,Define to 1 if you have the `iconv_open' library(-liconv).)
 fi
@@ -76,6 +78,7 @@ AC_TYPE_SIZE_T
 AC_LANG(C++)
 LIBS="$LIBS $MECAB_LIBS"
 AC_SUBST(MECAB_LIBS)
+AC_SUBST(LIB_ICONV)
 AC_MSG_CHECKING(whether make is GNU Make)
 if $ac_make --version 2>/dev/null | grep '^GNU Make ' >/dev/null ; then
    AC_MSG_RESULT(yes)
@@ -254,15 +257,28 @@ case "$host_os" in
       ;;
 esac
 
+# portaudio libs
+AC_MSG_CHECKING(libraries for portaudio)
+AC_SUBST(LIBS_PORTAUDIO)
+case $host_os in
+  linux*)
+        LIBS_PORTAUDIO="-lportaudio -lasound -pthread"
+        ;;
+    *)
+        LIBS_PORTAUDIO="-lportaudio"
+        ;;
+esac
+AC_MSG_RESULT($LIBS_PORTAUDIO)
+
 # Define dicdir
 AC_MSG_CHECKING(dicdir)
 AC_SUBST(DICDIR)
 case "$host_os" in
    *win32* | *wince* | *cygwin* | *mingw* )
-      DICDIR=/c/open_jtalk/dic_utf_8
+      DICDIR="/c/open_jtalk/dic_utf_8"
       ;;
    *)
-      DICDIR=/usr/local/OpenJTalk/dic_utf_8
+      DICDIR="/usr/local/OpenJTalk/dic_utf_8"
       ;;
 esac
 AC_MSG_RESULT($DICDIR)

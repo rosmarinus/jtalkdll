@@ -13,7 +13,7 @@ class OpenJTalk():
 		elif platform.system() == 'Darwin':
 			lib = 'libjtalk.dylib'
 		else:
-			lib = 'jtalk'
+			lib = 'libjtalk.so'
 		self.jtalk = cdll.LoadLibrary(lib)
 		self.jtalk.OpenJTalk_initialize.restype = c_void_p
 		self.jtalk.OpenJTalk_setSpeed.argtypes = [c_void_p,c_double]

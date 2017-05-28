@@ -11,7 +11,7 @@ libjtalk_la_SOURCES = jtalk.c
 #libjtalk_la_LIBADD = 	@top_srcdir@/lib/libopenjtalk.la 
 libjtalk_la_LIBADD = libopenjtalk.la 
 
-libjtalk_la_LDFLAGS =  -fvisibility=hidden -no-undefined -version-info 0:0:0 -dn -liconv -lportaudio -lm -lstdc++ -lHTSEngine
+libjtalk_la_LDFLAGS =  -fvisibility=hidden -no-undefined -version-info 0:0:0 -dn @LIB_ICONV@ @LIBS_PORTAUDIO@ -lm -lstdc++ -lHTSEngine
 
 libjtalk_la_CFLAGS = -I ../lib/
 
@@ -53,4 +53,4 @@ jsay_SOURCES = jsay.c
 
 jsay_LDADD = libjtalk.la
 
-jsay_LDFLAGS =  -all-static -no-undefined -o jsay
+jsay_LDFLAGS = -no-undefined -o jsay
