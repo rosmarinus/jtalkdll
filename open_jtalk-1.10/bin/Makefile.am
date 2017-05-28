@@ -36,4 +36,3 @@ open_jtalk_LDADD = @top_srcdir@/text2mecab/libtext2mecab.la \
                    @HTS_ENGINE_LIBRARY@ -lstdc++
 
 open_jtalk_SOURCES = open_jtalk.c
-

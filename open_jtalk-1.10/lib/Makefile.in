@@ -404,7 +404,7 @@ libopenjtalk_la_CFLAGS = -I @top_srcdir@/text2mecab \
 libopenjtalk_la_SOURCES = openjtalk.c
 jsay_SOURCES = jsay.c
 jsay_LDADD = libjtalk.la
-jsay_LDFLAGS = -all-static -no-undefined -version-info 1:0:0  -o jsay
+jsay_LDFLAGS = -all-static -no-undefined -o jsay
 all: all-am
 
 .SUFFIXES:
@@ -543,7 +543,6 @@ clean-binPROGRAMS:
 jsay$(EXEEXT): $(jsay_OBJECTS) $(jsay_DEPENDENCIES) $(EXTRA_jsay_DEPENDENCIES) 
 	@rm -f jsay$(EXEEXT)
 	$(AM_V_CCLD)$(jsay_LINK) $(jsay_OBJECTS) $(jsay_LDADD) $(LIBS)
-	strip --strip-all jsay$(EXEEXT)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
