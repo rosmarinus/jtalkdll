@@ -47,7 +47,6 @@ AC_CHECK_FUNCS(setjmp)
 MECAB_DEFAULT_RC="dummy"
 AC_SUBST(MECAB_DEFAULT_RC)
 AC_CONFIG_HEADERS([mecab/config.h:mecab/config.h.in])
-AC_CONFIG_HEADERS([lib/config.h:lib/config.h.in])
 DIC_VERSION="102"
 AC_SUBST(DIC_VERSION)
 AC_PROG_GCC_TRADITIONAL
@@ -66,6 +65,8 @@ fi
 if test "$use_iconv" == "yes"; then
    AC_DEFINE(HAVE_ICONV,1,Define to 1 if you have the `iconv_open' library(-liconv).)
    AC_DEFINE(ICONV_CONST,,Define to 1 if you have the `iconv_open' library(-liconv).)
+else
+   LIB_ICONV="-liconv"
 fi
 AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(char)
