@@ -18238,7 +18238,6 @@ fi
 
 if test "$use_libiconv" == "yes"; then
    MECAB_LIBS="$MECAB_LIBS -liconv"
-   LIB_ICONV="-liconv"
 
 $as_echo "#define HAVE_ICONV 1" >>confdefs.h
 
@@ -18253,9 +18252,16 @@ $as_echo "#define HAVE_ICONV 1" >>confdefs.h
 
 $as_echo "#define ICONV_CONST /**/" >>confdefs.h
 
-else
-   LIB_ICONV="-liconv"
 fi
+# mingw iconv libs
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking mingw iconv" >&5
+$as_echo_n "checking mingw iconv... " >&6; }
+case $host_os in
+   *win32* | *wince* | *cygwin* | *mingw* )
+	LIB_ICONV="-liconv"
+        ;;
+esac
+
 ac_fn_c_check_type "$LINENO" "size_t" "ac_cv_type_size_t" "$ac_includes_default"
 if test "x$ac_cv_type_size_t" = xyes; then :
 

@@ -1,4 +1,4 @@
-#define AUDIO_PLAY_PORTAUDIO
+Ôªø#define AUDIO_PLAY_PORTAUDIO
 #if defined(AUDIO_PLAY_PORTAUDIO)
 #include <portaudio.h>
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
@@ -12,6 +12,14 @@
 
 #include "openjtalk.h"
 #include <stdio.h>
+
+#if (defined(_WIN32) && !defined(__CYGWIN__))
+#define G_DIC_PATH_DEFAULT "C:\\open_jtalk\\dic_utf_8"
+#define G_VOICE_PATH_DEFAULT "C:\\open_jtalk\\voice\\mei\\mei_normal.htsvoice"
+#else
+#define G_DIC_PATH_DEFAULT "/usr/local/OpenJTalk/dic_utf_8"
+#define G_VOICE_PATH_DEFAULT "/usr/local/OpenJTalk/voice/mei/mei_normal.htsvoice"
+#endif
 
 #define BLOCKSIZE 1024
 
@@ -46,11 +54,13 @@ int main()
 {
 	Pa_Initialize();
 	Open_JTalk *oj = Open_JTalk_initialize();
-	char *dn_mecab = "C:\\open_jtalk\\dic_utf_8";
-	char *fn_voice = "C:\\open_jtalk\\voice\\mei\\mei_normal.htsvoice";
+	char *dn_mecab = G_DIC_PATH_DEFAULT;
+	char *fn_voice = G_VOICE_PATH_DEFAULT;
 	Open_JTalk_load(oj, dn_mecab, fn_voice);
-	speak(oj, u8"ï∑Ç±Ç¶Ç‹Ç∑Ç©ÅH");
+	speak(oj, u8"„Åì„Çì„Å´„Å°„ÅØ");
 	Open_JTalk_clear(oj);
 	Pa_Terminate();
 }
+
+
 

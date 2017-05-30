@@ -24,6 +24,15 @@ fn speak(voice: &str, message: &str) {
 }
 
 fn main() {
-	speak("mei_normal","こんにちは");
+	//speak("mei_normal","こんにちは");
+	let v = CString::new("tohoku-f01-neutral").unwrap();
+	let m = CString::new("hello").unwrap();
+	unsafe{
+		let h = OpenJTalk_initialize();
+		OpenJTalk_setVoice(h, v.as_ptr());
+		OpenJTalk_speakAsync(h, m.as_ptr());
+		OpenJTalk_waitUntilDone(h);
+		OpenJTalk_clear(h);
+	}
 }
 

@@ -48,9 +48,16 @@ libopenjtalk_la_CFLAGS = -I @top_srcdir@/text2mecab \
 libopenjtalk_la_SOURCES = openjtalk.c
 
 bin_PROGRAMS = jsay
+noinst_PROGRAMS = test_lib test_c test_cpp
 
 jsay_SOURCES = jsay.c
+jsay_LDFLAGS = -no-undefined -o jsay -ljtalk
 
-jsay_LDADD = libjtalk.la
+test_c_SOURCES = test_c.c
+test_c_LDFLAGS = -no-undefined -o test_c -ljtalk 
 
-jsay_LDFLAGS =  -all-static -no-undefined -o jsay
+test_cpp_SOURCES = test_cpp.cpp
+test_cpp_LDFLAGS = -no-undefined -o test_cpp -ljtalk -lstdc++
+
+test_lib_SOURCES = test_lib.c
+test_lib_LDFLAGS = -no-undefined -o test_lib libopenjtalk.la -lHTSEngine  @LIB_ICONV@ @LIBS_PORTAUDIO@

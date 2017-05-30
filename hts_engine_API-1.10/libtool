@@ -1,6 +1,5 @@
 #! /bin/sh
 # Generated automatically by config.status (hts_engine_API) 1.10
-# Libtool was configured on host mars:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.

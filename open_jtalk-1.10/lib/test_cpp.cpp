@@ -1,26 +1,20 @@
 #include "jtalk.h"
+#include <stdio.h>
 
 int main()
 {
 	auto jtalk = new JTalk();
 	if (jtalk)
 	{
-		printf("Žg—p‰Â”\‰¹‹¿ƒtƒ@ƒCƒ‹:\n");
+		printf("HTS voices:\n");
 		for (auto voice : jtalk->voices)
 		{
 			printf("%s\n", voice->path);
 		}
 		printf("\n");
-		jtalk->SetSpeed(2.0);
 		jtalk->SetVoice(u8"mei_normal");
-		jtalk->SpeakAsync_u16(u"\u3053\u3093\u306b\u3061\u306f");
+		jtalk->SpeakAsync(u8"ç¾åœ¨åˆ©ç”¨å¯èƒ½ãªéŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ã§ã™");
 		jtalk->WaitUntilDone();
-		jtalk->SetSpeed(1.0);
-		jtalk->SpeakAsync(u8"UTF-8‚Å‚·B");
-		jtalk->Wait(1000);
-		jtalk->SpeakAsync(u8"ƒ†ƒjƒR[ƒh‚ÅA‚±‚ñ‚É‚¿‚Í");
-		jtalk->WaitUntilDone();
-		getchar();
 		delete jtalk;
 	}
 }

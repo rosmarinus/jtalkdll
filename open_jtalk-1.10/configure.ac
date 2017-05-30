@@ -58,16 +58,21 @@ AC_LANG(C)
 AC_TYPE_OFF_T
 if test "$use_libiconv" == "yes"; then
    MECAB_LIBS="$MECAB_LIBS -liconv"
-   LIB_ICONV="-liconv"
    AC_DEFINE(HAVE_ICONV,1,Define to 1 if you have the `iconv_open' library(-liconv).)
    AC_DEFINE(ICONV_CONST,,Define to 1 if you have the `iconv_open' library(-liconv).)
 fi
 if test "$use_iconv" == "yes"; then
    AC_DEFINE(HAVE_ICONV,1,Define to 1 if you have the `iconv_open' library(-liconv).)
    AC_DEFINE(ICONV_CONST,,Define to 1 if you have the `iconv_open' library(-liconv).)
-else
-   LIB_ICONV="-liconv"
 fi
+# mingw iconv libs
+AC_MSG_CHECKING(mingw iconv)
+case $host_os in
+   *win32* | *wince* | *cygwin* | *mingw* )
+	LIB_ICONV="-liconv"
+        ;;
+esac
+
 AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(char)
 AC_CHECK_SIZEOF(short)
