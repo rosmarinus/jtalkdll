@@ -9,7 +9,7 @@ goto :eof
 :skip
 set BAT32="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
 set BAT64="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-if not exist %BAT32% goto :build
+if exist %BAT32% goto :build
 set B="C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
 if not exist %B% goto :error_batch
 echo "Visual Studio 2015‚Åƒrƒ‹ƒh‚µ‚Ü‚·"
