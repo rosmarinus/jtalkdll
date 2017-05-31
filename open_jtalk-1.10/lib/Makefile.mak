@@ -9,13 +9,12 @@ MDLLNAME = JTalkCOM
 !IF $(AMD64)
 ARCH=64
 DLLMACROS=/D _x64_
-PORTAUDIOLIB = ..\..\portaudio\portaudio_static_x64.lib
 !ELSE
 DLLMACROS=
 ARCH=32
-PORTAUDIOLIB = ..\..\portaudio\portaudio_static_x86.lib
 !ENDIF
 
+PORTAUDIOLIB = ..\..\portaudio\lib\portaudio_static_$(ARCH).lib
 DLLFILE = $(DLLNAME)$(ARCH).dll
 DEFFILE = $(DLLNAME).def
 MANAGEDDLLFILE =  $(MDLLNAME)$(ARCH).dll
@@ -33,7 +32,7 @@ OPTKEY = /KEYFILE:$(SNKFILE)
 OPTKEY = 
 !ENDIF
 
-CFLAGS = /MD /O2 /Ob2 /Oi /Ot /Oy /GT /GL /TC /I ..\text2mecab /I ..\mecab\src /I ..\mecab2njd /I ..\njd /I ..\njd_set_pronunciation /I ..\njd_set_digit /I ..\njd_set_accent_phrase /I ..\njd_set_accent_type /I ..\njd_set_unvoiced_vowel /I ..\njd_set_long_vowel /I ..\njd2jpcommon /I ..\jpcommon /I C:\hts_engine_API\include /I ..\..\portaudio
+CFLAGS = /MD /O2 /Ob2 /Oi /Ot /Oy /GT /GL /TC /I ..\text2mecab /I ..\mecab\src /I ..\mecab2njd /I ..\njd /I ..\njd_set_pronunciation /I ..\njd_set_digit /I ..\njd_set_accent_phrase /I ..\njd_set_accent_type /I ..\njd_set_unvoiced_vowel /I ..\njd_set_long_vowel /I ..\njd2jpcommon /I ..\jpcommon /I C:\hts_engine_API\include /I ..\..\portaudio\include
 LFLAGS = /LTCG
 
 LIBS = ..\text2mecab\text2mecab.lib ..\mecab\src\mecab.lib ..\mecab2njd\mecab2njd.lib ..\njd\njd.lib ..\njd_set_pronunciation\njd_set_pronunciation.lib ..\njd_set_digit\njd_set_digit.lib ..\njd_set_accent_phrase\njd_set_accent_phrase.lib ..\njd_set_accent_type\njd_set_accent_type.lib ..\njd_set_unvoiced_vowel\njd_set_unvoiced_vowel.lib ..\njd_set_long_vowel\njd_set_long_vowel.lib ..\njd2jpcommon\njd2jpcommon.lib ..\jpcommon\jpcommon.lib C:\hts_engine_API\lib\hts_engine_API.lib
@@ -59,7 +58,7 @@ jsay.exe : $(@B).c
 #	$(CL) /OUT:$@ $(@B).obj $(IMPORTLIB)
 
 test_lib.exe : $(@B).c
-	$(CC) /MD /I ..\..\portaudio /O2 /c $(@B).c
+	$(CC) /MD /I ..\..\portaudio\include /O2 /c $(@B).c
 	$(CL) $(LFLAGS) /OUT:$@ $(@B).obj $(LIBFILE) $(PORTAUDIOLIB) User32.lib Advapi32.lib
 
 test_c.exe : $(@B).c

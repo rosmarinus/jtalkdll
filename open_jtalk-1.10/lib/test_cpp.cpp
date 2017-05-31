@@ -1,4 +1,4 @@
-#include "jtalk.h"
+﻿#include "jtalk.h"
 #include <stdio.h>
 
 int main()

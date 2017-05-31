@@ -1,4 +1,4 @@
-#ifndef JTALK_C
+﻿#ifndef JTALK_C
 #define JTALK_C
 #ifdef __cplusplus
 #define JTALK_C_START extern "C" {
@@ -46,9 +46,9 @@ JTALK_C_START;
 #ifdef WINDOWS_PORTAUDIO
 #include <portaudio.h>
 #if defined(_WIN64) 
-#pragma comment(lib, "portaudio_static_x64.lib")
+#pragma comment(lib, "portaudio_static_64.lib")
 #else
-#pragma comment(lib, "portaudio_static_x86.lib")
+#pragma comment(lib, "portaudio_static_32.lib")
 #endif
 #else
 #error "WinOut関数による処理はまだ実装していません。"
