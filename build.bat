@@ -2,11 +2,23 @@
 set BUILD32=ON
 set BUILD64=ON
 if not "%BUILD32%""%BUILD64%" == """" goto :skip
-echo BUILD32、BUILD64 の少なくとも一方に何か値を設定してください。
+echo BUILD32、BUILD64 の少なくとも一方に何か値を入れて、有効にしてください
 echo 終了します
 pause
 goto :eof
 :skip
+rem ****************************************
+rem copy voices
+rem ****************************************
+set INSTALLDIR=c:\open_jtalk
+set VOICEDIR=voice
+if exist %INSTALLDIR%\%VOICEDIR% goto :skip_copy_voice
+if not exist %INSTALLDIR%\%VOICEDIR% mkdir %INSTALLDIR%\%VOICEDIR%
+xcopy %VOICEDIR% %INSTALLDIR%\%VOICEDIR% /e /q /y
+:skip_copy_voice
+rem ****************************************
+rem set build ver
+rem ****************************************
 set BAT32="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
 set BAT64="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
 if exist %BAT32% goto :build
@@ -25,7 +37,7 @@ goto :eof
 :build
 if "%BUILD32%" == "" goto :build64
 rem ****************************************
-rem *** 32bit build
+rem 32bit build
 rem ****************************************
 call %BAT32%
 cd /d %~dp0
@@ -52,7 +64,7 @@ cd ..
 if "%BUILD64%" == "" goto :eof
 if "%PROCESSOR_ARCHITECTURE%" == "x86" goto :eof
 rem ****************************************
-rem *** 64bit build
+rem 64bit build
 rem ****************************************
 call %BAT64%
 cd /d %~dp0

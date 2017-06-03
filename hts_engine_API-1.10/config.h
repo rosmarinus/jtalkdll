@@ -8,7 +8,7 @@
 /* #undef FESTIVAL */
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-/* #undef HAVE_DLFCN_H */
+#define HAVE_DLFCN_H 1
 
 /* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
 /* #undef HAVE_DOPRNT */
@@ -20,7 +20,7 @@
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `winmm' library (-lwinmm). */
-#define HAVE_LIBWINMM 1
+/* #undef HAVE_LIBWINMM */
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1

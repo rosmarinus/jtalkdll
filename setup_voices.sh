@@ -1,83 +1,95 @@
 #!/usr/bin/env bash
-# arch
-archs=( "" "x86_64-w64-mingw32" "i686-w64-mingw32" )
-arch=${archs[0]}
+
+# target dir name
+target=/usr/local/OpenJTalk
+wintarget=/c/open_jtalk
+
+# voice dir name
+voice=voice
 
 # version
 mmdagent_example_ver=1.7
 
-# dir name
-voice=voice
-
-# hts_voice
-hts_voice=hts_voice_nitech_jp_atr503_m001-1.05
-
-# download from open-jtalk
-if [! type wget > /dev/null 2>&1 ]; then
-	echo exit
-fi
-files=($hts_voice)
-base_url=http://downloads.sourceforge.net/open-jtalk/
-for file in ${files[@]}; do
-	if [ ! -e $file.tar.gz ]; then
-		wget ${base_url}$file.tar.gz
-	fi
-done
+# check command
+#commands=(wget tar git unzip)
+#for command in ${commands[@]}; do
+#	if ! type $command >/dev/null 2>&1; then
+#		echo "$command: command not found"
+#		exit
+#	fi
+#done
 
 # make voice dir
 if [ ! -d $voice ]; then
 	mkdir $voice
 fi
 
-# hts_voice
-if [! type tar > /dev/null 2>&1 ]; then
-	exit
-fi
-if [ ! -d $voice/$hts_voice ]; then
-	tar zxvf ${hts_voice}.tar.gz -C $voice
+# download from open-jtalk
+name=hts_voice_nitech_jp_atr503_m001-1.05
+if [ ! -d $voice/$name ]; then
+	if [ ! -e $name.tar.gz ]; then
+		$command=wget
+		if ! type $command >/dev/null 2>&1; then
+			echo "$command: command not found"
+			exit
+		fi
+		wget http://downloads.sourceforge.net/open-jtalk/$name.tar.gz
+	fi
+	$command=tar
+	if ! type $command >/dev/null 2>&1; then
+		echo "$command: command not found"
+		exit
+	fi
+	tar zxvf $name.tar.gz -C $voice
 fi
 
 # download from tohoku github
-dir=$voice/htsvoice-tohoku-f01
-if [ ! -d $dir ]; then
-	mkdir $dir
-	names=(angry happy neutral sad)
-	base_url=https://github.com/icn-lab/htsvoice-tohoku-f01/raw/master/
-	for name in ${names[@]}; do
-		if [ ! -e $dir/tohoku-f01-${name}.htsvoice ]; then
-			wget ${base_url}tohoku-f01-${name}.htsvoice -P $dir
-		fi
-	done
-	files=(COPYRIGHT.txt README.md)
-	for file in ${files[@]}; do
-		if [ ! -e $dir/$file ]; then
-			wget ${base_url}$file -P $dir
-		fi
-	done
+name=htsvoice-tohoku-f01
+if [ ! -d $voice/$name ]; then
+	$command=git
+	if ! type $command >/dev/null 2>&1; then
+		echo "$command: command not found"
+		exit
+	fi
+	cd $voice
+	git clone https://github.com/icn-lab/$name.git
+	cd ..
 fi
 
 # download from mmdagent
-if [! type unzip > /dev/null 2>&1 ]; then
-	exit
-fi
 dir=$voice/mei
+name=MMDAgent_Example-$mmdagent_example_ver
 if [ ! -d $dir ]; then
 	mkdir $dir
-	base_url=http://downloads.sourceforge.net/mmdagent/
-	file=MMDAgent_Example-${mmdagent_example_ver}
-	if [ ! -e ${file}.zip ]; then
-		wget ${base_url}${file}.zip
+	if [ ! -e $name.zip ]; then
+		$command=wget
+		if ! type $command >/dev/null 2>&1; then
+			echo "$command: command not found"
+			exit
+		fi
+		wget $http://downloads.sourceforge.net/mmdagent/$name.zip
 	fi
-	unzip ${file}.zip ${file}/Voice/mei/*.*
-	mv ${file}/Voice/mei/*.* $dir
-	rm -r ${file}
+	$command=unzip
+	if ! type $command >/dev/null 2>&1; then
+		echo "$command: command not found"
+		exit
+	fi
+	unzip $name.zip $name/Voice/mei/*.*
+	mv $name/Voice/mei/*.* $dir
+	rm -r $name
 fi
 
-re="^CYGWIN|MINGW"
-if [[ $(uname) =~ $re  ]]; then
-mkdir -p /c/open_jtalk
-cp -r $voice /c/open_jtalk
+# install
+if [[ $(uname) =~ "MINGW"  ]]; then
+	mkdir -p $wintarget
+	cp -r $voice $wintarget
+elif [[ $(uname) =~ "CYGWIN" ]]; then
+	mkdir -p /cygdrive$wintarget
+	cp -r $voice /cygdrive$wintarget
+elif [[ $(uname) =~ "-Microsoft" ]]; then
+	mkdir -p /mnt$wintarget
+	cp -r $voice /mnt$wintarget
 else
-sudo mkdir -p /usr/local/OpenJTalk
-sudo cp -r $voice /usr/local/OpenJTalk
+	sudo mkdir -p $target
+	sudo cp -r $voice $target
 fi

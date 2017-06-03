@@ -41,6 +41,7 @@ hts_engine_api=hts_engine_API-${hts_engine_api_ver}
 
 cd ${hts_engine_api}
 ./configure
+make clean
 make
 if [[ $(uname) =~ $re ]]; then
 make install
@@ -51,6 +52,7 @@ cd ..
 
 cd ${open_jtalk}
 ./configure --with-hts-engine-header-path=$hpath --with-hts-engine-library-path=$lpath
+make clean
 make
 if [[ $(uname) =~ $re ]]; then
 make install

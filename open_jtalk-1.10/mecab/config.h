@@ -11,7 +11,7 @@
 #define HAVE_DIRENT_H 1
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-/* #undef HAVE_DLFCN_H */
+#define HAVE_DLFCN_H 1
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
@@ -23,25 +23,25 @@
 #define HAVE_GETPAGESIZE 1
 
 /* Define to 1 if you have the `iconv_open' library(-liconv). */
-/* #undef HAVE_ICONV */
+#define HAVE_ICONV 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the <io.h> header file. */
-#define HAVE_IO_H 1
+/* #undef HAVE_IO_H */
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `winmm' library (-lwinmm). */
-#define HAVE_LIBWINMM 1
+/* #undef HAVE_LIBWINMM */
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have a working `mmap' system call. */
-/* #undef HAVE_MMAP */
+#define HAVE_MMAP 1
 
 /* Define to 1 if you have the `opendir' function. */
 #define HAVE_OPENDIR 1
@@ -71,7 +71,7 @@
 #define HAVE_STRSTR 1
 
 /* Define to 1 if you have the <sys/mman.h> header file. */
-/* #undef HAVE_SYS_MMAN_H */
+#define HAVE_SYS_MMAN_H 1
 
 /* Define to 1 if you have the <sys/param.h> header file. */
 #define HAVE_SYS_PARAM_H 1
@@ -80,7 +80,7 @@
 #define HAVE_SYS_STAT_H 1
 
 /* Define to 1 if you have the <sys/times.h> header file. */
-/* #undef HAVE_SYS_TIMES_H */
+#define HAVE_SYS_TIMES_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
@@ -89,10 +89,10 @@
 #define HAVE_UNISTD_H 1
 
 /* Define to 1 if you have the <windows.h> header file. */
-#define HAVE_WINDOWS_H 1
+/* #undef HAVE_WINDOWS_H */
 
 /* Define to 1 if you have the `iconv_open' library(-liconv). */
-/* #undef ICONV_CONST */
+#define ICONV_CONST /**/
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #define LT_OBJDIR ".libs/"
@@ -125,7 +125,7 @@
 #define SIZEOF_INT 4
 
 /* The size of `long', as computed by sizeof. */
-#define SIZEOF_LONG 4
+#define SIZEOF_LONG 8
 
 /* The size of `long long', as computed by sizeof. */
 #define SIZEOF_LONG_LONG 8
