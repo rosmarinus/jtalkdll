@@ -1,0 +1,1 @@
+clang main.m jtalkobjc.m -ljtalk -o jtd_objc -I/usr/include/GNUstep -I/usr/lib/gcc/x86_64-linux-gnu/6/include -framework Foundation

@@ -1,13 +1,13 @@
-#ifndef OPEN_JTALK_C
+ï»¿#ifndef OPEN_JTALK_C
 #define OPEN_JTALK_C
 
 #ifdef __cplusplus
 #define OPEN_JTALK_C_START extern "C" {
-#define OPEN_JTALK_C_END   }
+#define OPEN_JTALK_C_END }
 #else
 #define OPEN_JTALK_C_START
 #define OPEN_JTALK_C_END
-#endif                          /* __CPLUSPLUS */
+#endif /* __CPLUSPLUS */
 
 OPEN_JTALK_C_START;
 
@@ -39,11 +39,10 @@ OPEN_JTALK_C_START;
 #include <math.h>
 #include <portaudio.h>
 
-
 #define AUDIO_PLAY_PORTAUDIO
 #if defined(AUDIO_PLAY_PORTAUDIO)
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-#if defined(_WIN64) 
+#if defined(_WIN64)
 #pragma comment(lib, "portaudio_static_64.lib")
 #else
 #pragma comment(lib, "portaudio_static_32.lib")
@@ -51,7 +50,8 @@ OPEN_JTALK_C_START;
 #endif
 #endif
 
-typedef struct Open_JTalk_tag {
+typedef struct Open_JTalk_tag
+{
 	Mecab mecab;
 	NJD njd;
 	JPCommon jpcommon;
@@ -60,7 +60,7 @@ typedef struct Open_JTalk_tag {
 
 Open_JTalk *Open_JTalk_initialize()
 {
-	Open_JTalk *open_jtalk = (Open_JTalk*)malloc(sizeof(Open_JTalk));
+	Open_JTalk *open_jtalk = (Open_JTalk *)malloc(sizeof(Open_JTalk));
 	if (open_jtalk == NULL)
 	{
 		return NULL;
@@ -99,21 +99,70 @@ void Open_JTalk_refresh(Open_JTalk *open_jtalk)
 	Mecab_refresh(&open_jtalk->mecab);
 }
 
+bool Open_JTalk_load_dic(Open_JTalk *open_jtalk, char *dn_mecab)
+{
+	if (open_jtalk == NULL || dn_mecab == NULL || strlen(dn_mecab) == 0)
+	{
+		return false;
+	}
+
+	JPCommon_refresh(&open_jtalk->jpcommon);
+	NJD_refresh(&open_jtalk->njd);
+	Mecab_refresh(&open_jtalk->mecab);
+
+	if (Mecab_load(&open_jtalk->mecab, dn_mecab) != true)
+	{
+		Open_JTalk_clear(open_jtalk);
+		return false;
+	}
+	return true;
+}
+
+bool Open_JTalk_load_voice(Open_JTalk *open_jtalk, char *fn_voice)
+{
+	if (open_jtalk == NULL || fn_voice == NULL || strlen(fn_voice) == 0)
+	{
+		return false;
+	}
+
+	if (JPCommon_get_label_size(&open_jtalk->jpcommon) > 2)
+	{
+		HTS_Engine_refresh(&open_jtalk->engine);
+	}
+	JPCommon_refresh(&open_jtalk->jpcommon);
+	NJD_refresh(&open_jtalk->njd);
+
+	if (HTS_Engine_load(&open_jtalk->engine, &fn_voice, 1) != true)
+	{
+		Open_JTalk_clear(open_jtalk);
+		return false;
+	}
+	if (strcmp(HTS_Engine_get_fullcontext_label_format(&open_jtalk->engine), "HTS_TTS_JPN") != 0)
+	{
+		Open_JTalk_clear(open_jtalk);
+		return false;
+	}
+	return true;
+}
+
 bool Open_JTalk_load(Open_JTalk *open_jtalk, char *dn_mecab, char *fn_voice)
 {
 	if (open_jtalk == NULL)
 	{
 		return false;
 	}
-	if (Mecab_load(&open_jtalk->mecab, dn_mecab) != true) {
+	if (Mecab_load(&open_jtalk->mecab, dn_mecab) != true)
+	{
 		Open_JTalk_clear(open_jtalk);
 		return false;
 	}
-	if (HTS_Engine_load(&open_jtalk->engine, &fn_voice, 1) != true) {
+	if (HTS_Engine_load(&open_jtalk->engine, &fn_voice, 1) != true)
+	{
 		Open_JTalk_clear(open_jtalk);
 		return false;
 	}
-	if (strcmp(HTS_Engine_get_fullcontext_label_format(&open_jtalk->engine), "HTS_TTS_JPN") != 0) {
+	if (strcmp(HTS_Engine_get_fullcontext_label_format(&open_jtalk->engine), "HTS_TTS_JPN") != 0)
+	{
 		Open_JTalk_clear(open_jtalk);
 		return false;
 	}
@@ -129,6 +178,24 @@ void Open_JTalk_set_sampling_frequency(Open_JTalk *open_jtalk, size_t i)
 	HTS_Engine_set_sampling_frequency(&open_jtalk->engine, i);
 }
 
+size_t Open_JTalk_get_sampling_frequency(Open_JTalk *open_jtalk, bool *error)
+{
+	if (error)
+	{
+		*error = false;
+	}
+
+	if (open_jtalk == NULL)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	return HTS_Engine_get_sampling_frequency(&open_jtalk->engine);
+}
+
 void Open_JTalk_set_fperiod(Open_JTalk *open_jtalk, size_t i)
 {
 	if (open_jtalk == NULL)
@@ -136,6 +203,24 @@ void Open_JTalk_set_fperiod(Open_JTalk *open_jtalk, size_t i)
 		return;
 	}
 	HTS_Engine_set_fperiod(&open_jtalk->engine, i);
+}
+
+size_t Open_JTalk_get_fperiod(Open_JTalk *open_jtalk, bool *error)
+{
+	if (error)
+	{
+		*error = false;
+	}
+
+	if (open_jtalk == NULL)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	return open_jtalk->engine.condition.fperiod;
 }
 
 void Open_JTalk_set_alpha(Open_JTalk *open_jtalk, double f)
@@ -147,6 +232,24 @@ void Open_JTalk_set_alpha(Open_JTalk *open_jtalk, double f)
 	HTS_Engine_set_alpha(&open_jtalk->engine, f);
 }
 
+double Open_JTalk_get_alpha(Open_JTalk *open_jtalk, bool *error)
+{
+	if (error)
+	{
+		*error = false;
+	}
+
+	if (open_jtalk == NULL)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	return HTS_Engine_get_alpha(&open_jtalk->engine);
+}
+
 void Open_JTalk_set_beta(Open_JTalk *open_jtalk, double f)
 {
 	if (open_jtalk == NULL)
@@ -154,6 +257,24 @@ void Open_JTalk_set_beta(Open_JTalk *open_jtalk, double f)
 		return;
 	}
 	HTS_Engine_set_beta(&open_jtalk->engine, f);
+}
+
+double Open_JTalk_get_beta(Open_JTalk *open_jtalk, bool *error)
+{
+	if (error)
+	{
+		*error = false;
+	}
+
+	if (open_jtalk == NULL)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	return HTS_Engine_get_beta(&open_jtalk->engine);
 }
 
 void Open_JTalk_set_speed(Open_JTalk *open_jtalk, double f)
@@ -165,13 +286,49 @@ void Open_JTalk_set_speed(Open_JTalk *open_jtalk, double f)
 	HTS_Engine_set_speed(&open_jtalk->engine, f);
 }
 
-void Open_JTalk_add_half_tone(Open_JTalk *open_jtalk, double f)
+double Open_JTalk_get_speed(Open_JTalk *open_jtalk, bool *error)
+{
+	if (error)
+	{
+		*error = false;
+	}
+
+	if (open_jtalk == NULL)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	return open_jtalk->engine.condition.speed;
+}
+
+void Open_JTalk_set_additional_half_tone(Open_JTalk *open_jtalk, double f)
 {
 	if (open_jtalk == NULL)
 	{
 		return;
 	}
 	HTS_Engine_add_half_tone(&open_jtalk->engine, f);
+}
+
+double Open_JTalk_get_additional_half_tone(Open_JTalk *open_jtalk, bool *error)
+{
+	if (error)
+	{
+		*error = false;
+	}
+
+	if (open_jtalk == NULL)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	return open_jtalk->engine.condition.additional_half_tone;
 }
 
 void Open_JTalk_set_msd_threshold(Open_JTalk *open_jtalk, size_t i, double f)
@@ -183,6 +340,32 @@ void Open_JTalk_set_msd_threshold(Open_JTalk *open_jtalk, size_t i, double f)
 	HTS_Engine_set_msd_threshold(&open_jtalk->engine, i, f);
 }
 
+double Open_JTalk_get_msd_threshold(Open_JTalk *open_jtalk, size_t i, bool *error)
+{
+	if (error)
+	{
+		*error = false;
+	}
+
+	if (open_jtalk == NULL)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	if (i != 0)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	return HTS_Engine_get_msd_threshold(&open_jtalk->engine, i);
+}
+
 void Open_JTalk_set_gv_weight(Open_JTalk *open_jtalk, size_t i, double f)
 {
 	if (open_jtalk == NULL)
@@ -190,6 +373,32 @@ void Open_JTalk_set_gv_weight(Open_JTalk *open_jtalk, size_t i, double f)
 		return;
 	}
 	HTS_Engine_set_gv_weight(&open_jtalk->engine, i, f);
+}
+
+double Open_JTalk_get_gv_weight(Open_JTalk *open_jtalk, size_t i, bool *error)
+{
+	if (error)
+	{
+		*error = false;
+	}
+
+	if (open_jtalk == NULL)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	if (i != 0 && i != 1)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	return HTS_Engine_get_gv_weight(&open_jtalk->engine, i);
 }
 
 void Open_JTalk_set_volume(Open_JTalk *open_jtalk, double f)
@@ -201,6 +410,24 @@ void Open_JTalk_set_volume(Open_JTalk *open_jtalk, double f)
 	HTS_Engine_set_volume(&open_jtalk->engine, f);
 }
 
+double Open_JTalk_get_volume(Open_JTalk *open_jtalk, bool *error)
+{
+	if (error)
+	{
+		*error = false;
+	}
+
+	if (open_jtalk == NULL)
+	{
+		if (error)
+		{
+			*error = true;
+		}
+		return 0;
+	}
+	return HTS_Engine_get_volume(&open_jtalk->engine);
+}
+
 void Open_JTalk_set_audio_buff_size(Open_JTalk *open_jtalk, size_t i)
 {
 	if (open_jtalk == NULL)
@@ -210,7 +437,7 @@ void Open_JTalk_set_audio_buff_size(Open_JTalk *open_jtalk, size_t i)
 	HTS_Engine_set_audio_buff_size(&open_jtalk->engine, i);
 }
 
-bool Open_JTalk_synthesis(Open_JTalk *open_jtalk, const char *txt, FILE * wavfp, FILE * logfp)
+bool Open_JTalk_synthesis(Open_JTalk *open_jtalk, const char *txt, FILE *wavfp, FILE *logfp)
 {
 	if (open_jtalk == NULL)
 	{
@@ -222,7 +449,7 @@ bool Open_JTalk_synthesis(Open_JTalk *open_jtalk, const char *txt, FILE * wavfp,
 	text2mecab(buff, txt);
 	Mecab_analysis(&open_jtalk->mecab, buff);
 	mecab2njd(&open_jtalk->njd, Mecab_get_feature(&open_jtalk->mecab),
-		Mecab_get_size(&open_jtalk->mecab));
+			  Mecab_get_size(&open_jtalk->mecab));
 	njd_set_pronunciation(&open_jtalk->njd);
 	njd_set_digit(&open_jtalk->njd);
 	njd_set_accent_phrase(&open_jtalk->njd);
@@ -231,14 +458,15 @@ bool Open_JTalk_synthesis(Open_JTalk *open_jtalk, const char *txt, FILE * wavfp,
 	njd_set_long_vowel(&open_jtalk->njd);
 	njd2jpcommon(&open_jtalk->jpcommon, &open_jtalk->njd);
 	JPCommon_make_label(&open_jtalk->jpcommon);
-	if (JPCommon_get_label_size(&open_jtalk->jpcommon) > 2) {
-		if (HTS_Engine_synthesize_from_strings
-		(&open_jtalk->engine, JPCommon_get_label_feature(&open_jtalk->jpcommon),
-			JPCommon_get_label_size(&open_jtalk->jpcommon)) == true)
+	if (JPCommon_get_label_size(&open_jtalk->jpcommon) > 2)
+	{
+		if (HTS_Engine_synthesize_from_strings(&open_jtalk->engine, JPCommon_get_label_feature(&open_jtalk->jpcommon),
+											   JPCommon_get_label_size(&open_jtalk->jpcommon)) == true)
 			result = true;
 		if (wavfp != NULL)
 			HTS_Engine_save_riff(&open_jtalk->engine, wavfp);
-		if (logfp != NULL) {
+		if (logfp != NULL)
+		{
 			NJD_fprint(&open_jtalk->njd, logfp);
 			HTS_Engine_save_label(&open_jtalk->engine, logfp);
 			HTS_Engine_save_information(&open_jtalk->engine, logfp);
@@ -253,10 +481,10 @@ bool Open_JTalk_synthesis(Open_JTalk *open_jtalk, const char *txt, FILE * wavfp,
 }
 
 bool Open_JTalk_generate_sounddata(Open_JTalk *open_jtalk,
-	const char *txt,
-	short **sounddata,
-	size_t *size,
-	size_t *sampling_frequency)
+								   const char *txt,
+								   short **sounddata,
+								   size_t *size,
+								   size_t *sampling_frequency)
 {
 	if (open_jtalk == NULL)
 	{
@@ -266,7 +494,7 @@ bool Open_JTalk_generate_sounddata(Open_JTalk *open_jtalk,
 	text2mecab(buff, txt);
 	Mecab_analysis(&open_jtalk->mecab, buff);
 	mecab2njd(&open_jtalk->njd, Mecab_get_feature(&open_jtalk->mecab),
-		Mecab_get_size(&open_jtalk->mecab));
+			  Mecab_get_size(&open_jtalk->mecab));
 	njd_set_pronunciation(&open_jtalk->njd);
 	njd_set_digit(&open_jtalk->njd);
 	njd_set_accent_phrase(&open_jtalk->njd);
@@ -278,13 +506,13 @@ bool Open_JTalk_generate_sounddata(Open_JTalk *open_jtalk,
 	if (JPCommon_get_label_size(&open_jtalk->jpcommon) > 2)
 	{
 		if (HTS_Engine_synthesize_from_strings(
-			&open_jtalk->engine,
-			JPCommon_get_label_feature(&open_jtalk->jpcommon), JPCommon_get_label_size(&open_jtalk->jpcommon)) == TRUE)
+				&open_jtalk->engine,
+				JPCommon_get_label_feature(&open_jtalk->jpcommon), JPCommon_get_label_size(&open_jtalk->jpcommon)) == TRUE)
 		{
 			short temp;
 			HTS_GStreamSet *gss = &open_jtalk->engine.gss;
 			size_t len = (gss->total_nsample / OPEN_JTALK_BLOCKSIZE + 1) * OPEN_JTALK_BLOCKSIZE;
-			short *data = (short*)calloc(len, sizeof(short));
+			short *data = (short *)calloc(len, sizeof(short));
 			for (unsigned int i = 0; i < gss->total_nsample; i++)
 			{
 				double x = gss->gspeech[i];
@@ -317,47 +545,27 @@ bool Open_JTalk_generate_sounddata(Open_JTalk *open_jtalk,
 	return false;
 }
 
-
-#if 0
-void speak(short*data, size_t size, size_t sampling_frequency)
+void Open_JTalk_COPYRIGHT()
 {
-	PaStreamParameters outputParameters;
-	PaStream *stream;
-	PaError err;
-	Pa_Initialize();
-	outputParameters.device = Pa_GetDefaultOutputDevice();
-	if (outputParameters.device == paNoDevice) return;
-	outputParameters.channelCount = 1;
-	outputParameters.sampleFormat = paInt16;
-	outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
-	outputParameters.hostApiSpecificStreamInfo = NULL;
-	err = Pa_OpenStream(&stream, NULL, &outputParameters, (double)sampling_frequency, OPEN_JTALK_BLOCKSIZE, paClipOff, NULL, NULL);
-	if (err != paNoError) return;
-	err = Pa_StartStream(stream);
-	if (err != paNoError) return;
-	for (unsigned int i = 0; i * OPEN_JTALK_BLOCKSIZE < size; i++)
-	{
-		err = Pa_WriteStream(stream, &data[i * OPEN_JTALK_BLOCKSIZE], OPEN_JTALK_BLOCKSIZE);
-		if (err != paNoError) break;
-	}
-	Pa_CloseStream(stream);
+	fprintf(stderr, "The Japanese TTS System \"Open JTalk\"\n");
+	fprintf(stderr, "Version 1.10 (http://open-jtalk.sourceforge.net/)\n");
+	fprintf(stderr, "Copyright (C) 2008-2016 Nagoya Institute of Technology\n");
+	fprintf(stderr, "All rights reserved.\n");
+	fprintf(stderr, "\n");
+	fprintf(stderr, "%s", HTS_COPYRIGHT);
+	fprintf(stderr, "\n");
+	fprintf(stderr, "Yet Another Part-of-Speech and Morphological Analyzer \"Mecab\"\n");
+	fprintf(stderr, "Version 0.996 (http://mecab.sourceforge.net/)\n");
+	fprintf(stderr, "Copyright (C) 2001-2008 Taku Kudo\n");
+	fprintf(stderr, "              2004-2008 Nippon Telegraph and Telephone Corporation\n");
+	fprintf(stderr, "All rights reserved.\n");
+	fprintf(stderr, "\n");
+	fprintf(stderr, "NAIST Japanese Dictionary\n");
+	fprintf(stderr, "Version 0.6.1-20090630 (http://naist-jdic.sourceforge.jp/)\n");
+	fprintf(stderr, "Copyright (C) 2009 Nara Institute of Science and Technology\n");
+	fprintf(stderr, "All rights reserved.\n");
+	fprintf(stderr, "\n");
 }
-
-void main()
-{
-	Open_JTalk *oj = Open_JTalk_initialize();
-	char *dn_mecab = "C:\\open_jtalk\\dic";
-	char *fn_voice = "C:\\open_jtalk\\voice\\mei\\mei_normal.htsvoice";
-	Open_JTalk_load(oj, dn_mecab, fn_voice);
-	short *sounddata;
-	size_t size;
-	size_t sampling_frequency;
-	Open_JTalk_generate_sounddata(oj, u8"‚±‚ñ‚É‚¿‚Í", &sounddata, &size, &sampling_frequency);
-	speak(sounddata, size, sampling_frequency);
-	Open_JTalk_clear(oj);
-}
-
-#endif
 
 OPEN_JTALK_C_END;
-#endif                          /* !OPEN_JTALK_C */
+#endif /* !OPEN_JTALK_C */

@@ -84,8 +84,10 @@ if [[ $(uname) =~ "MINGW"  ]]; then
 	mkdir -p $wintarget
 	cp -r $voice $wintarget
 elif [[ $(uname) =~ "CYGWIN" ]]; then
-	mkdir -p /cygdrive$wintarget
-	cp -r $voice /cygdrive$wintarget
+#	mkdir -p /cygdrive$wintarget
+#	cp -r $voice /cygdrive$wintarget
+	mkdir -p $target
+	cp -r $voice $target
 elif [[ $(uname) =~ "-Microsoft" ]]; then
 	mkdir -p /mnt$wintarget
 	cp -r $voice /mnt$wintarget

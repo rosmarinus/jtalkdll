@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<job id="test"><script language="VBScript">
+<![CDATA[
+set tts = CreateObject("JTalk.TTS")
+dim str, n
+
+str = "利用可能な音響モデル:" & vbCrLf
+For Each voice In tts.Voices
+	str = str & voice.Name & vbCrLf
+Next
+WScript.Echo str
+
+Randomize
+n = Int((tts.Voices.Count + 1) * Rnd )
+tts.Voice = tts.Voices.GetItem(n)
+str = ""
+str = str & "現在の音声: " & vbCrLf & tts.VoiceName & vbCrLf & vbCrLf
+str = str & "辞書: " & vbCrLf & tts.Dic      & vbCrLf
+WScript.Echo str
+
+str = "パラメータ" & vbCrLf
+str = str & "s  = " & CStr(tts.S)  & vbCrLf
+str = str & "p  = " & CStr(tts.P)  & vbCrLf
+str = str & "a  = " & CStr(tts.A)  & vbCrLf
+str = str & "b  = " & CStr(tts.B)  & vbCrLf
+str = str & "r  = " & CStr(tts.R)  & vbCrLf
+str = str & "fm = " & CStr(tts.Fm) & vbCrLf
+str = str & "u  = " & CStr(tts.U)  & vbCrLf
+str = str & "jm = " & CStr(tts.Jm) & vbCrLf
+str = str & "jf = " & CStr(tts.Jf) & vbCrLf
+str = str & "g  = " & CStr(tts.G)  & vbCrLf
+WScript.Echo str
+
+tts.SpeakSync "読み上げのテストです。"
+tts.SpeakToFile "録音のテストです。", "test_vbs.wav"
+]]>
+</script></job>

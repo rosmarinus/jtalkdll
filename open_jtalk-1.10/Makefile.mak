@@ -1,4 +1,3 @@
-
 INSTALLDIR = C:\open_jtalk
 
 all:
@@ -39,6 +38,7 @@ all:
 	nmake /f Makefile.mak
 	cd ..
 	cd lib
+	@if not exist git.revision for /f "delims=" %%a in ('git show --format^="%h" -s') do echo GIT_REV=\^"%a\^">git.revision
 	nmake /f Makefile.mak
 	cd ..
 	cd bin
@@ -100,16 +100,41 @@ install::
 	@if not exist "$(INSTALLDIR)\bin" mkdir "$(INSTALLDIR)\bin"
 	@if not exist "$(INSTALLDIR)\dic_utf_8" mkdir "$(INSTALLDIR)\dic_utf_8"
 	@if not exist "$(INSTALLDIR)\lib" mkdir "$(INSTALLDIR)\lib"
-	cd lib
-	copy *.exe $(INSTALLDIR)\bin
+	@cd lib
+	copy jsay.exe $(INSTALLDIR)\bin
 	copy *.dll $(INSTALLDIR)\bin
 	copy *.lib $(INSTALLDIR)\lib
 	copy jtalk.h $(INSTALLDIR)\include
-	cd ..
-	cd bin
+	if $(REAL) == x86   if exist "jtalk32.dll" copy jtalk32.dll $(INSTALLDIR)\bin\jtalk.dll
+	if $(REAL) == AMD64 if exist "jtalk64.dll" copy jtalk64.dll $(INSTALLDIR)\bin\jtalk.dll
+	if $(REAL) == x86   if exist "jtalk32.dll" copy jtalk32.dll ..\..\ffi\luajit\jtalk.dll
+	if $(REAL) == AMD64 if exist "jtalk64.dll" copy jtalk64.dll ..\..\ffi\luajit\jtalk.dll
+	if exist "jtalkcom32.dll" copy regist_jtalkcom.bat $(INSTALLDIR)\bin
+	if exist "jtalkcom32.dll" copy unregist_jtalkcom.bat $(INSTALLDIR)\bin
+	if exist "jtalkcom64.dll" copy regist_jtalkcom.bat $(INSTALLDIR)\bin
+	if exist "jtalkcom64.dll" copy unregist_jtalkcom.bat $(INSTALLDIR)\bin
+
+	@rem if exist "jtalkcom32.dll" copy jtalkCOM32.dll ..\..\ffi\csharp
+	@rem if exist "jtalkcom32.dll" copy jtalkCOM32.dll ..\..\ffi\cppcli
+	@rem if exist "jtalkcom32.dll" copy jtalkCOM32.dll ..\..\ffi\vb
+	@rem if exist "jtalkcom64.dll" copy jtalkCOM64.dll ..\..\ffi\csharp
+	@rem if exist "jtalkcom64.dll" copy jtalkCOM64.dll ..\..\ffi\cppcli
+	@rem if exist "jtalkcom64.dll" copy jtalkCOM64.dll ..\..\ffi\vb
+	@rem copy jtalk*.dll ..\..\ffi\cbuilder
+	@rem copy jtalk*.dll ..\..\ffi\d
+	@rem copy jtalk*.lib ..\..\ffi\cppcli
+	@rem copy jtalk*.lib ..\..\ffi\cpp
+	@rem copy jtalk*.lib ..\..\ffi\d
+	@rem copy jtalk.h ..\..\ffi\cppcli
+	@rem copy jtalk.h ..\..\ffi\cpp
+	@rem copy jtalk.h ..\..\ffi\swift
+	@rem copy jtalk.h ..\..\ffi\objc
+
+	@cd ..
+	@cd bin
 	copy *.exe $(INSTALLDIR)\bin
-	cd ..
-	cd mecab-naist-jdic
+	@cd ..
+	@cd mecab-naist-jdic
 	copy char.bin $(INSTALLDIR)\dic_utf_8
 	copy matrix.bin $(INSTALLDIR)\dic_utf_8
 	copy sys.dic $(INSTALLDIR)\dic_utf_8
@@ -118,4 +143,4 @@ install::
 	copy right-id.def $(INSTALLDIR)\dic_utf_8
 	copy rewrite.def $(INSTALLDIR)\dic_utf_8
 	copy pos-id.def $(INSTALLDIR)\dic_utf_8
-	cd ..
+	@cd ..

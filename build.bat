@@ -1,6 +1,8 @@
 @echo off
-set BUILD32=ON
+setlocal
+set BUILD32=
 set BUILD64=ON
+set CPPCLI=0
 if not "%BUILD32%""%BUILD64%" == """" goto :skip
 echo BUILD32、BUILD64 の少なくとも一方に何か値を入れて、有効にしてください
 echo 終了します
@@ -19,18 +21,18 @@ xcopy %VOICEDIR% %INSTALLDIR%\%VOICEDIR% /e /q /y
 rem ****************************************
 rem set build ver
 rem ****************************************
-set BAT32="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
-set BAT64="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+set REAL=%PROCESSOR_ARCHITECTURE%
+if %PROCESSOR_ARCHITECTURE% == x86 set ProgramFiles(x86)=C:\Program Files
+set BAT32="%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
+set BAT64="%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
 if exist %BAT32% goto :build
-set B="C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
-if not exist %B% goto :error_batch
-echo "Visual Studio 2015でビルドします"
-set VS=2015
-set BAT32=%B% x86
-set BAT64=%B% amd64
+set BAT32="%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars32.bat"
+set BAT64="%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+if not exist %BAT32% goto :error_batch
+echo "Visual Studio Build Tools 2017でビルドします"
 goto :build
 :error_batch
-echo "Visual Studio 2017 Community をインストールしてから実行してください。"
+echo "Visual Studio Community 2017 もしくは Visual Studio Build Tools 2017 をインストールしてから実行してください。"
 echo 終了します
 pause
 goto :eof
@@ -42,6 +44,14 @@ rem ****************************************
 call %BAT32%
 cd /d %~dp0
 set AMD64=0
+set name=clrtest
+echo using namespace System;void main(){} >%name%.cpp
+cl /clr %name%.cpp >NUL 2>&1
+if "%errorlevel%" == "0" (
+echo C++/CLIのビルドに対応しているのでJTalkCOM32.dllもビルドします。
+set CPPCLI=1
+)
+del/q %name%.*
 
 cd portaudio\build\msvc
 msbuild portaudio.sln /p:Configuration=Release;Platform=x86
@@ -69,6 +79,14 @@ rem ****************************************
 call %BAT64%
 cd /d %~dp0
 set AMD64=1
+set name=clrtest
+echo using namespace System;void main(){} >%name%.cpp
+cl /clr %name%.cpp >NUL 2>&1
+if "%errorlevel%" == "0" (
+echo C++/CLIのビルドに対応しているのでJTalkCOM64.dllもビルドします。
+set CPPCLI=1
+)
+del/q %name%.*
 
 cd portaudio\build\msvc
 msbuild portaudio.sln /p:Configuration=Release;Platform=x64
@@ -77,13 +95,13 @@ copy x64\Release\portaudio_static_64.lib ..\..\lib\
 cd ..\..\..
 
 cd hts_engine_API-1.10
-nmake -f makefile.mak clean
+rem nmake -f makefile.mak clean
 nmake -f makefile.mak
 nmake -f makefile.mak install
 cd ..
 
 cd open_jtalk-1.10
-nmake -f makefile.mak clean
+rem nmake -f makefile.mak clean
 nmake -f makefile.mak
 nmake -f makefile.mak install
 cd ..

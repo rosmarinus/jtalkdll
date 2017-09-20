@@ -20,6 +20,7 @@ char message[MAX_PATH];
 
 void usage_exit()
 {
+	jtalkdll_copyright();
 	fprintf(stderr, "Usage: jsay [-v voice/?] [-o out] [-f in | message]\n");
 	exit(EXIT_FAILURE);
 }
@@ -205,7 +206,7 @@ int get_option(int argc, char *argv[])
 void print_voice_list(OpenJTalk *openjtalk)
 {
 	char padding[MAX_PATH];
-	HtsVoiceFilelist *result = OpenJTalk_getHTSVoiceList(openjtalk);
+	HtsVoiceFilelist *result = openjtalk_getHTSVoiceList(openjtalk);
 	size_t length = 0;
 
 	for (HtsVoiceFilelist*list = result; list != NULL; list = list->succ)
@@ -220,13 +221,13 @@ void print_voice_list(OpenJTalk *openjtalk)
 	length = (length / tab_len) * tab_len + tab_len;
 	for (HtsVoiceFilelist*list = result; list != NULL; list = list->succ)
 	{
-		size_t diff = length - strlen(list->name);
+		size_t diff = length - strlen((char*)list->name);
 		strcpy(padding, " ");
 		while (--diff)
 		{
 			strcat(padding, " ");
 		}
-		printf("%s%s%s\n", list->name, padding, list->path);
+		printf("%s%s%s\n", (char*)list->name, padding, (char*)list->path);
 	}
 }
 
@@ -253,9 +254,9 @@ char *remove_cr_lf(char*str)
 void speak_commandline_to_file(OpenJTalk *openjtalk)
 {
 #if defined(_WIN32)
-	OpenJTalk_speakToFile_sjis(openjtalk, message, outfile);
+	openjtalk_speakToFileSjis(openjtalk, message, outfile);
 #else
-	OpenJTalk_speakToFile(openjtalk, message, outfile);
+	openjtalk_speakToFile(openjtalk, message, outfile);
 #endif
 }
 
@@ -292,7 +293,7 @@ void speak_file_to_file(OpenJTalk *openjtalk, FILE *fp)
 		strcat(str, line);
 	}
 
-	OpenJTalk_speakToFile(openjtalk, str, outfile);
+	openjtalk_speakToFile(openjtalk, str, outfile);
 }
 
 void speak_stdin_console_to_file(OpenJTalk *openjtalk)
@@ -325,18 +326,18 @@ void speak_stdin_console_to_file(OpenJTalk *openjtalk)
 	}
 
 #if defined(_WIN32)
-	OpenJTalk_speakToFile_sjis(openjtalk, str, outfile);
+	openjtalk_speakToFileSjis(openjtalk, str, outfile);
 #else
-	OpenJTalk_speakToFile(openjtalk, str, outfile);
+	openjtalk_speakToFile(openjtalk, str, outfile);
 #endif
 }
 
 void speak_commandline(OpenJTalk *openjtalk)
 {
 #if defined(_WIN32)
-	OpenJTalk_speakSync_sjis(openjtalk, message);
+	openjtalk_speakSyncSjis(openjtalk, message);
 #else
-	OpenJTalk_speakSync(openjtalk, message);
+	openjtalk_speakSync(openjtalk, message);
 #endif
 }
 
@@ -362,7 +363,7 @@ void speak_file(OpenJTalk *openjtalk, FILE* fp)
 			continue;
 		}
 
-		OpenJTalk_speakSync(openjtalk, line);
+		openjtalk_speakSync(openjtalk, line);
 	}
 	fclose(fp);
 }
@@ -385,9 +386,9 @@ void speak_stdin_console(OpenJTalk *openjtalk)
 			continue;
 		}
 #if defined(_WIN32)
-		OpenJTalk_speakSync_sjis(openjtalk, line);
+		openjtalk_speakSyncSjis(openjtalk, line);
 #else
-		OpenJTalk_speakSync(openjtalk, line);
+		openjtalk_speakSync(openjtalk, line);
 #endif
 	}
 }
@@ -402,7 +403,7 @@ int main(int argc, char *argv[])
 	const bool stdin_console = isatty(fileno(stdin));
 #endif
 
-	OpenJTalk *openjtalk = OpenJTalk_initialize();
+	OpenJTalk *openjtalk = openjtalk_initialize(NULL,NULL,NULL);
 	if (openjtalk == NULL)
 	{
 		error_exit("OpenJTalk Initialization faileda.");
@@ -416,14 +417,14 @@ int main(int argc, char *argv[])
 			goto exit_success;
 		}
 #if defined(_WIN32)
-		bool res = OpenJTalk_setVoice_sjis(openjtalk, voice);
+		bool res = openjtalk_setVoiceSjis(openjtalk, voice);
 #else
-		bool res = OpenJTalk_setVoice(openjtalk, voice);
+		bool res = openjtalk_setVoice(openjtalk, voice);
 #endif
 		if (!res)
 		{
 			fprintf(stderr, "Voice '%s' not found.\n", voice);
-			OpenJTalk_clear(openjtalk);
+			openjtalk_clear(openjtalk);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -448,7 +449,7 @@ int main(int argc, char *argv[])
 			FILE *fp = NULL;
 			if ((fp = fopen(infile, "r")) == NULL)
 			{
-				OpenJTalk_clear(openjtalk);
+				openjtalk_clear(openjtalk);
 				exit(EXIT_FAILURE);
 			}
 			speak_file_to_file(openjtalk, fp);
@@ -472,7 +473,7 @@ int main(int argc, char *argv[])
 		FILE *fp = NULL;
 		if ((fp = fopen(infile, "r")) == NULL)
 		{
-			OpenJTalk_clear(openjtalk);
+			openjtalk_clear(openjtalk);
 			exit(EXIT_FAILURE);
 		}
 		speak_file(openjtalk, fp);
@@ -490,6 +491,6 @@ int main(int argc, char *argv[])
 	}
 
 exit_success:
-	OpenJTalk_clear(openjtalk);
+	openjtalk_clear(openjtalk);
 	exit(EXIT_SUCCESS);
 }

@@ -17,6 +17,16 @@ AN_MAKEVAR([AR], [AC_PROG_AR])
 AN_PROGRAM([ar], [AC_PROG_AR])
 AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
 AC_PROG_AR
+case "$host_os" in
+   *cygwin* )
+      CFLAGS="$CFLAGS -std=gnu11"
+      CXXFLAGS="$CXXFLAGS -std=gnu++11"
+      ;;
+   *)
+      CFLAGS="$CFLAGS -std=c11"
+      CXXFLAGS="$CXXFLAGS -std=c++11"
+      ;;
+esac
 
 # Check for endian
 AC_C_BIGENDIAN
@@ -220,11 +230,27 @@ case "$host_os" in
 esac
 fi
 
+# header & library path
+case "$host" in
+   x86_64-w64-mingw32 )
+      hpath=/mingw64/include
+	lpath=/mingw64/lib
+      ;;
+   *mingw32 )
+      hpath=/mingw32/include
+	lpath=/mingw32/lib
+      ;;
+   *)
+      hpath=/usr/local/include
+	lpath=/usr/local/lib
+      ;;
+esac
+
 # Define HTS_ENGINE_HEADER
 AC_ARG_WITH(hts-engine-header-path,
             AS_HELP_STRING([--with-hts-engine-header-path],[specify the hts_engine_API header path]),
             [hts_engine_header_path=$withval],
-            [hts_engine_header_path='/usr/local/include'])
+            [hts_engine_header_path=$hpath])
 if test ! -f "${hts_engine_header_path}/HTS_engine.h"; then
    AC_MSG_ERROR(Cannot find HTS_engine.h)
 fi
@@ -241,7 +267,7 @@ HTS_ENGINE_HEADER_DIR=${hts_engine_header_path}
 AC_ARG_WITH(hts-engine-library-path,
             AS_HELP_STRING([--with-hts-engine-library-path],[specify the hts_engine_API library path]),
             [hts_engine_library_path=$withval],
-            [hts_engine_library_path='/usr/local/lib'])
+            [hts_engine_library_path=$lpath])
 if test ! -f "${hts_engine_library_path}/libHTSEngine.a"; then
    AC_MSG_ERROR(Cannot find libHTSEngine.a)
 fi
@@ -263,6 +289,11 @@ case "$host_os" in
       ;;
 esac
 
+# Define VERSION VARIABLE
+git_revision=$(git show --format="%h" -s)
+AC_SUBST(GIT_REV)
+GIT_REV=${git_revision}
+
 # portaudio libs
 AC_MSG_CHECKING(libraries for portaudio)
 AC_SUBST(LIBS_PORTAUDIO)
@@ -274,13 +305,21 @@ case $host_os in
         LIBS_PORTAUDIO="-lportaudio"
         ;;
 esac
+case "$host" in
+   x86_64-w64-mingw32 )
+      LIBS_PORTAUDIO="-L/mingw64/lib/ $LIBS_PORTAUDIO "
+      ;;
+   *mingw32 )
+      LIBS_PORTAUDIO="-L/mingw32/lib/ $LIBS_PORTAUDIO "
+      ;;
+esac
 AC_MSG_RESULT($LIBS_PORTAUDIO)
 
 # Define dicdir
 AC_MSG_CHECKING(dicdir)
 AC_SUBST(DICDIR)
 case "$host_os" in
-   *win32* | *wince* | *cygwin* | *mingw* )
+   *win32* | *wince* | *mingw* )
       DICDIR="/c/open_jtalk/dic_utf_8"
       ;;
    *)

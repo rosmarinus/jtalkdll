@@ -1,0 +1,20 @@
+
+//let tts = Jtalk(voiceName:"tohoku-f01-neutral",s:44000)
+let tts = Jtalk()
+print("available voices:")
+tts.voices.forEach{print($0.path)}
+tts.voice = tts.voices[Int(arc4random_uniform(UInt32(tts.voices.count)))]
+print("current voice: " + tts.voice!.name)
+print("dic: " + tts.dic)
+print("s  = \(tts.s)")
+print("p  = \(tts.p)")
+print("a  = \(tts.a)")
+print("b  = \(tts.b)")
+print("r  = \(tts.r)")
+print("fm = \(tts.fm)")
+print("u  = \(tts.u)")
+print("jm = \(tts.jm)")
+print("jf = \(tts.jf)")
+print("g  = \(tts.g)")
+tts.speakAsync("こんにちは")
+tts.waitUntilDone()

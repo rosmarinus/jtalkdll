@@ -85,6 +85,18 @@ JPCOMMON_LABEL_C_START;
 #define MAX_L     99
 #define MAX_LL    199
 
+char *jpcommon_label_strdup(const char *str)
+{
+	if (str == NULL) return NULL;
+	char *r = malloc(strlen(str)+1);
+	if (r==NULL) return NULL;
+	char *s = (char*)str;
+	char *d = r;
+    while ((*d++ = *s++) != '\0')
+		;
+	return r;
+}
+
 static int strtopcmp(const char *str, const char *pattern)
 {
    int i;
@@ -112,7 +124,7 @@ static void JPCommonLabelPhoneme_initialize(JPCommonLabelPhoneme * p, const char
                                             JPCommonLabelPhoneme * prev,
                                             JPCommonLabelPhoneme * next, JPCommonLabelMora * up)
 {
-   p->phoneme = strdup(phoneme);
+   p->phoneme = jpcommon_label_strdup(phoneme);
    p->prev = prev;
    p->next = next;
    p->up = up;
@@ -125,7 +137,7 @@ static void JPCommonLabelPhoneme_convert_unvoice(JPCommonLabelPhoneme * p)
    for (i = 0; jpcommon_unvoice_list[i] != NULL; i += 2) {
       if (strcmp(jpcommon_unvoice_list[i], p->phoneme) == 0) {
          free(p->phoneme);
-         p->phoneme = strdup(jpcommon_unvoice_list[i + 1]);
+         p->phoneme = jpcommon_label_strdup(jpcommon_unvoice_list[i + 1]);
          return;
       }
    }
@@ -145,7 +157,7 @@ static void JPCommonLabelMora_initialize(JPCommonLabelMora * m, const char *mora
                                          JPCommonLabelMora * prev, JPCommonLabelMora * next,
                                          JPCommonLabelWord * up)
 {
-   m->mora = strdup(mora);
+   m->mora = jpcommon_label_strdup(mora);
    m->head = head;
    m->tail = tail;
    m->prev = prev;
@@ -165,7 +177,7 @@ static void JPCommonLabelWord_initialize(JPCommonLabelWord * w, const char *pron
 {
    int i, find;
 
-   w->pron = strdup(pron);
+   w->pron = jpcommon_label_strdup(pron);
    for (i = 0, find = 0; jpcommon_pos_list[i] != NULL; i += 2) {
       if (strcmp(jpcommon_pos_list[i], pos) == 0) {
          find = 1;
@@ -178,7 +190,7 @@ static void JPCommonLabelWord_initialize(JPCommonLabelWord * w, const char *pron
               pos);
       i = 0;
    }
-   w->pos = strdup(jpcommon_pos_list[i + 1]);
+   w->pos = jpcommon_label_strdup(jpcommon_pos_list[i + 1]);
    for (i = 0, find = 0; jpcommon_ctype_list[i] != NULL; i += 2) {
       if (strcmp(jpcommon_ctype_list[i], ctype) == 0) {
          find = 1;
@@ -191,7 +203,7 @@ static void JPCommonLabelWord_initialize(JPCommonLabelWord * w, const char *pron
               ctype);
       i = 0;
    }
-   w->ctype = strdup(jpcommon_ctype_list[i + 1]);
+   w->ctype = jpcommon_label_strdup(jpcommon_ctype_list[i + 1]);
    for (i = 0, find = 0; jpcommon_cform_list[i] != NULL; i += 2) {
       if (strcmp(jpcommon_cform_list[i], cform) == 0) {
          find = 1;
@@ -204,7 +216,7 @@ static void JPCommonLabelWord_initialize(JPCommonLabelWord * w, const char *pron
               cform);
       i = 0;
    }
-   w->cform = strdup(jpcommon_cform_list[i + 1]);
+   w->cform = jpcommon_label_strdup(jpcommon_cform_list[i + 1]);
    w->head = head;
    w->tail = tail;
    w->prev = prev;
@@ -228,7 +240,7 @@ static void JPCommonLabelAccentPhrase_initialize(JPCommonLabelAccentPhrase * a, 
 {
    a->accent = acc;
    if (emotion != NULL)
-      a->emotion = strdup(emotion);
+      a->emotion = jpcommon_label_strdup(emotion);
    else
       a->emotion = NULL;
    a->head = head;
@@ -283,6 +295,7 @@ static int count_mora_in_accent_phrase(JPCommonLabelMora * m)
       if (index == m->up->up->tail->tail)
          break;
    }
+   if (i > 3) i = 3;
    return i;
 }
 
@@ -375,6 +388,7 @@ static int count_accent_phrase_in_utterance(JPCommonLabelAccentPhrase * a)
 
    for (i = 0, index = a->next; index != NULL; index = index->next)
       i++;
+   if (i > 10) i = 10;
    return index_accent_phrase_in_utterance(a) + i;
 }
 
@@ -453,10 +467,10 @@ void JPCommonLabel_push_word(JPCommonLabel * label, const char *pron, const char
       if (label->phoneme_tail != NULL) {
          if (strcmp(label->phoneme_tail->phoneme, JPCOMMON_PHONEME_SHORT_PAUSE) == 0) {
             if (label->phoneme_tail->prev->up->up->up->emotion == NULL)
-               label->phoneme_tail->prev->up->up->up->emotion = strdup(JPCOMMON_FLAG_QUESTION);
+               label->phoneme_tail->prev->up->up->up->emotion = jpcommon_label_strdup(JPCOMMON_FLAG_QUESTION);
          } else {
             if (label->phoneme_tail->up->up->up->emotion == NULL)
-               label->phoneme_tail->up->up->up->emotion = strdup(JPCOMMON_FLAG_QUESTION);
+               label->phoneme_tail->up->up->up->emotion = jpcommon_label_strdup(JPCOMMON_FLAG_QUESTION);
          }
       } else {
          fprintf(stderr,

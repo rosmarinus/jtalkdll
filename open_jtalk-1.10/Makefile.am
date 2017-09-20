@@ -15,6 +15,8 @@ SUBDIRS = text2mecab \
           lib \
           mecab-naist-jdic
 
+include_HEADERS = lib/openjtalk.h lib/jtalk.h
+
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL Makefile.mak NEWS README
 
 DISTCLEANFILES = *.log *.out *~ config/*~

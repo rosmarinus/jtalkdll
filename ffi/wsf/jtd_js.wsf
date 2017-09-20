@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<job id="test"><script language="JScript">
+<![CDATA[
+var tts = new ActiveXObject("JTalk.TTS");
+var str = "利用可能な音響モデル:\n";
+for(var e = new Enumerator(tts.Voices);!e.atEnd();e.moveNext()) {
+	str += e.item().Name + "\n";
+}
+WScript.Echo(str);
+
+var n = Math.floor(Math.random() * tts.Voices.Count + 1);
+tts.Voice = tts.Voices.GetItem(n);
+str = "";
+str += "現在の音声:\n" + tts.VoiceName + "\n\n";
+str += "辞書:\n" + tts.Dic + "\n";
+WScript.Echo(str);
+
+str = "パラメータ:\n"
+str += "s  = " + tts.S + "\n";
+str += "p  = " + tts.P + "\n";
+str += "a  = " + tts.A + "\n";
+str += "b  = " + tts.B + "\n";
+str += "r  = " + tts.R + "\n";
+str += "fm = " + tts.Fm + "\n";
+str += "u  = " + tts.U + "\n";
+str += "jm = " + tts.Jm + "\n";
+str += "jf = " + tts.Jf + "\n";
+str += "g  = " + tts.G + "\n";
+WScript.Echo(str);
+tts.SpeakSync("読み上げのテストです。");
+tts.SpeakToFile("録音のテストです。","test_js.wav");
+]]>
+</script></job>

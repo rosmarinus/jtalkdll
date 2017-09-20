@@ -1,3 +1,6 @@
+include main.version
+include build.version
+
 EXTRA_DIST = Makefile.mak
 
 DISTCLEANFILES = *.log *.out *~
@@ -6,14 +9,14 @@ MAINTAINERCLEANFILES = Makefile.in
 
 lib_LTLIBRARIES  = libjtalk.la
 
-libjtalk_la_SOURCES = jtalk.c
+libjtalk_la_SOURCES = jtalk.c main.version build.version
 
 #libjtalk_la_LIBADD = 	@top_srcdir@/lib/libopenjtalk.la 
 libjtalk_la_LIBADD = libopenjtalk.la 
 
 libjtalk_la_LDFLAGS =  -fvisibility=hidden -no-undefined -version-info 0:0:0 @LIB_ICONV@ @LIBS_PORTAUDIO@ -lm -lstdc++ -lHTSEngine
 
-libjtalk_la_CFLAGS = -I ../lib/
+libjtalk_la_CFLAGS = -I ../lib/ -DVER_MAJOR=$(MAJOR) -DVER_MINOR=$(MINOR) -DVER_BUILD=$(BUILD) -DGIT_REV=\"@GIT_REV@\"
 
 noinst_LTLIBRARIES = libopenjtalk.la
 
@@ -48,16 +51,13 @@ libopenjtalk_la_CFLAGS = -I @top_srcdir@/text2mecab \
 libopenjtalk_la_SOURCES = openjtalk.c
 
 bin_PROGRAMS = jsay
-noinst_PROGRAMS = test_lib test_c test_cpp
+noinst_PROGRAMS = jtd_c
 
-jsay_SOURCES = jsay.c
-jsay_LDFLAGS = -no-undefined -o jsay -ljtalk
+jsay_SOURCES = jsay.c jtalk.c openjtalk main.version build.version
+jsay_CFLAGS  = -DVER_MAJOR=$(MAJOR) -DVER_MINOR=$(MINOR) -DVER_BUILD=$(BUILD) -DGIT_REV=\"@GIT_REV@\"
+jsay_LDFLAGS = -no-undefined -o jsay -L/usr/local/lib -ljtalk
 
-test_c_SOURCES = test_c.c
-test_c_LDFLAGS = -no-undefined -o test_c -ljtalk 
+jtd_c_SOURCES = jtd_c.c jtalk.c openjtalk main.version build.version
+jtd_c_CFLAGS  = -DVER_MAJOR=$(MAJOR) -DVER_MINOR=$(MINOR) -DVER_BUILD=$(BUILD) -DGIT_REV=\"@GIT_REV@\"
+jtd_c_LDFLAGS = -no-undefined -o jtd_c -L/usr/local/lib -ljtalk 
 
-test_cpp_SOURCES = test_cpp.cpp
-test_cpp_LDFLAGS = -no-undefined -o test_cpp -ljtalk -lstdc++
-
-test_lib_SOURCES = test_lib.c
-test_lib_LDFLAGS = -no-undefined -o test_lib libopenjtalk.la -lHTSEngine  @LIB_ICONV@ @LIBS_PORTAUDIO@

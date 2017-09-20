@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+gcc -std=c++11 jtd_cpp.cpp jtalkcpp.cpp -ljtalk -lstdc++ -ojtd_cpp

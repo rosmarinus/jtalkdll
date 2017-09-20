@@ -1,455 +1,573 @@
-/*****************************************************************
+ï»¿/*****************************************************************
 ** OpenJTalk.TTS
 */
 #pragma once
 #include "jtalk.h"
 #include <msclr/marshal.h>
+//#include <std/string>
 
+//using namespace std;
+using namespace System;
 using namespace System::IO;
 using namespace System::Reflection;
 using namespace System::Collections::Generic;
 using namespace System::Runtime::InteropServices;
 using namespace msclr::interop;
 
-namespace Openjtalk {
+namespace JTalkCom
+{
 
-	/// <summary>
-	/// ‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^‚ÌƒCƒ“ƒ^[ƒtƒFƒCƒX
-	/// </summary>
-	[Guid("75CDB8C8-BF88-47AA-97FA-D88EF80EFEB8")]
-	[InterfaceType(ComInterfaceType::InterfaceIsDual)]
-	public interface class IVoiceFileData
-	{
-		property System::String^ Path {System::String^ get(); }
-		property System::String^ Name {System::String^ get(); }
-	};
+/// <summary>
+/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹
+/// </summary>
+[Guid("75CDB8C8-BF88-47AA-97FA-D88EF80EFEB8")]
+	[InterfaceType(ComInterfaceType::InterfaceIsDual)] public interface class IVoiceFileInfo
+{
+	property System::String ^ Path { System::String ^ get(); } property System::String ^ Name { System::String ^ get(); }
+};
 
-
-	/// <summary>
-	/// <para>‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^ƒNƒ‰ƒX</para>
-	/// </summary>
-	[ComVisible(true)]
+/// <summary>
+/// <para>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã‚¯ãƒ©ã‚¹</para>
+/// </summary>
+[ComVisible(true)]
 #if defined(_x64_)
 	[Guid("B5E3B9E9-5029-4158-AE70-95A59996644E")]
 #else
 	[Guid("1B16AF23-BD83-4C49-A1B7-0A3A4F0ECFF5")]
 #endif
 	[ClassInterface(ClassInterfaceType::None)]
-	[ComDefaultInterface(IVoiceFileData::typeid)]
-	public ref class VoiceFileData : IVoiceFileData {
+	[ComDefaultInterface(IVoiceFileInfo::typeid)] public ref class VoiceFileInfo : IVoiceFileInfo
+{
 
-	internal:
+	internal :
 		/// <summary>
-		/// ‰¹‹¿ƒtƒ@ƒCƒ‹‚ÌƒpƒX
+		/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
 		/// </summary>
-		System::String^ path;
+		System::String ^
+		path;
 
-		/// <summary>
-		/// ‰¹‹¿ƒtƒ@ƒCƒ‹‚ÌŠg’£q‚ğœ‚¢‚½ƒtƒ@ƒCƒ‹–¼
-		/// </summary>
-		System::String^ name;
+	/// <summary>
+	/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®æ‹¡å¼µå­ã‚’é™¤ã„ãŸãƒ•ã‚¡ã‚¤ãƒ«å
+	/// </summary>
+	System::String ^ name;
 
-	public:
+  public:
+	/// <summary>
+	/// <para>ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ–‡å­—åˆ—åŒ–</para>
+	/// <para>ãã®éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”ã™</para>
+	/// </summary>
+	/// <returns>ãã®éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«å</returns>
+	virtual System::String ^ ToString() override
+	{
+		return this->name;
+	}
+
+	/// <summary>
+	/// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šéŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
+	/// </summary>
+	property System::String ^ Path {
 		/// <summary>
-		/// <para>ƒIƒuƒWƒFƒNƒg‚Ì•¶š—ñ‰»</para>
-		/// <para>‚»‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹–¼‚ğ•Ô‚·</para>
+		/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹ã‚’å–å¾—ã™ã‚‹
 		/// </summary>
-		/// <returns>‚»‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹–¼</returns>
-		virtual System::String^ ToString() override
-		{
+		/// <returns></returns>
+		virtual System::String ^ get() {
+			return this->path;
+		}
+	}
+
+	/// <summary>
+	/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®åå‰ï¼ˆæ‹¡å¼µå­ã‚’é™¤ã„ãŸéƒ¨åˆ†ï¼‰
+	/// </summary>
+	property System::String ^
+	Name {
+		/// <summary>
+		/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®åå‰ã‚’å–å¾—ã™ã‚‹
+		/// </summary>
+		/// <returns></returns>
+		virtual System::String ^ get() {
 			return this->name;
 		}
-
-		/// <summary>
-		/// ƒvƒƒpƒeƒBF‰¹‹¿ƒtƒ@ƒCƒ‹‚ÌƒpƒX
-		/// </summary>
-		property System::String^ Path
-		{
-			/// <summary>
-			/// ‰¹‹¿ƒtƒ@ƒCƒ‹‚ÌƒpƒX‚ğæ“¾‚·‚é
-			/// </summary>
-			/// <returns></returns>
-			virtual System::String ^get()
-			{
-				return this->path;
-			}
-		}
-
-		/// <summary>
-		/// ‰¹‹¿ƒtƒ@ƒCƒ‹‚Ì–¼‘OiŠg’£q‚ğœ‚¢‚½•”•ªj
-		/// </summary>
-		property System::String^ Name
-		{
-			/// <summary>
-			/// ‰¹‹¿ƒtƒ@ƒCƒ‹‚Ì–¼‘O‚ğæ“¾‚·‚é
-			/// </summary>
-			/// <returns></returns>
-			virtual System::String ^get()
-			{
-				return this->name;
-			}
-		}
-
-		/// <summary>
-		/// <para>ˆø”‚ªString^Œ^‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^</para>
-		/// </summary>
-		/// <param name="path">‰¹‹¿ƒtƒ@ƒCƒ‹‚ÌƒpƒX</param>
-		/// <param name="name">‰¹‹¿ƒtƒ@ƒCƒ‹–¼</param>
-		VoiceFileData(System::String^path, System::String^name)
-		{
-			this->path = path;
-			this->name = name;
-		}
-
-		/// <summary>
-		/// <para>ˆø”‚ªchar*Œ^‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^</para>
-		/// </summary>
-		/// <param name="path">‰¹‹¿ƒtƒ@ƒCƒ‹‚ÌƒpƒX</param>
-		/// <param name="name">‰¹‹¿ƒtƒ@ƒCƒ‹–¼</param>
-		VoiceFileData(char*path, char*name)
-		{
-			this->path = gcnew System::String(path);
-			this->name = gcnew System::String(name);
-		}
-
-		/// <summary>
-		/// <para>ˆø”‚ªHtsVoiceFilelist*Œ^‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^</para>
-		/// </summary>
-		/// <param name="data">HtsVoiceFilelist*Œ^‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^</param>
-		/// <returns></returns>
-		VoiceFileData(HtsVoiceFilelist*data)
-		{
-			this->path = gcnew System::String(data->path);
-			this->name = gcnew System::String(data->name);
-		}
-
-		/// <summary>
-		/// ƒfƒXƒgƒ‰ƒNƒ^
-		/// </summary>
-		~VoiceFileData()
-		{
-			delete this->path;
-			delete this->name;
-			this->!VoiceFileData();
-		}
-
-		/// <summary>
-		/// ƒtƒ@ƒCƒiƒ‰ƒCƒU
-		/// </summary>
-		!VoiceFileData()
-		{
-		}
-	};
+	}
 
 	/// <summary>
-	/// ‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^ƒRƒŒƒNƒVƒ‡ƒ“‚ÌƒCƒ“ƒ^[ƒtƒFƒCƒX
+	/// <para>å¼•æ•°ãŒString^å‹ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿</para>
 	/// </summary>
-	[Guid("B73BF2FC-CA54-499E-B7B4-FDFE806E8CFA")]
-	[InterfaceType(ComInterfaceType::InterfaceIsDual)]
-	public interface class IVoiceCollection : ICollection<VoiceFileData^>
+	/// <param name="path">éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹</param>
+	/// <param name="name">éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«å</param>
+	VoiceFileInfo(System::String ^ path, System::String ^ name)
 	{
-		property int Count { int get(); };
-		System::String^ GetPath(int index);
-		System::String^ GetName(int index);
-		VoiceFileData^ GetItem(int index);
-		System::Collections::IEnumerator^ GetEnumerator(void);
-	};
+		this->path = path;
+		this->name = name;
+	}
 
 	/// <summary>
-	/// ‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^ƒRƒŒƒNƒVƒ‡ƒ“
+	/// <para>å¼•æ•°ãŒchar*å‹ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿</para>
 	/// </summary>
-	[ComVisible(true)]
+	/// <param name="path">éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹</param>
+	/// <param name="name">éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«å</param>
+	VoiceFileInfo(char *path, char *name)
+	{
+		this->path = gcnew System::String(path);
+		this->name = gcnew System::String(name);
+	}
+
+	/// <summary>
+	/// <para>å¼•æ•°ãŒwchar_t*å‹ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿</para>
+	/// </summary>
+	/// <param name="path">éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹</param>
+	/// <param name="name">éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«å</param>
+	VoiceFileInfo(wchar_t *path, wchar_t *name)
+	{
+		this->path = gcnew System::String(path);
+		this->name = gcnew System::String(name);
+	}
+
+	/// <summary>
+	/// <para>å¼•æ•°ãŒHtsVoiceFilelist*å‹ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿</para>
+	/// </summary>
+	/// <param name="data">HtsVoiceFilelist*å‹ã®éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿</param>
+	/// <returns></returns>
+	VoiceFileInfo(HtsVoiceFilelist *data)
+	{
+		this->path = gcnew System::String((const wchar_t *)data->pathU16);
+		this->name = gcnew System::String((const wchar_t *)data->nameU16);
+	}
+
+	/// <summary>
+	/// <para>å¼•æ•°ãŒchar*å‹1ã¤ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿</para>
+	/// </summary>
+	/// <param name="path">å¼•æ•°ãŒchar*å‹ã®éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹æ–‡å­—åˆ—</param>
+	/// <returns></returns>
+	VoiceFileInfo(wchar_t *path)
+	{
+		this->path = gcnew System::String(path);
+		this->name = IO::Path::GetFileNameWithoutExtension(this->path);
+	}
+
+	/// <summary>
+	/// <para>å¼•æ•°ãŒSystem::String^å‹1ã¤ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿</para>
+	/// </summary>
+	/// <param name="path">å¼•æ•°ãŒSystem::Stringå‹ã®éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹æ–‡å­—åˆ—</param>
+	/// <returns></returns>
+	VoiceFileInfo(System::String ^ path)
+	{
+		this->path = path;
+		this->name = IO::Path::GetFileNameWithoutExtension(this->path);
+	}
+
+	/// <summary>
+	/// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	/// </summary>
+	~VoiceFileInfo()
+	{
+		delete this->path;
+		delete this->name;
+		this->!VoiceFileInfo();
+	}
+
+	/// <summary>
+	/// ãƒ•ã‚¡ã‚¤ãƒŠãƒ©ã‚¤ã‚¶
+	/// </summary>
+	!VoiceFileInfo()
+	{
+	}
+};
+
+/// <summary>
+/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹
+/// </summary>
+[Guid("B73BF2FC-CA54-499E-B7B4-FDFE806E8CFA")]
+	[InterfaceType(ComInterfaceType::InterfaceIsDual)] public interface class IVoiceCollection : ICollection<VoiceFileInfo ^>
+{
+	property int Count { int get(); };
+	System::String ^ GetPath(int index);
+	System::String ^ GetName(int index);
+	VoiceFileInfo ^ GetItem(int index);
+	System::Collections::IEnumerator ^ GetEnumerator(void);
+};
+
+/// <summary>
+/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³
+/// </summary>
+[ComVisible(true)]
 #if defined(_x64_)
 	[Guid("ACFB19F9-F94D-45EA-B424-63B415503CB3")]
 #else
 	[Guid("D5AF2B5D-C932-4A4A-936A-C21CD82D41B2")]
 #endif
 	[ClassInterface(ClassInterfaceType::None)]
-	[ComDefaultInterface(IVoiceCollection::typeid)]
-	public ref class VoiceCollection : IVoiceCollection {
+	[ComDefaultInterface(IVoiceCollection::typeid)] public ref class VoiceCollection : IVoiceCollection
+{
 
-	internal:
-
-		/// <summary>
-		/// ‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^‚ÌƒŠƒXƒg
-		/// </summary>
-		System::Collections::Generic::List<VoiceFileData^>^ m_list = nullptr;
+	internal :
 
 		/// <summary>
-		/// <para>‰¹‹¿ƒtƒ@ƒCƒ‹‚ÌƒŠƒXƒg‚ªNULL‚Å‚È‚¢‚©ƒ`ƒFƒbƒN‚·‚éE</para>
-		/// <para>NULL‚È‚ç‚Î—áŠO‚ğ“Š‚°‚éB</para>
+		/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã®ãƒªã‚¹ãƒˆ
 		/// </summary>
-		void check_voicelist()
+		System::Collections::Generic::List<VoiceFileInfo ^> ^
+		m_list = nullptr;
+
+	/// <summary>
+	/// <para>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒªã‚¹ãƒˆãŒNULLã§ãªã„ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹ãƒ»</para>
+	/// <para>NULLãªã‚‰ã°ä¾‹å¤–ã‚’æŠ•ã’ã‚‹ã€‚</para>
+	/// </summary>
+	void check_voicelist()
+	{
+		if (m_list == nullptr)
 		{
-			if (m_list == nullptr)
-			{
-				throw gcnew System::Exception("“à•”ƒGƒ‰[F‰¹‹¿ƒtƒ@ƒCƒ‹ƒŠƒXƒg‚ªNULL‚Å‚·B");
-			}
+			throw gcnew System::Exception("å†…éƒ¨ã‚¨ãƒ©ãƒ¼ï¼šéŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆãŒNULLã§ã™ã€‚");
+		}
+	}
+
+	/// <summary>
+	/// <para>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®ç¯„å›²ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã€‚</para>
+	/// <para>ç¯„å›²ãŒãªã‚‰ã°ã€ä¾‹å¤–ã‚’æŠ•ã’ã‚‹ã€‚</para>
+	/// </summary>
+	/// <param name="index"></param>
+	void check_index(int index)
+	{
+		if (m_list == nullptr)
+		{
+			throw gcnew System::Exception("å†…éƒ¨ã‚¨ãƒ©ãƒ¼ï¼šéŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆãŒNULLã§ã™ã€‚");
 		}
 
-		/// <summary>
-		/// <para>‰¹‹¿ƒtƒ@ƒCƒ‹ƒŠƒXƒg‚ÌƒCƒ“ƒfƒbƒNƒX‚Ì”ÍˆÍ‚ğƒ`ƒFƒbƒN‚·‚éB</para>
-		/// <para>”ÍˆÍ‚ª‚È‚ç‚ÎA—áŠO‚ğ“Š‚°‚éB</para>
-		/// </summary>
-		/// <param name="index"></param>
-		void check_index(int index)
+		if (index < 0 || index >= m_list->Count)
 		{
-			if (m_list == nullptr)
-			{
-				throw gcnew System::Exception("“à•”ƒGƒ‰[F‰¹‹¿ƒtƒ@ƒCƒ‹ƒŠƒXƒg‚ªNULL‚Å‚·B");
-			}
-
-			if (index < 0 || index >= m_list->Count)
-			{
-				throw gcnew System::Exception("ƒCƒ“ƒfƒbƒNƒX‚ª”ÍˆÍŠO‚Å‚·B");
-			}
+			throw gcnew System::Exception("ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãŒç¯„å›²å¤–ã§ã™ã€‚");
 		}
+	}
 
-	public:
+  public:
+	/// <summary>
+	/// ãƒªã‚¹ãƒˆã‹ã‚‰è¦ç´ ã‚’å‰Šé™¤ã™ã‚‹ã€‚
+	/// </summary>
+	/// <param name="item">å‰Šé™¤ã™ã‚‹è¦ç´ </param>
+	/// <returns>å‰Šé™¤ãŒæˆåŠŸã—ãŸã‹ã©ã†ã‹</returns>
+	virtual bool Remove(VoiceFileInfo ^ item)
+	{
+		return m_list->Remove(item);
+	}
 
+	/// <summary>
+	/// ãƒªã‚¹ãƒˆã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
+	/// </summary>
+	/// <param name="arr">ã‚³ãƒ”ãƒ¼å…ˆ</param>
+	/// <param name="arrIndex">ã‚³ãƒ”ãƒ¼ã‚’é–‹å§‹ã™ã‚‹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹</param>
+	virtual void CopyTo(array<VoiceFileInfo ^> ^ arr, int arrIndex)
+	{
+		m_list->CopyTo(arr, arrIndex);
+	}
+
+	/// <summary>
+	/// æŒ‡å®šè¦ç´ ã‚’å«ã‚€ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹ã€‚
+	/// </summary>
+	/// <param name="item">èª¿ã¹ã‚‹è¦ç´ </param>
+	/// <returns>å«ã‚“ã§ã„ã‚‹ã‹ã©ã†ã‹</returns>
+	virtual bool Contains(VoiceFileInfo ^ item)
+	{
+		return m_list->Contains(item);
+	}
+
+	/// <summary>
+	/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ã€‚
+	/// </summary>
+	/// <param name="item"></param>
+	virtual void Add(VoiceFileInfo ^ item)
+	{
+		return m_list->Add(item);
+	}
+
+	/// <summary>
+	/// HtsVoiceFilelistå‹ã®è¦ç´ ã‹ã‚‰éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã‚’ä½œã‚Šã€è¿½åŠ ã™ã‚‹ã€‚
+	/// </summary>
+	/// <param name="data"></param>
+	virtual void Add(HtsVoiceFilelist *data)
+	{
+		VoiceFileInfo ^ item = gcnew VoiceFileInfo(data);
+		return m_list->Add(item);
+	}
+
+	/// <summary>
+	/// ã“ã®ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³ã®ãŒãƒªãƒ¼ãƒ‰ã‚ªãƒ³ãƒªãƒ¼å±æ€§
+	/// </summary>
+	property bool IsReadOnly
+	{
 		/// <summary>
-		/// ƒŠƒXƒg‚©‚ç—v‘f‚ğíœ‚·‚éB
+		/// <para>ãƒªãƒ¼ãƒ‰ã‚ªãƒ³ãƒªãƒ¼å±æ€§ã‚’å–å¾—ã™ã‚‹ã€‚</para>
+		/// <para>å½ã«å›ºå®š</para>
 		/// </summary>
-		/// <param name="item">íœ‚·‚é—v‘f</param>
-		/// <returns>íœ‚ª¬Œ÷‚µ‚½‚©‚Ç‚¤‚©</returns>
-		virtual bool Remove(VoiceFileData^ item)
+		/// <returns>å½</returns>
+		virtual bool get()
 		{
-			return m_list->Remove(item);
+			return false;
 		}
+	}
 
-		/// <summary>
-		/// ƒŠƒXƒg‚ğƒRƒs[‚·‚é
-		/// </summary>
-		/// <param name="arr">ƒRƒs[æ</param>
-		/// <param name="arrIndex">ƒRƒs[‚ğŠJn‚·‚éƒCƒ“ƒfƒbƒNƒX</param>
-		virtual void CopyTo(array<VoiceFileData^>^ arr, int arrIndex)
-		{
-			m_list->CopyTo(arr, arrIndex);
-		}
+	/// <summary>
+	/// GetEnumeratorã®å®Ÿè£…
+	/// </summary>
+	/// <returns></returns>
+	virtual System::Collections::IEnumerator ^ GetEnumerator() = System::Collections::IEnumerable::GetEnumerator
+	{
+		return m_list->GetEnumerator();
+	}
 
-		/// <summary>
-		/// w’è—v‘f‚ğŠÜ‚Ş‚©‚Ç‚¤‚©‚ğ’²‚×‚éB
-		/// </summary>
-		/// <param name="item">’²‚×‚é—v‘f</param>
-		/// <returns>ŠÜ‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©</returns>
-		virtual bool Contains(VoiceFileData^ item)
-		{
-			return m_list->Contains(item);
-		}
+	/// <summary>
+	/// Genericå‹æŒ‡å®šã®GetEnumeratorã®å®Ÿè£…
+	/// </summary>
+	/// <returns></returns>
+	virtual System::Collections::Generic::IEnumerator<VoiceFileInfo ^> ^ GetEnumerator_generic() = System::Collections::Generic::IEnumerable<VoiceFileInfo ^>::GetEnumerator
+	{
+		return m_list->GetEnumerator();
+	}
 
+	/// <summary>
+	/// <para>ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚¤ãƒ³ãƒ‡ã‚¯ã‚µ</para>
+	/// <para>ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’ä½¿ã£ã¦é…åˆ—ã®ã‚ˆã†ã«è¦ç´ ã«ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹</para>
+	/// </summary>
+	property VoiceFileInfo ^ default[ int ]
+	{
 		/// <summary>
-		/// ‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^‚ğ’Ç‰Á‚·‚éB
+		/// è¦ç´ ã‚’å–å¾—ã™ã‚‹
 		/// </summary>
-		/// <param name="item"></param>
-		virtual void Add(VoiceFileData^ item)
-		{
-			return m_list->Add(item);
-		}
-
-		/// <summary>
-		/// HtsVoiceFilelistŒ^‚Ì—v‘f‚©‚ç‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^‚ğì‚èA’Ç‰Á‚·‚éB
-		/// </summary>
-		/// <param name="data"></param>
-		virtual void Add(HtsVoiceFilelist* data)
-		{
-			VoiceFileData^ item = gcnew VoiceFileData(data);
-			return m_list->Add(item);
-		}
-
-		/// <summary>
-		/// ‚±‚ÌƒRƒŒƒNƒVƒ‡ƒ“‚Ì‚ªƒŠ[ƒhƒIƒ“ƒŠ[‘®«
-		/// </summary>
-		property bool IsReadOnly
-		{
-			/// <summary>
-			/// <para>ƒŠ[ƒhƒIƒ“ƒŠ[‘®«‚ğæ“¾‚·‚éB</para>
-			/// <para>‹U‚ÉŒÅ’è</para>
-			/// </summary>
-			/// <returns>‹U</returns>
-			virtual bool get()
-			{
-				return false;
-			}
-		}
-
-		/// <summary>
-		/// GetEnumerator‚ÌÀ‘•
-		/// </summary>
-		/// <returns></returns>
-		virtual System::Collections::IEnumerator^ GetEnumerator()
-			= System::Collections::IEnumerable::GetEnumerator
-		{
-			return m_list->GetEnumerator();
-		}
-
-		/// <summary>
-		/// GenericŒ^w’è‚ÌGetEnumerator‚ÌÀ‘•
-		/// </summary>
-		/// <returns></returns>
-		virtual System::Collections::Generic::IEnumerator<VoiceFileData^>^ GetEnumerator_generic()
-			= System::Collections::Generic::IEnumerable<VoiceFileData^>::GetEnumerator
-		{
-			return m_list->GetEnumerator();
-		}
-
-		/// <summary>
-		/// <para>ƒfƒtƒHƒ‹ƒgƒCƒ“ƒfƒNƒT</para>
-		/// <para>ƒCƒ“ƒfƒbƒNƒX‚ğg‚Á‚Ä”z—ñ‚Ì‚æ‚¤‚É—v‘f‚ÉƒAƒNƒZƒX‚·‚é</para>
-		/// </summary>
-		property VoiceFileData^ default[int]
-		{
-			/// <summary>
-			/// —v‘f‚ğæ“¾‚·‚é
-			/// </summary>
-			/// <param name="index">ƒCƒ“ƒfƒbƒNƒX</param>
-			/// <returns>‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^‚Ö‚Ìƒ|ƒCƒ“ƒ^</returns>
-			VoiceFileData^ get(int index)
-			{
-			return m_list[index];
-			}
-		}
-
-		/// <summary>
-		/// ‰Šú‰»”z—ñ—L‚è‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^
-		/// </summary>
-		/// <param name="data">‰Šú‰»ƒŠƒXƒg</param>
-		VoiceCollection(array<VoiceFileData^>^data)
-		{
-			m_list = gcnew System::Collections::Generic::List<VoiceFileData^>();
-			m_list->AddRange(data);
-		}
-
-		/// <summary>
-		/// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-		/// </summary>
-		VoiceCollection()
-		{
-			m_list = gcnew System::Collections::Generic::List<VoiceFileData^>();
-		}
-
-		/// <summary>
-		/// ƒfƒXƒgƒ‰ƒNƒ^
-		/// </summary>
-		~VoiceCollection()
-		{
-			m_list->Clear();
-		}
-
-		/// <summary>
-		/// ƒtƒ@ƒCƒiƒ‰ƒCƒU
-		/// </summary>
-		!VoiceCollection()
-		{
-		}
-
-		/// <summary>
-		/// w’è‚³‚ê‚½ƒCƒ“ƒfƒbƒNƒX‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^‚ğæ“¾‚·‚é
-		/// </summary>
-		/// <param name="index">”z—ñ“Y‚¦š</param>
-		/// <returns>‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^</returns>
-		virtual VoiceFileData^ GetItem(int index)
-		{
+		/// <param name="index">ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹</param>
+		/// <returns>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã¸ã®ãƒã‚¤ãƒ³ã‚¿</returns>
+		VoiceFileInfo ^ get(int index) {
 			check_voicelist();
 			check_index(index);
 			return m_list[index];
 		}
+	}
+
+	/// <summary>
+	/// åˆæœŸåŒ–é…åˆ—æœ‰ã‚Šã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	/// </summary>
+	/// <param name="data">åˆæœŸåŒ–ãƒªã‚¹ãƒˆ</param>
+	VoiceCollection(array<VoiceFileInfo ^> ^ data)
+	{
+		m_list = gcnew System::Collections::Generic::List<VoiceFileInfo ^>();
+		m_list->AddRange(data);
+	}
+
+	/// <summary>
+	/// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	/// </summary>
+	VoiceCollection()
+	{
+		m_list = gcnew System::Collections::Generic::List<VoiceFileInfo ^>();
+	}
+
+	/// <summary>
+	/// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	/// </summary>
+	~VoiceCollection()
+	{
+		m_list->Clear();
+	}
+
+	/// <summary>
+	/// ãƒ•ã‚¡ã‚¤ãƒŠãƒ©ã‚¤ã‚¶
+	/// </summary>
+	!VoiceCollection()
+	{
+	}
+
+	/// <summary>
+	/// æŒ‡å®šã•ã‚ŒãŸã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—ã™ã‚‹
+	/// </summary>
+	/// <param name="index">é…åˆ—æ·»ãˆå­—</param>
+	/// <returns>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿</returns>
+	virtual VoiceFileInfo ^ GetItem(int index) {
+		check_voicelist();
+		check_index(index);
+		return m_list[index];
+	}
 
 		/// <summary>
-		/// w’è‚³‚ê‚½ƒCƒ“ƒfƒbƒNƒX‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹‚ÌƒpƒX‚ğæ“¾‚·‚é
+		/// æŒ‡å®šã•ã‚ŒãŸã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹ã‚’å–å¾—ã™ã‚‹
 		/// </summary>
-		/// <param name="index">”z—ñ“Y‚¦š</param>
-		/// <returns>ƒpƒX•¶š—ñ</returns>
-		virtual System::String^ GetPath(int index)
-		{
-			check_voicelist();
-			check_index(index);
-			return m_list[index]->path;
-		}
+		/// <param name="index">é…åˆ—æ·»ãˆå­—</param>
+		/// <returns>ãƒ‘ã‚¹æ–‡å­—åˆ—</returns>
+		virtual System::String
+		^ GetPath(int index) {
+			  check_voicelist();
+			  check_index(index);
+			  return m_list[index]->path;
+		  }
 
 		/// <summary>
-		/// w’è‚³‚ê‚½ƒCƒ“ƒfƒbƒNƒX‚Ì‰¹‹¿ƒtƒ@ƒCƒ‹‚Ì–¼‘O‚ğæ“¾‚·‚é
+		/// æŒ‡å®šã•ã‚ŒãŸã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®åå‰ã‚’å–å¾—ã™ã‚‹
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		virtual System::String^ GetName(int index)
-		{
-			check_voicelist();
-			check_index(index);
-			return m_list[index]->name;
-		}
+		virtual System::String
+		^ GetName(int index) {
+			  check_voicelist();
+			  check_index(index);
+			  return m_list[index]->name;
+		  }
 
 		/// <summary>
-		/// ‰¹‹¿ƒtƒ@ƒCƒ‹ƒRƒŒƒNƒVƒ‡ƒ“‚ğƒNƒŠƒA‚·‚é
+		/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
 		/// </summary>
 		virtual void Clear(void)
+	{
+		check_voicelist();
+		m_list->Clear();
+	}
+
+	/// <summary>
+	/// éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³ã®æ•°
+	/// </summary>
+	property int Count
+	{
+		/// <summary>
+		/// ã‚«ã‚¹ã‚’æ•°ãˆã‚‹
+		/// </summary>
+		/// <returns></returns>
+		virtual int get()
 		{
 			check_voicelist();
-			m_list->Clear();
+			return m_list->Count;
 		}
+	}
+};
 
-		/// <summary>
-		/// ‰¹‹¿ƒtƒ@ƒCƒ‹ƒRƒŒƒNƒVƒ‡ƒ“‚Ì”
-		/// </summary>
-		property int Count
-		{
-			/// <summary>
-			/// ƒJƒX‚ğ”‚¦‚é
-			/// </summary>
-			/// <returns></returns>
-			virtual int get()
-			{
-				check_voicelist();
-				return m_list->Count;
-			}
-		}
-	};
-
-	/// <summary>
-	/// <para>TTS‚Ì‚½‚ß‚ÌƒCƒ“ƒ^[ƒtƒFƒCƒX</para>
-	/// </summary>
-	[Guid("6EEAAEE7-DD5F-44DD-A32F-A30A148E6D7A")]
-	[InterfaceType(ComInterfaceType::InterfaceIsDual)]
-	public interface class IJTalkTTS
+/// <summary>
+/// <para>TTSã®ãŸã‚ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹</para>
+/// </summary>
+[Guid("6EEAAEE7-DD5F-44DD-A32F-A30A148E6D7A")]
+	[InterfaceType(ComInterfaceType::InterfaceIsDual)] public interface class IJTalkTTS
+{
+	void Refresh();
+	property unsigned int SamplingFrequency
 	{
-		void Refresh();
-		property unsigned int SamplingFrequency {  void set(unsigned int value); }
-		property unsigned int S { void set(unsigned int value); }
-		property unsigned int Fperiod {  void set(unsigned int value); }
-		property unsigned int P {  void set(unsigned int value); }
-		property double Alpha {  void set(double value); }
-		property double A {  void set(double value); }
-		property double Beta {  void set(double value); }
-		property double B {  void set(double value); }
-		property double Speed {  void set(double value); }
-		property double R {  void set(double value); }
-		property double AdditionalHalfTone {  void set(double value); }
-		property double FM {  void set(double value); }
-		property double MSDThreshold {  void set(double value); }
-		property double U {  void set(double value); }
-		property double GVWeightForSpectrum {  void set(double value); }
-		property double JM {  void set(double value); }
-		property double GVWeightForLogF0 {  void set(double value); }
-		property double JF {  void set(double value); }
-		property double Volume {  void set(double value); }
-		property double G {  void set(double value); }
-		property System::String^ Dic { void set(System::String^ value); }
-		property System::String^ VoiceDir {  void set(System::String^ value); }
-		property System::String^ Voice { void set(System::String^ value); }
-		void SpeakSync(System::String^ text);
-		void SpeakAsync(System::String^ text);
-		void Stop();
-		property bool IsSpeaking {bool get(); }
-		void WaitUntilDone();
-		void Wait();
-		void Wait(int duration);
-		void SpeakToFile(System::String^ text, System::String^ file);
-		property VoiceCollection ^Voices {VoiceCollection ^get(); }
-	};
+		void set(unsigned int value);
+		unsigned int get();
+	}
+	property unsigned int S
+	{
+		void set(unsigned int value);
+		unsigned int get();
+	}
+	property unsigned int Fperiod
+	{
+		void set(unsigned int value);
+		unsigned int get();
+	}
+	property unsigned int P
+	{
+		void set(unsigned int value);
+		unsigned int get();
+	}
+	property double Alpha
+	{
+		void set(double value);
+		double get();
+	}
+	property double A
+	{
+		void set(double value);
+		double get();
+	}
+	property double Beta
+	{
+		void set(double value);
+		double get();
+	}
+	property double B
+	{
+		void set(double value);
+		double get();
+	}
+	property double Speed
+	{
+		void set(double value);
+		double get();
+	}
+	property double R
+	{
+		void set(double value);
+		double get();
+	}
+	property double AdditionalHalfTone
+	{
+		void set(double value);
+		double get();
+	}
+	property double Fm
+	{
+		void set(double value);
+		double get();
+	}
+	property double MsdThreshold
+	{
+		void set(double value);
+		double get();
+	}
+	property double U
+	{
+		void set(double value);
+		double get();
+	}
+	property double GvWeightForSpectrum
+	{
+		void set(double value);
+		double get();
+	}
+	property double Jm
+	{
+		void set(double value);
+		double get();
+	}
+	property double GvWeightForLogF0
+	{
+		void set(double value);
+		double get();
+	}
+	property double Jf
+	{
+		void set(double value);
+		double get();
+	}
+	property double Volume
+	{
+		void set(double value);
+		double get();
+	}
+	property double G
+	{
+		void set(double value);
+		double get();
+	}
+	property System::String ^ Dic { void set(System::String^ value); System::String^ get(); }
+	property System::String ^ VoiceDir {  void set(System::String^ value);  System::String^ get(); }
+	property System::String ^ VoiceName { void set(System::String^ value); System::String^ get(); }
+	property System::String ^ VoicePath { void set(System::String^ value); System::String^ get(); }
+	property VoiceFileInfo ^ Voice { void set(VoiceFileInfo^ value); VoiceFileInfo^ get(); }
+	property bool IsSpeaking { bool get(); }
+	property bool IsPaused { bool get(); }
+	property bool IsFinished { bool get(); }
+	property VoiceCollection ^ Voices { VoiceCollection ^ get(); }
+	void SpeakSync(System::String ^ text);
+	void SpeakAsync(System::String ^ text);
+	void Say(System::String ^ text);
+	void SpeakToFile(System::String ^ text, System::String ^ file);
+	void Pause();
+	void PauseMethod();
+	void Resume();
+	void ResumeMethod();
+	void Stop();
+	void StopMethod();
+	void WaitUntilDone();
+	void Wait();
+	void Wait(int duration);
+};
 
-	/// <summary>
-	/// TTSƒNƒ‰ƒX
-	/// </summary>
-	[ProgId("OpenJTalk.TTS")]
+/// <summary>
+/// TTSã‚¯ãƒ©ã‚¹
+/// </summary>
+[ProgId("JTalk.TTS")]
 	[ComVisible(true)]
 #if defined(_x64_)
 	[Guid("69535960-A7A5-4E9B-8A14-C1CD4BD97734")]
@@ -459,743 +577,1107 @@ namespace Openjtalk {
 	[ClassInterface(ClassInterfaceType::None)]
 	[ComDefaultInterface(IJTalkTTS::typeid)]
 	/// <summary>
-	/// OpenJTalk ‚ğ—p‚¢‚½ TextToSpeech ‚ğÀŒ»‚·‚éƒNƒ‰ƒX
+	/// OpenJTalk ã‚’ç”¨ã„ãŸ TextToSpeech ã‚’å®Ÿç¾ã™ã‚‹ã‚¯ãƒ©ã‚¹
 	/// </summary>
-	public ref class JTalkTTS : IJTalkTTS {
+	public ref class JTalkTTS : IJTalkTTS
+{
 
-	internal:
+	internal :
 		/// <summary>
-		/// ‰ºˆÊŠÖ”‚Å—p‚¢‚éƒf[ƒ^\‘¢‘Ì
+		/// ä¸‹ä½é–¢æ•°ã§ç”¨ã„ã‚‹ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“
 		/// </summary>
 		OpenJTalk *m_openjtalk = NULL;
 
-		/// <summary>
-		/// <para>‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^‚ÌƒRƒŒƒNƒVƒ‡ƒ“</para>
-		/// <para>VBScript‚Å For Each ‚ÌƒOƒ‹[ƒv‚Éw’è‰Â”\</para>
-		/// <para>JScript‚Å Enumerator() ‚Ìˆø”‚Éw’è‰Â”\</para>
-		/// </summary>
-		VoiceCollection^ m_voiceCollection = nullptr;
+	/// <summary>
+	/// <para>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã®ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³</para>
+	/// <para>VBScriptã§ For Each ã®ã‚°ãƒ«ãƒ¼ãƒ—ã«æŒ‡å®šå¯èƒ½</para>
+	/// <para>JScriptã§ Enumerator() ã®å¼•æ•°ã«æŒ‡å®šå¯èƒ½</para>
+	/// </summary>
+	VoiceCollection ^ m_voiceCollection = nullptr;
 
-		/// <summary>
-		/// <para>openjtalk \‘¢‘Ì‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ªNULL‚©‚Ç‚¤‚©’²‚×‚éB</para>
-		/// <para>NULL‚È‚ç‚Î—áŠO‚ğ“Š‚°‚éB</para>
-		/// </summary>
-		void check_struct()
+	/// <summary>
+	/// <para>openjtalk æ§‹é€ ä½“ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã‹ã©ã†ã‹èª¿ã¹ã‚‹ã€‚</para>
+	/// <para>NULLãªã‚‰ã°ä¾‹å¤–ã‚’æŠ•ã’ã‚‹ã€‚</para>
+	/// </summary>
+	void check_openjtalk_object()
+	{
+		if (!m_openjtalk)
 		{
-			if (!m_openjtalk)
-			{
-				throw gcnew System::Exception("“à•”ƒGƒ‰[F\‘¢‘Ì‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ªNULL‚Å‚·B");
-			}
+			throw gcnew System::Exception("å†…éƒ¨ã‚¨ãƒ©ãƒ¼ï¼šæ§‹é€ ä½“ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
 		}
+	}
 
-		/// <summary>
-		/// <para>‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^‚ÌƒŠƒXƒg‚ğ¶¬‚·‚éB</para>
-		/// <para>g—pŒã‚Ídelete_voice_list‚ğg‚Á‚Ä‰ğ•ú‚·‚éB</para>
-		/// </summary>
-		void generate_voice_list()
+	/// <summary>
+	/// <para>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã®ãƒªã‚¹ãƒˆã‚’ç”Ÿæˆã™ã‚‹ã€‚</para>
+	/// <para>ä½¿ç”¨å¾Œã¯delete_voice_listã‚’ä½¿ã£ã¦è§£æ”¾ã™ã‚‹ã€‚</para>
+	/// </summary>
+	void generate_voice_list()
+	{
+		check_openjtalk_object();
+
+		if (m_voiceCollection)
 		{
-			check_struct();
-
-			if (m_voiceCollection)
-			{
-				m_voiceCollection->Clear();
-			}
-			else
-			{
-				m_voiceCollection = gcnew VoiceCollection();
-			}
-
-			HtsVoiceFilelist *result = OpenJTalk_getHTSVoiceList(m_openjtalk);
-			if (result)
-			{
-				for (HtsVoiceFilelist* list = result; list != NULL; list = list->succ)
-				{
-					m_voiceCollection->Add(list);
-				}
-				OpenJTalk_clearHTSVoiceList(m_openjtalk, result);
-			}
-		}
-
-		/// <summary>
-		/// <para>‰¹‹¿ƒtƒ@ƒCƒ‹ƒf[ƒ^‚ÌƒŠƒXƒg‚ğ‰ğ•ú‚·‚éB</para>
-		/// </summary>
-		void delete_voice_list()
-		{
-			check_struct();
 			m_voiceCollection->Clear();
 		}
-
-	public:
-
-		/// <summary>
-		/// <para>ƒRƒ“ƒXƒgƒ‰ƒNƒ^</para>
-		/// </summary>
-		JTalkTTS()
+		else
 		{
-			m_openjtalk = OpenJTalk_initialize();
-			check_struct();
-			generate_voice_list();
+			m_voiceCollection = gcnew VoiceCollection();
 		}
 
-		/// <summary>
-		/// <para>JTalkTTSƒNƒ‰ƒX‚ÌƒfƒXƒgƒ‰ƒNƒ^</para>
-		/// </summary>
-		~JTalkTTS()
+		HtsVoiceFilelist *htsvList = openjtalk_getHTSVoiceListU16(m_openjtalk);
+		if (htsvList)
 		{
-			delete_voice_list();
-			delete m_voiceCollection;
-			this->!JTalkTTS();
-		}
-
-		/// <summary>
-		/// <para>JTalkTTSƒNƒ‰ƒX‚Ìƒtƒ@ƒCƒiƒ‰ƒCƒU</para>
-		/// </summary>
-		!JTalkTTS()
-		{
-			check_struct();
-
-			OpenJTalk_clear(m_openjtalk);
-		}
-
-		/// <summary>
-		/// <para>ƒNƒ‰ƒX‚ÌƒŠƒtƒŒƒbƒVƒ…‚ğs‚¤B </para>
-		/// <para>Eİ’è‚ÌƒNƒŠƒA</para>
-		/// <para>Eİ’èƒtƒ@ƒCƒ‹‚ª‚ ‚ê‚ÎÄ“Ç‚İ‚İ</para>
-		/// </summary>
-		virtual void Refresh()
-		{
-			check_struct();
-
-			OpenJTalk_refresh(m_openjtalk);
-
-		}
-
-		/// <summary>
-		/// —˜—p‰Â”\‚È‰¹‹¿ƒtƒ@ƒCƒ‹‚ÌƒRƒŒƒNƒVƒ‡ƒ“
-		/// </summary>
-		property VoiceCollection^ Voices
-		{
-			/// <summary>
-			/// —˜—p‰Â”\‚È‰¹‹¿ƒtƒ@ƒCƒ‹ƒRƒŒƒNƒVƒ‡ƒ“‚ğæ“¾‚·‚é
-			/// </summary>
-			/// <returns>—˜—p‰Â”\‚È‰¹‹¿ƒtƒ@ƒCƒ‹ƒRƒŒƒNƒVƒ‡ƒ“</returns>
-			virtual VoiceCollection^get()
+			for (HtsVoiceFilelist *list = htsvList; list != NULL; list = list->succ)
 			{
+				m_voiceCollection->Add(list);
+			}
+			openjtalk_clearHTSVoiceList(m_openjtalk, htsvList);
+		}
+	}
+
+	/// <summary>
+	/// <para>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã®ãƒªã‚¹ãƒˆã‚’è§£æ”¾ã™ã‚‹ã€‚</para>
+	/// </summary>
+	void delete_voice_list()
+	{
+		check_openjtalk_object();
+		m_voiceCollection->Clear();
+	}
+
+  public:
+	/// <summary>
+	/// <para>ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿</para>
+	/// </summary>
+	JTalkTTS(System::String ^ voicePath, System::String ^ dicPath, System::String ^ voiceDirPath)
+	{
+		const char16_t *voicePathPtr = NULL;
+		const char16_t *dicPathPtr = NULL;
+		const char16_t *voiceDirPathPtr = NULL;
+		marshal_context ctx;
+		if (voicePath != nullptr)
+		{
+			voicePathPtr = (const char16_t *)ctx.marshal_as<const wchar_t *>(voicePath);
+		}
+		if (dicPath != nullptr)
+		{
+			dicPathPtr = (const char16_t *)ctx.marshal_as<const wchar_t *>(dicPath);
+		}
+		if (voiceDirPath != nullptr)
+		{
+			voiceDirPathPtr = (const char16_t *)ctx.marshal_as<const wchar_t *>(voiceDirPath);
+		}
+		m_openjtalk = openjtalk_initializeU16(voicePathPtr, dicPathPtr, voiceDirPathPtr);
+		check_openjtalk_object();
+		generate_voice_list();
+	}
+	JTalkTTS(System::String ^ voicePath, System::String ^ dicPath)
+	{
+		const char16_t *voicePathPtr = NULL;
+		const char16_t *dicPathPtr = NULL;
+		marshal_context ctx;
+		if (voicePath != nullptr)
+		{
+			voicePathPtr = (const char16_t *)ctx.marshal_as<const wchar_t *>(voicePath);
+		}
+		if (dicPath != nullptr)
+		{
+			dicPathPtr = (const char16_t *)ctx.marshal_as<const wchar_t *>(dicPath);
+		}
+		m_openjtalk = openjtalk_initializeU16(voicePathPtr, dicPathPtr, NULL);
+		check_openjtalk_object();
+		generate_voice_list();
+	}
+	JTalkTTS(System::String ^ voicePath)
+	{
+		const char16_t *voicePathPtr = NULL;
+		marshal_context ctx;
+		if (voicePath != nullptr)
+		{
+			voicePathPtr = (const char16_t *)ctx.marshal_as<const wchar_t *>(voicePath);
+		}
+		m_openjtalk = openjtalk_initializeU16(voicePathPtr, NULL, NULL);
+		check_openjtalk_object();
+		generate_voice_list();
+	}
+	JTalkTTS()
+	{
+		m_openjtalk = openjtalk_initializeU16(NULL, NULL, NULL);
+		check_openjtalk_object();
+		generate_voice_list();
+	}
+
+	/// <summary>
+	/// <para>JTalkTTSã‚¯ãƒ©ã‚¹ã®ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿</para>
+	/// </summary>
+	~JTalkTTS()
+	{
+		delete_voice_list();
+		delete m_voiceCollection;
+		this->!JTalkTTS();
+	}
+
+	/// <summary>
+	/// <para>JTalkTTSã‚¯ãƒ©ã‚¹ã®ãƒ•ã‚¡ã‚¤ãƒŠãƒ©ã‚¤ã‚¶</para>
+	/// </summary>
+	!JTalkTTS()
+	{
+		check_openjtalk_object();
+		openjtalk_clear(m_openjtalk);
+	}
+
+	/// <summary>
+	/// <para>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒå¤‰æ›´ã•ã‚ŒãŸå¾Œã®å‡¦ç†ã®ã‚¤ãƒ™ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ©</para>
+	/// </summary>
+	event EventHandler ^ VoiceListChanged;
+
+  protected:
+	/// <summary>
+	/// <para>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒå¤‰æ›´ã•ã‚ŒãŸã‚ã¨ã«è¡Œã†å‡¦ç† </para>
+	/// <param name="e">ã‚¤ãƒ™ãƒ³ãƒˆå¼•æ•°</param>
+	/// </summary>
+	void OnVoiceListChanged(EventArgs ^ e)
+	{
+		VoiceListChanged(this, e);
+	}
+
+  public:
+	/// <summary>
+	/// <para>ã‚¯ãƒ©ã‚¹ã®ãƒªãƒ•ãƒ¬ãƒƒã‚·ãƒ¥ã‚’è¡Œã†ã€‚ </para>
+	/// <para>ãƒ»è¨­å®šã®ã‚¯ãƒªã‚¢</para>
+	/// <para>ãƒ»è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã‚Œã°å†èª­ã¿è¾¼ã¿</para>
+	/// </summary>
+	virtual void Refresh()
+	{
+		check_openjtalk_object();
+		openjtalk_refresh(m_openjtalk);
+	}
+
+	/// <summary>
+	/// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šéŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€
+	/// </summary>
+	property System::String ^ VoiceDir {
+		/// <summary>
+		/// <para>éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€ã®è¨­å®š</para>
+		/// </summary>
+		/// <param name="path">ãƒ‘ã‚¹æ–‡å­—åˆ—</param>
+		virtual void set(System::String ^ path)
+		{
+			check_openjtalk_object();
+
+			if (!path)
+			{
+				throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€ã‚’ç¤ºã™æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
+			}
+			if (!Directory::Exists(path))
+			{
+				throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
+			}
+			delete_voice_list();
+			marshal_context ctx;
+			const wchar_t *str = ctx.marshal_as<const wchar_t *>(path);
+			if (!openjtalk_setVoiceDirU16(m_openjtalk, (const char16_t *)str))
+			{
+				throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€ã‚’è¨­å®šã§ãã¾ã›ã‚“ã€‚");
+			}
+			generate_voice_list();
+			OnVoiceListChanged(EventArgs::Empty);
+		}
+
+		virtual System::String ^ get() {
+			check_openjtalk_object();
+			System::String ^ res = nullptr;
+			char16_t path[MAX_PATH];
+			wchar_t *temp = (wchar_t *)openjtalk_getVoiceDirU16(m_openjtalk, path);
+			if (temp)
+			{
+				res = gcnew System::String(temp);
+			}
+			return res;
+		}
+	}
+
+		/// <summary>
+		/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼ˆè¨­å®šã®ã¿ï¼‰</para>
+		/// <para>ä»¥é™ã®ç™ºå£°ã§ä½¿ç”¨ã™ã‚‹éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®è¨­å®š</para>
+		/// <para>ä¸‰é€šã‚Šã®æŒ‡å®šæ–¹æ³•</para>
+		/// <para>ãƒ»çµ¶å¯¾ãƒ‘ã‚¹...ãƒ•ã‚¡ã‚¤ãƒ«ã®ç›´æ¥æŒ‡å®š</para>
+		/// <para>ãƒ»ç›¸å¯¾ãƒ‘ã‚¹ï¼ˆæ‹¡å¼µå­æœ‰ã‚Šï¼‰...éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€å†…ã§ã®ç›¸å¯¾æŒ‡å®š</para>
+		/// <para>ãƒ»åå‰ã®ã¿ï¼ˆæ‹¡å¼µå­ç„¡ã—ï¼‰...éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ«ãƒ€å†…ã‚’æ¢ç´¢</para>
+		/// <para>æ¢ç´¢ã«ã¤ã„ã¦ï¼š</para>
+		/// <para>æ¢ç´¢ç¯„å›²ã«è¤‡æ•°é©åˆã™ã‚‹ã‚‚ã®ãŒã‚ã£ã¦ã‚‚ã€æœ€åˆã«è¦‹ã¤ã‘ãŸã‚‚ã®ã¨ã™ã‚‹ã€‚</para>
+		/// <para>ã“ã®ã¨ãã®æ¢ç´¢é †åºã¯readdirã®å‡¦ç†ã«ä¾å­˜ã—ã¦ã„ã‚‹ã€‚</para>
+		/// <para>æ¢ç´¢åã«ã¯ãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰ï¼ˆ*?ï¼‰ã‚’ä½¿ç”¨ã§ãã‚‹ã€‚</para>
+		/// <para>æ¢ç´¢å¯¾è±¡ãŒå¤šã„ã¨ãã¯1000ãƒ•ã‚¡ã‚¤ãƒ«æ¢ç´¢ã—ã¦ã‚‚è¦‹ã¤ã‹ã‚‰ãªã‘ã‚Œã°æ¢ç´¢ã‚’ä¸­æ­¢ã™ã‚‹ã€‚</para>
+		/// </summary>
+		property VoiceFileInfo ^
+		Voice {
+			virtual void set(VoiceFileInfo ^ info)
+			{
+				check_openjtalk_object();
+				if (!info)
+				{
+					throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¤ºã™æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
+				}
+				System::String ^ path = info->path;
+				if (!path)
+				{
+					throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¤ºã™æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
+				}
+				if (path->Length == 0)
+				{
+					throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¤ºã™æ–‡å­—åˆ—ãŒç©ºã§ã™ã€‚");
+				}
+				marshal_context ctx;
+				const wchar_t *str = ctx.marshal_as<const wchar_t *>(path);
+				if (!openjtalk_setVoiceU16(m_openjtalk, (const char16_t *)str))
+				{
+					throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è¨­å®šã§ãã¾ã›ã‚“ã€‚");
+				}
+			}
+
+			virtual VoiceFileInfo ^ get() {
+				check_openjtalk_object();
+				VoiceFileInfo ^ res = nullptr;
+				char16_t path[MAX_PATH];
+				if (openjtalk_getVoicePathU16(m_openjtalk, path) == nullptr)
+				{
+					return nullptr;
+				}
+				char16_t name[MAX_PATH];
+				if (openjtalk_getVoiceNameU16(m_openjtalk, name) == nullptr)
+				{
+					return nullptr;
+				}
+				return gcnew VoiceFileInfo((wchar_t *)path, (wchar_t *)name);
+			}
+		}
+
+		property System::String ^
+		VoiceName {
+			/// <summary>
+			/// <para>ä»¥é™ã®ç™ºå£°ã§ä½¿ç”¨ã™ã‚‹éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®è¨­å®š</para>
+			/// </summary>
+			/// <param name="path">éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¤ºã™æ–‡å­—åˆ—</param>
+			virtual void set(System::String ^ name)
+			{
+				check_openjtalk_object();
+
+				if (!name)
+				{
+					throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¤ºã™æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
+				}
+				if (name->Length == 0)
+				{
+					throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¤ºã™æ–‡å­—åˆ—ãŒç©ºã§ã™ã€‚");
+				}
+				marshal_context ctx;
+				const wchar_t *str = ctx.marshal_as<const wchar_t *>(name);
+				if (!openjtalk_setVoiceU16(m_openjtalk, (const char16_t *)str))
+				{
+					throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è¨­å®šã§ãã¾ã›ã‚“ã€‚");
+				}
+			}
+
+			virtual System::String ^ get() {
+				check_openjtalk_object();
+				System::String ^ res = nullptr;
+				char16_t path[MAX_PATH];
+				wchar_t *temp = (wchar_t *)openjtalk_getVoiceU16(m_openjtalk, path);
+				if (temp)
+				{
+					System::String ^ path = gcnew System::String(temp);
+					System::String ^ name = IO::Path::GetFileNameWithoutExtension(path);
+					res = name;
+				}
+				return res;
+			}
+		}
+
+		property System::String ^
+		VoicePath {
+			/// <summary>
+			/// <para>ä»¥é™ã®ç™ºå£°ã§ä½¿ç”¨ã™ã‚‹éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®è¨­å®š</para>
+			/// </summary>
+			/// <param name="path">éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¤ºã™æ–‡å­—åˆ—</param>
+			virtual void set(System::String ^ path)
+			{
+				check_openjtalk_object();
+
+				if (!path)
+				{
+					throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¤ºã™æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
+				}
+				if (path->Length == 0)
+				{
+					throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¤ºã™æ–‡å­—åˆ—ãŒç©ºã§ã™ã€‚");
+				}
+				marshal_context ctx;
+				const wchar_t *str = ctx.marshal_as<const wchar_t *>(path);
+				if (!openjtalk_setVoiceU16(m_openjtalk, (const char16_t *)str))
+				{
+					throw gcnew System::Exception("éŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è¨­å®šã§ãã¾ã›ã‚“ã€‚");
+				}
+			}
+
+			virtual System::String ^ get() {
+				check_openjtalk_object();
+				System::String ^ res = nullptr;
+				char16_t path[MAX_PATH];
+				wchar_t *temp = (wchar_t *)openjtalk_getVoiceU16(m_openjtalk, path);
+				if (temp)
+				{
+					res = gcnew System::String(temp);
+				}
+				return res;
+			}
+		}
+
+		/// <summary>
+		/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šè¾æ›¸ãƒ•ã‚©ãƒ«ãƒ€</para>
+		/// </summary>
+		property System::String ^
+		Dic {
+			/// <summary>
+			/// <para>è¾æ›¸ãƒ•ã‚©ãƒ«ãƒ€ã®è¨­å®š</para>
+			/// </summary>
+			/// <param name="path">ãƒ‘ã‚¹æ–‡å­—åˆ—</param>
+			virtual void set(System::String ^ path)
+			{
+				check_openjtalk_object();
+
+				if (!path)
+				{
+					throw gcnew System::Exception("è¾æ›¸ãƒ•ã‚©ãƒ«ãƒ€ã‚’ç¤ºã™æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
+				}
+				if (!Directory::Exists(path))
+				{
+					throw gcnew System::Exception("è¾æ›¸ãƒ•ã‚©ãƒ«ãƒ€ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
+				}
+				marshal_context ctx;
+				const wchar_t *str = ctx.marshal_as<const wchar_t *>(path);
+				if (!openjtalk_setDicU16(m_openjtalk, (const char16_t *)str))
+				{
+					throw gcnew System::Exception("è¾æ›¸ãƒ•ã‚©ãƒ«ãƒ€ã‚’è¨­å®šã§ãã¾ã›ã‚“ã€‚UTF-8å‘ã‘ã®è¾æ›¸ã§ã¯ãªã„ã‹ã‚‚ã—ã‚Œã¾ã›ã‚“ã€‚");
+				}
+			}
+
+			virtual System::String ^ get() {
+				check_openjtalk_object();
+				System::String ^ res = nullptr;
+				char16_t path[MAX_PATH];
+				wchar_t *temp = (wchar_t *)openjtalk_getDicU16(m_openjtalk, path);
+				if (temp)
+				{
+					res = gcnew System::String(temp);
+				}
+				return res;
+			}
+		}
+
+		/// <summary>
+		/// åˆ©ç”¨å¯èƒ½ãªéŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³
+		/// </summary>
+		property VoiceCollection ^
+		Voices {
+			/// <summary>
+			/// åˆ©ç”¨å¯èƒ½ãªéŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³ã‚’å–å¾—ã™ã‚‹
+			/// </summary>
+			/// <returns>åˆ©ç”¨å¯èƒ½ãªéŸ³éŸ¿ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³</returns>
+			virtual VoiceCollection ^ get() {
 				return m_voiceCollection;
 			}
 		}
 
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒTƒ“ƒvƒŠƒ“ƒOü”g”</para>
+		/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å‘¨æ³¢æ•°</para>
 		/// </summary>
 		property unsigned int SamplingFrequency
-		{
-			/// <summary>
-			/// <para>ƒTƒ“ƒvƒŠƒ“ƒOü”g”‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li1…ij</param>
-			virtual void set(unsigned int value)
-			{
-				check_struct();
-
-				if (value < 1)
-				{
-					throw gcnew System::Exception("sampling frequency ‚Ì’l‚Í1ˆÈã‚Ì®”‚Å‚·B");
-				}
-				OpenJTalk_setSamplingFrequency(m_openjtalk, value);
-			}
-		}
-
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒTƒ“ƒvƒŠƒ“ƒOü”g”</para>
+		/// <para>ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å‘¨æ³¢æ•°ã®è¨­å®š</para>
 		/// </summary>
-		property unsigned int S
+		/// <param name="value">å€¤ï¼ˆ1â‰¦iï¼‰</param>
+		virtual void set(unsigned int value)
 		{
-			/// <summary>
-			/// <para>ƒTƒ“ƒvƒŠƒ“ƒOü”g”‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li1…ij</param>
-			virtual void set(unsigned int value)
+			check_openjtalk_object();
+
+			if (value < 1)
 			{
-				SamplingFrequency = value;
+				throw gcnew System::Exception("sampling frequency ã®ç¯„å›²ã¯1ä»¥ä¸Šã®æ•´æ•°ã§ã™ã€‚");
 			}
+			openjtalk_setSamplingFrequency(m_openjtalk, value);
 		}
 
+		virtual unsigned int get()
+		{
+			check_openjtalk_object();
+			return openjtalk_getSamplingFrequency(m_openjtalk);
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å‘¨æ³¢æ•°</para>
+	/// </summary>
+	property unsigned int S
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒtƒŒ[ƒ€ƒsƒŠƒIƒh</para>
+		/// <para>ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å‘¨æ³¢æ•°ã®è¨­å®š</para>
 		/// </summary>
-		property unsigned int Fperiod
+		/// <param name="value">å€¤ï¼ˆ1â‰¦iï¼‰</param>
+		virtual void set(unsigned int value)
 		{
-			/// <summary>
-			/// <para>ƒtƒŒ[ƒ€ƒsƒŠƒIƒh‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li1…ij</param>
-			virtual void set(unsigned int value)
-			{
-				check_struct();
-
-				if (value < 1)
-				{
-					throw gcnew System::Exception("frame period ‚Ì’l‚Í1ˆÈã‚Ì®”‚Å‚·B");
-				}
-				OpenJTalk_setFperiod(m_openjtalk, value);
-			}
+			SamplingFrequency = value;
 		}
 
+		virtual unsigned int get()
+		{
+			return SamplingFrequency;
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šãƒ•ãƒ¬ãƒ¼ãƒ ãƒ”ãƒªã‚ªãƒ‰</para>
+	/// </summary>
+	property unsigned int Fperiod
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒtƒŒ[ƒ€ƒsƒŠƒIƒh</para>
+		/// <para>ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ”ãƒªã‚ªãƒ‰ã®è¨­å®š</para>
 		/// </summary>
-		property unsigned int P
+		/// <param name="value">å€¤ï¼ˆ1â‰¦iï¼‰</param>
+		virtual void set(unsigned int value)
 		{
-			/// <summary>
-			/// <para>ƒtƒŒ[ƒ€ƒsƒŠƒIƒh‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li1…ij</param>
-			virtual void set(unsigned int value)
+			check_openjtalk_object();
+
+			if (value < 1)
 			{
-				Fperiod = value;
+				throw gcnew System::Exception("frame period ã®ç¯„å›²ã¯1ä»¥ä¸Šã®æ•´æ•°ã§ã™ã€‚");
 			}
+			openjtalk_setFperiod(m_openjtalk, value);
 		}
 
+		virtual unsigned int get()
+		{
+			check_openjtalk_object();
+			return openjtalk_getFperiod(m_openjtalk);
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šãƒ•ãƒ¬ãƒ¼ãƒ ãƒ”ãƒªã‚ªãƒ‰</para>
+	/// </summary>
+	property unsigned int P
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒI[ƒ‹ƒpƒX’l</para>
+		/// <para>ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ”ãƒªã‚ªãƒ‰ã®è¨­å®š</para>
 		/// </summary>
-		property double Alpha
+		/// <param name="value">å€¤ï¼ˆ1â‰¦iï¼‰</param>
+		virtual void set(unsigned int value)
 		{
-			/// <summary>
-			/// <para>ƒI[ƒ‹ƒpƒX’l‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…d…1j</param>
-			virtual void set(double value)
-			{
-				check_struct();
-
-				if (value < 0.0 || value > 1.0)
-				{
-					throw gcnew System::Exception("all-pass constant ‚Ì’l‚Í0‚Æ1‚ÌŠÔ‚Ì•‚“®¬”“_”‚Å‚·B");
-				}
-				OpenJTalk_setAlpha(m_openjtalk, value);
-			}
+			Fperiod = value;
 		}
 
+		virtual unsigned int get()
+		{
+			return Fperiod;
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šã‚ªãƒ¼ãƒ«ãƒ‘ã‚¹å€¤</para>
+	/// </summary>
+	property double Alpha
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒI[ƒ‹ƒpƒX’l</para>
+		/// <para>ã‚ªãƒ¼ãƒ«ãƒ‘ã‚¹å€¤ã®è¨­å®š</para>
 		/// </summary>
-		property double A
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dâ‰¦1ï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>ƒI[ƒ‹ƒpƒX’l‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…d…1j</param>
-			virtual void set(double value)
+			check_openjtalk_object();
+			if (value < 0.0 || value > 1.0)
 			{
-				Alpha = value;
+				throw gcnew System::Exception("all-pass constant ã®ç¯„å›²ã¯0ã¨1ã®é–“ã®æµ®å‹•å°æ•°ç‚¹æ•°ã§ã™ã€‚");
 			}
+			openjtalk_setAlpha(m_openjtalk, value);
 		}
 
+		virtual double get()
+		{
+			check_openjtalk_object();
+			return openjtalk_getAlpha(m_openjtalk);
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šã‚ªãƒ¼ãƒ«ãƒ‘ã‚¹å€¤</para>
+	/// </summary>
+	property double A
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒ|ƒXƒgƒtƒBƒ‹ƒ^[ŒW”</para>
+		/// <para>ã‚ªãƒ¼ãƒ«ãƒ‘ã‚¹å€¤ã®è¨­å®š</para>
 		/// </summary>
-		property double Beta
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dâ‰¦1ï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>ƒ|ƒXƒgƒtƒBƒ‹ƒ^[ŒW”‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…d…1j</param>
-			virtual void set(double value)
-			{
-				check_struct();
-
-				if (value < 0.0 || value > 1.0)
-				{
-					throw gcnew System::Exception("postfiltering coefficient ‚Ì’l‚Í0‚Æ1‚ÌŠÔ‚Ì•‚“®¬”“_”‚Å‚·B");
-				}
-				OpenJTalk_setBeta(m_openjtalk, value);
-			}
+			Alpha = value;
 		}
 
+		virtual double get()
+		{
+			return Alpha;
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šãƒã‚¹ãƒˆãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ä¿‚æ•°</para>
+	/// </summary>
+	property double Beta
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒ|ƒXƒgƒtƒBƒ‹ƒ^[ŒW”</para>
+		/// <para>ãƒã‚¹ãƒˆãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ä¿‚æ•°ã®è¨­å®š</para>
 		/// </summary>
-		property double B
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dâ‰¦1ï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>ƒ|ƒXƒgƒtƒBƒ‹ƒ^[ŒW”‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…d…1j</param>
-			virtual void set(double value)
+			check_openjtalk_object();
+
+			if (value < 0.0 || value > 1.0)
 			{
-				Beta = value;
+				throw gcnew System::Exception("postfiltering coefficient ã®ç¯„å›²ã¯0ã¨1ã®é–“ã®æµ®å‹•å°æ•°ç‚¹æ•°ã§ã™ã€‚");
 			}
+			openjtalk_setBeta(m_openjtalk, value);
 		}
 
+		virtual double get()
+		{
+			check_openjtalk_object();
+			return openjtalk_getBeta(m_openjtalk);
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šãƒã‚¹ãƒˆãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ä¿‚æ•°</para>
+	/// </summary>
+	property double B
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒXƒs[ƒ`‘¬“x</para>
+		/// <para>ãƒã‚¹ãƒˆãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ä¿‚æ•°ã®è¨­å®š</para>
 		/// </summary>
-		property double Speed
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dâ‰¦1ï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>ƒXƒs[ƒ`‘¬“x‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…dj</param>
-			virtual void set(double value)
-			{
-				check_struct();
-
-				if (value < 0.0)
-				{
-					throw gcnew System::Exception("speech speed rate ‚Ì’l‚Í0ˆÈã‚Ì•‚“®¬”“_”‚Å‚·B");
-				}
-				OpenJTalk_setSpeed(m_openjtalk, value);
-			}
+			Beta = value;
 		}
 
+		virtual double get()
+		{
+			return Beta;
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šã‚¹ãƒ”ãƒ¼ãƒé€Ÿåº¦</para>
+	/// </summary>
+	property double Speed
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒXƒs[ƒ`‘¬“x</para>
+		/// <para>ã‚¹ãƒ”ãƒ¼ãƒé€Ÿåº¦ã®è¨­å®š</para>
 		/// </summary>
-		property double R
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>ƒXƒs[ƒ`‘¬“x‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…dj</param>
-			virtual void set(double value)
+			check_openjtalk_object();
+
+			if (value < 0.0)
 			{
-				Speed = value;
+				throw gcnew System::Exception("speech speed rate ã®ç¯„å›²ã¯0ä»¥ä¸Šã®æµ®å‹•å°æ•°ç‚¹æ•°ã§ã™ã€‚");
 			}
+			openjtalk_setSpeed(m_openjtalk, value);
 		}
 
+		virtual double get()
+		{
+			check_openjtalk_object();
+			return openjtalk_getSpeed(m_openjtalk);
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šã‚¹ãƒ”ãƒ¼ãƒé€Ÿåº¦</para>
+	/// </summary>
+	property double R
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBF’Ç‰Áƒn[ƒtƒg[ƒ“</para>
+		/// <para>ã‚¹ãƒ”ãƒ¼ãƒé€Ÿåº¦ã®è¨­å®š</para>
 		/// </summary>
-		property double AdditionalHalfTone
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>’Ç‰Áƒn[ƒtƒg[ƒ“‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’lidj</param>
-			virtual void set(double value)
-			{
-				check_struct();
-
-				OpenJTalk_addHalfTone(m_openjtalk, value);
-			}
+			Speed = value;
 		}
 
+		virtual double get()
+		{
+			return Speed;
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šè¿½åŠ ãƒãƒ¼ãƒ•ãƒˆãƒ¼ãƒ³</para>
+	/// </summary>
+	property double AdditionalHalfTone
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBF’Ç‰Áƒn[ƒtƒg[ƒ“</para>
+		/// <para>è¿½åŠ ãƒãƒ¼ãƒ•ãƒˆãƒ¼ãƒ³ã®è¨­å®š</para>
 		/// </summary>
-		property double FM
+		/// <param name="value">å€¤ï¼ˆdï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>’Ç‰Áƒn[ƒtƒg[ƒ“‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’lidj</param>
-			virtual void set(double value)
-			{
-				AdditionalHalfTone = value;
-			}
+			check_openjtalk_object();
+			openjtalk_setAdditionalHalfTone(m_openjtalk, value);
 		}
 
+		virtual double get()
+		{
+			check_openjtalk_object();
+			return openjtalk_getAdditionalHalfTone(m_openjtalk);
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šè¿½åŠ ãƒãƒ¼ãƒ•ãƒˆãƒ¼ãƒ³</para>
+	/// </summary>
+	property double Fm
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBF—Lº / –³º‹«ŠE’l</para>
+		/// <para>è¿½åŠ ãƒãƒ¼ãƒ•ãƒˆãƒ¼ãƒ³ã®è¨­å®š</para>
 		/// </summary>
-		property double MSDThreshold
+		/// <param name="value">å€¤ï¼ˆdï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>—Lº / –³º‹«ŠE’l”‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…d…1j</param>
-			virtual void set(double value)
-			{
-				check_struct();
-
-				if (value < 0.0 || value > 1.0)
-				{
-					throw gcnew System::Exception("voiced/unvoiced threshold ‚Ì’l‚Í0‚Æ1‚ÌŠÔ‚Ì•‚“®¬”“_”‚Å‚·B");
-				}
-				OpenJTalk_setMsdThreshold(m_openjtalk, value);
-			}
+			AdditionalHalfTone = value;
 		}
 
+		virtual double get()
+		{
+			return AdditionalHalfTone;
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šæœ‰å£° / ç„¡å£°å¢ƒç•Œå€¤</para>
+	/// </summary>
+	property double MsdThreshold
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBF—Lº / –³º‹«ŠE’l</para>
+		/// <para>æœ‰å£° / ç„¡å£°å¢ƒç•Œå€¤æ•°ã®è¨­å®š</para>
 		/// </summary>
-		property double U
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dâ‰¦1ï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>—Lº / –³º‹«ŠE’l”‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…d…1j</param>
-			virtual void set(double value)
+			check_openjtalk_object();
+
+			if (value < 0.0 || value > 1.0)
 			{
-				MSDThreshold = value;
+				throw gcnew System::Exception("voiced/unvoiced threshold ã®ç¯„å›²ã¯0ã¨1ã®é–“ã®æµ®å‹•å°æ•°ç‚¹æ•°ã§ã™ã€‚");
 			}
+			openjtalk_setMsdThreshold(m_openjtalk, value);
 		}
 
+		virtual double get()
+		{
+			check_openjtalk_object();
+			return openjtalk_getMsdThreshold(m_openjtalk);
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šæœ‰å£° / ç„¡å£°å¢ƒç•Œå€¤</para>
+	/// </summary>
+	property double U
+	{
 		/// <summary>
-		/// <para>Œn—ñ“à•Ï“®‚Ìd‚İ‚ğİ’è‚·‚é</para>
+		/// <para>æœ‰å£° / ç„¡å£°å¢ƒç•Œå€¤æ•°ã®è¨­å®š</para>
 		/// </summary>
-		/// <param name="i">ƒXƒgƒŠ[ƒ€ƒCƒ“ƒfƒbƒNƒXii=0,1j</param>
-		/// <param name="f">GVd‚İi0…dj</param>
-		virtual void  SetGVWeight(size_t i, double f)
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dâ‰¦1ï¼‰</param>
+		virtual void set(double value)
 		{
-			check_struct();
-
-			if (i != 0 && i != 1)
-			{
-				throw gcnew System::Exception("stream index ‚Ì’l‚Í0‚©1‚Ì®”‚Å‚·B");
-			}
-			if (f < 0.0)
-			{
-				throw gcnew System::Exception("GV weight ‚Ì’l‚Í0ˆÈã‚Ì•‚“®¬”“_”‚Å‚·B");
-			}
-			OpenJTalk_setGvWeight(m_openjtalk, i, f);
+			MsdThreshold = value;
 		}
 
+		virtual double get()
+		{
+			return MsdThreshold;
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šã‚¹ãƒšã‚¯ãƒˆãƒ©ãƒ ç³»åˆ—å†…å¤‰å‹•ã®é‡ã¿</para>
+	/// </summary>
+	property double GvWeightForSpectrum
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒXƒyƒNƒgƒ‰ƒ€Œn—ñ“à•Ï“®‚Ìd‚İ</para>
+		/// <para>ã‚¹ãƒšã‚¯ãƒˆãƒ©ãƒ ç³»åˆ—å†…å¤‰å‹•ã®é‡ã¿ã®è¨­å®š</para>
 		/// </summary>
-		property double GVWeightForSpectrum
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>ƒXƒyƒNƒgƒ‰ƒ€Œn—ñ“à•Ï“®‚Ìd‚İ‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…dj</param>
-			virtual void set(double value)
-			{
-				check_struct();
+			check_openjtalk_object();
 
-				if (value < 0.0)
-				{
-					throw gcnew System::Exception("weight of GV for spectrum ‚Ì’l‚Í0ˆÈã‚Ì•‚“®¬”“_”‚Å‚·B");
-				}
-				OpenJTalk_setGvWeightForSpectrum(m_openjtalk, value);
+			if (value < 0.0)
+			{
+				throw gcnew System::Exception("weight of GV for spectrum ã®ç¯„å›²ã¯0ä»¥ä¸Šã®æµ®å‹•å°æ•°ç‚¹æ•°ã§ã™ã€‚");
 			}
+			openjtalk_setGvWeightForSpectrum(m_openjtalk, value);
 		}
 
+		virtual double get()
+		{
+			check_openjtalk_object();
+			return openjtalk_getGvWeightForSpectrum(m_openjtalk);
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šã‚¹ãƒšã‚¯ãƒˆãƒ©ãƒ ç³»åˆ—å†…å¤‰å‹•ã®é‡ã¿</para>
+	/// </summary>
+	property double Jm
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒXƒyƒNƒgƒ‰ƒ€Œn—ñ“à•Ï“®‚Ìd‚İ</para>
+		/// <para>ã‚¹ãƒšã‚¯ãƒˆãƒ©ãƒ ç³»åˆ—å†…å¤‰å‹•ã®é‡ã¿ã®è¨­å®š</para>
 		/// </summary>
-		property double JM
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>ƒXƒyƒNƒgƒ‰ƒ€Œn—ñ“à•Ï“®‚Ìd‚İ‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…dj</param>
-			virtual void set(double value)
-			{
-				GVWeightForSpectrum = value;
-			}
+			GvWeightForSpectrum = value;
 		}
 
+		virtual double get()
+		{
+			return GvWeightForSpectrum;
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šF0ç³»åˆ—å†…å¤‰å‹•é‡ã¿</para>
+	/// </summary>
+	property double GvWeightForLogF0
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFF0Œn—ñ“à•Ï“®d‚İ</para>
+		/// <para>F0ç³»åˆ—å†…å¤‰å‹•é‡ã¿ã®è¨­å®š</para>
 		/// </summary>
-		property double GVWeightForLogF0
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>F0Œn—ñ“à•Ï“®d‚İ‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…dj</param>
-			virtual void set(double value)
-			{
-				check_struct();
+			check_openjtalk_object();
 
-				if (value < 0.0)
-				{
-					throw gcnew System::Exception("weight of GV for log F0 ‚Ì’l‚Í0ˆÈã‚Ì•‚“®¬”“_”‚Å‚·B");
-				}
-				OpenJTalk_setGvWeightForLogF0(m_openjtalk, value);
+			if (value < 0.0)
+			{
+				throw gcnew System::Exception("weight of GV for log F0 ã®ç¯„å›²ã¯0ä»¥ä¸Šã®æµ®å‹•å°æ•°ç‚¹æ•°ã§ã™ã€‚");
 			}
+			openjtalk_setGvWeightForLogF0(m_openjtalk, value);
 		}
 
+		virtual double get()
+		{
+			check_openjtalk_object();
+			return openjtalk_getGvWeightForLogF0(m_openjtalk);
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šF0ç³»åˆ—å†…å¤‰å‹•é‡ã¿</para>
+	/// </summary>
+	property double Jf
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFF0Œn—ñ“à•Ï“®d‚İ</para>
+		/// <para>F0ç³»åˆ—å†…å¤‰å‹•é‡ã¿ã®è¨­å®š</para>
 		/// </summary>
-		property double JF
+		/// <param name="value">å€¤ï¼ˆ0â‰¦dï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>F0Œn—ñ“à•Ï“®d‚İ‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’li0…dj</param>
-			virtual void set(double value)
-			{
-				GVWeightForLogF0 = value;
-			}
+			GvWeightForLogF0 = value;
 		}
 
+		virtual double get()
+		{
+			return GvWeightForLogF0;
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šãƒœãƒªãƒ¥ãƒ¼ãƒ </para>
+	/// </summary>
+	property double Volume
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒ{ƒŠƒ…[ƒ€</para>
+		/// <para>ãƒœãƒªãƒ¥ãƒ¼ãƒ ã®è¨­å®š</para>
 		/// </summary>
-		property double Volume
+		/// <param name="value">å€¤ï¼ˆdï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>ƒ{ƒŠƒ…[ƒ€‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’lidj</param>
-			virtual void set(double value)
-			{
-				check_struct();
-
-				OpenJTalk_setVolume(m_openjtalk, value);
-			}
+			check_openjtalk_object();
+			openjtalk_setVolume(m_openjtalk, value);
 		}
 
+		virtual double get()
+		{
+			check_openjtalk_object();
+			return openjtalk_getVolume(m_openjtalk);
+		}
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šãƒœãƒªãƒ¥ãƒ¼ãƒ </para>
+	/// </summary>
+	property double G
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBFƒ{ƒŠƒ…[ƒ€</para>
+		/// <para>ãƒœãƒªãƒ¥ãƒ¼ãƒ ã®è¨­å®š</para>
 		/// </summary>
-		property double G
+		/// <param name="value">å€¤ï¼ˆdï¼‰</param>
+		virtual void set(double value)
 		{
-			/// <summary>
-			/// <para>ƒ{ƒŠƒ…[ƒ€‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="value">’lidj</param>
-			virtual void set(double value)
-			{
-				Volume = value;
-			}
+			Volume = value;
 		}
 
+		virtual double get()
+		{
+			return Volume;
+		}
+	}
+
+	/// <summary>
+	/// <para>åŒæœŸç™ºå£°ã™ã‚‹ã€‚</para>
+	/// <para>èª­ã¿ä¸Šã’ãŒçµ‚ã‚ã‚‹ã¾ã§å‡¦ç†ã¯æˆ»ã‚‰ãªã„ã€‚</para>
+	/// <para>ç™ºå£°ä¸­ãªã‚‰ã°ã€ãã‚Œã‚’çµ‚äº†ã•ã›ã¦ç™ºå£°ã™ã‚‹ã€‚</para>
+	/// </summary>
+	/// <param name="text">èª­ã¿ä¸Šã’æ–‡å­—åˆ—</param>
+	virtual void SpeakSync(System::String ^ text)
+	{
+		check_openjtalk_object();
+
+		if (!text)
+		{
+			throw gcnew System::Exception("èª­ã¿ä¸Šã’æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
+		}
+		marshal_context ctx;
+		const wchar_t *str = ctx.marshal_as<const wchar_t *>(text);
+		openjtalk_speakSyncU16(m_openjtalk, (const char16_t *)str);
+	}
+
+	/// <summary>
+	/// <para>éåŒæœŸç™ºå£°ã™ã‚‹ã€‚</para>
+	/// <para>èª­ã¿ä¸Šã’é–‹å§‹å¾Œã€å‡¦ç†ãŒæˆ»ã£ã¦ãã‚‹ã€‚</para>
+	/// <para>ç™ºå£°ä¸­ãªã‚‰ã°ã€ãã‚Œã‚’çµ‚äº†ã•ã›ã¦ç™ºå£°ã™ã‚‹ã€‚</para>
+	/// </summary>
+	/// <param name="text">èª­ã¿ä¸Šã’æ–‡å­—åˆ—</param>
+	virtual void SpeakAsync(System::String ^ text)
+	{
+		check_openjtalk_object();
+
+		if (!text)
+		{
+			throw gcnew System::Exception("èª­ã¿ä¸Šã’æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
+		}
+		marshal_context ctx;
+		const wchar_t *str = ctx.marshal_as<const wchar_t *>(text);
+		openjtalk_speakAsyncU16(m_openjtalk, (const char16_t *)str);
+	}
+
+	/// <summary>
+	/// <para>éåŒæœŸç™ºå£°ã™ã‚‹ã€‚</para>
+	/// <para>SpeakAsyncã®åˆ¥å</para>
+	/// <para>èª­ã¿ä¸Šã’é–‹å§‹å¾Œã€å‡¦ç†ãŒæˆ»ã£ã¦ãã‚‹ã€‚</para>
+	/// <para>ç™ºå£°ä¸­ãªã‚‰ã°ã€ãã‚Œã‚’çµ‚äº†ã•ã›ã¦ç™ºå£°ã™ã‚‹ã€‚</para>
+	/// </summary>
+	/// <param name="text">èª­ã¿ä¸Šã’æ–‡å­—åˆ—</param>
+	virtual void Say(System::String ^ text)
+	{
+		check_openjtalk_object();
+
+		if (!text)
+		{
+			throw gcnew System::Exception("èª­ã¿ä¸Šã’æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
+		}
+		marshal_context ctx;
+		const wchar_t *str = ctx.marshal_as<const wchar_t *>(text);
+		openjtalk_speakAsyncU16(m_openjtalk, (const char16_t *)str);
+	}
+
+	/// <summary>
+	/// éåŒæœŸç™ºå£°ä¸­ãªã‚‰ã°ã€ç™ºå£°ã‚’ä¸€æ™‚åœæ­¢ã™ã‚‹ã€‚
+	/// </summary>
+	virtual void Pause()
+	{
+		check_openjtalk_object();
+		openjtalk_pause(m_openjtalk);
+	}
+
+	// pause ãŒäºˆç´„èªã®è¨€èªã®ãŸã‚ã®åˆ¥å
+	virtual void PauseMethod()
+	{
+		Pause();
+	}
+
+	/// <summary>
+	/// éåŒæœŸç™ºå£°ãŒä¸€æ™‚åœæ­¢ä¸­ãªã‚‰ã°ã€ç™ºå£°ã‚’å†é–‹ã™ã‚‹ã€‚
+	/// </summary>
+	virtual void Resume()
+	{
+		check_openjtalk_object();
+		openjtalk_resume(m_openjtalk);
+	}
+
+	// Resume ãŒäºˆç´„èªã®è¨€èªã®ãŸã‚ã®åˆ¥å
+	virtual void ResumeMethod()
+	{
+		Resume();
+	}
+	
+	/// <summary>
+	/// éåŒæœŸç™ºå£°ä¸­ãªã‚‰ã°ã€ç™ºå£°ã‚’å¼·åˆ¶åœæ­¢ã™ã‚‹ã€‚
+	/// </summary>
+	virtual void Stop()
+	{
+		check_openjtalk_object();
+		openjtalk_stop(m_openjtalk);
+	}
+
+	// Stop ãŒäºˆç´„èªã®è¨€èªã®ãŸã‚ã®åˆ¥å
+	virtual void StopMethod()
+	{
+		Stop();
+	}
+
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šéåŒæœŸç™ºå£°ä¸­ã‹ã©ã†ã‹</para>
+	/// </summary>
+	property bool IsSpeaking
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBF«‘ƒtƒHƒ‹ƒ_</para>
+		/// ç™ºå£°ä¸­ã‹ã©ã†ã‹èª¿ã¹ã‚‹
 		/// </summary>
-		property System::String^ Dic
+		/// <returns>ç™ºå£°ä¸­ã‹ã©ã†ã‹ã®çœŸå½å€¤</returns>
+		virtual bool get()
 		{
-			/// <summary>
-			/// <para>«‘ƒtƒHƒ‹ƒ_‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="path">ƒpƒX•¶š—ñ</param>
-			virtual void set(System::String^path)
-			{
-				check_struct();
-
-				if (!path)
-				{
-					throw gcnew System::Exception("«‘ƒtƒHƒ‹ƒ_‚ğ¦‚·•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ªNULL‚Å‚·B");
-				}
-				if (!Directory::Exists(path))
-				{
-					throw gcnew System::Exception("«‘ƒtƒHƒ‹ƒ_‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
-				}
-				marshal_context ctx;
-				const wchar_t*str = ctx.marshal_as<const wchar_t*>(path);
-				if (!OpenJTalk_setDic_u16(m_openjtalk, (const char16_t*)str))
-				{
-					throw gcnew System::Exception("«‘ƒtƒHƒ‹ƒ_‚ğİ’è‚Å‚«‚Ü‚¹‚ñBUTF-8Œü‚¯‚Ì«‘‚Å‚Í‚È‚¢‚©‚à‚µ‚ê‚Ü‚¹‚ñB");
-				}
-			}
+			check_openjtalk_object();
+			return openjtalk_isSpeaking(m_openjtalk);
 		}
+	}
 
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šéåŒæœŸç™ºå£°ãŒä¸€æ™‚åœæ­¢ä¸­ã‹ã©ã†ã‹</para>
+	/// </summary>
+	property bool IsPaused
+	{
 		/// <summary>
-		/// ƒvƒƒpƒeƒBF‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_
+		/// ä¸€æ™‚åœæ­¢ä¸­ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹
 		/// </summary>
-		property System::String^ VoiceDir
+		/// <returns>ä¸€æ™‚åœæ­¢ä¸­ã‹ã©ã†ã‹ã®çœŸå½å€¤</returns>
+		virtual bool get()
 		{
-			/// <summary>
-			/// <para>‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="path">ƒpƒX•¶š—ñ</param>
-			virtual void set(System::String^path)
-			{
-				check_struct();
-
-				if (!path)
-				{
-					throw gcnew System::Exception("‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_‚ğ¦‚·•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ªNULL‚Å‚·B");
-				}
-				if (!Directory::Exists(path))
-				{
-					throw gcnew System::Exception("‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
-				}
-				delete_voice_list();
-				marshal_context ctx;
-				const wchar_t* str = ctx.marshal_as<const wchar_t*>(path);
-				if (!OpenJTalk_setVoiceDir_u16(m_openjtalk, (const char16_t*)str))
-				{
-					throw gcnew System::Exception("‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_‚ğİ’è‚Å‚«‚Ü‚¹‚ñB");
-				}
-				generate_voice_list();
-			}
+			check_openjtalk_object();
+			return openjtalk_isPaused(m_openjtalk);
 		}
+	}
 
+	/// <summary>
+	/// <para>ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼šéåŒæœŸç™ºå£°ãŒçµ‚äº†ã—ãŸã‹ã©ã†ã‹</para>
+	/// </summary>
+	property bool IsFinished
+	{
 		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBiİ’è‚Ì‚İj</para>
-		/// <para>ˆÈ~‚Ì”­º‚Åg—p‚·‚é‰¹‹¿ƒtƒ@ƒCƒ‹‚Ìİ’è</para>
-		/// <para>O’Ê‚è‚Ìw’è•û–@</para>
-		/// <para>Eâ‘ÎƒpƒX...ƒtƒ@ƒCƒ‹‚Ì’¼Úw’è</para>
-		/// <para>E‘Š‘ÎƒpƒXiŠg’£q—L‚èj...‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_“à‚Å‚Ì‘Š‘Îw’è</para>
-		/// <para>E–¼‘O‚Ì‚İiŠg’£q–³‚µj...‰¹‹¿ƒtƒ@ƒCƒ‹ƒtƒHƒ‹ƒ_“à‚ğ’Tõ</para>
-		/// <para>’Tõ‚É‚Â‚¢‚ÄF</para>
-		/// <para>’Tõ”ÍˆÍ‚É•¡”“K‡‚·‚é‚à‚Ì‚ª‚ ‚Á‚Ä‚àAÅ‰‚ÉŒ©‚Â‚¯‚½‚à‚Ì‚Æ‚·‚éB</para>
-		/// <para>‚±‚Ì‚Æ‚«‚Ì’Tõ‡˜‚Íreaddir‚Ìˆ—‚ÉˆË‘¶‚µ‚Ä‚¢‚éB</para>
-		/// <para>’Tõ–¼‚É‚ÍƒƒCƒ‹ƒhƒJ[ƒhi*?j‚ğg—p‚Å‚«‚éB</para>
-		/// <para>’Tõ‘ÎÛ‚ª‘½‚¢‚Æ‚«‚Í1000ƒtƒ@ƒCƒ‹’Tõ‚µ‚Ä‚àŒ©‚Â‚©‚ç‚È‚¯‚ê‚Î’Tõ‚ğ’†~‚·‚éB</para>
+		/// éåŒæœŸç™ºå£°ãŒçµ‚äº†ã—ãŸã‹ã©ã†ã‹
 		/// </summary>
-		property System::String^ Voice
+		/// <returns>çµ‚äº†ã—ãŸã‹ã©ã†ã‹ã®çœŸå½å€¤</returns>
+		virtual bool get()
 		{
-			/// <summary>
-			/// <para>ˆÈ~‚Ì”­º‚Åg—p‚·‚é‰¹‹¿ƒtƒ@ƒCƒ‹‚Ìİ’è</para>
-			/// </summary>
-			/// <param name="path">‰¹‹¿ƒtƒ@ƒCƒ‹‚ğ¦‚·•¶š—ñ</param>
-			virtual void set(System::String^path)
-			{
-				check_struct();
-
-				if (!path)
-				{
-					throw gcnew System::Exception("‰¹‹¿ƒtƒ@ƒCƒ‹‚ğ¦‚·•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ªNULL‚Å‚·B");
-				}
-				if (path->Length == 0)
-				{
-					throw gcnew System::Exception("‰¹‹¿ƒtƒ@ƒCƒ‹‚ğ¦‚·•¶š—ñ‚ª‹ó‚Å‚·B");
-				}
-				marshal_context ctx;
-				const wchar_t* str = ctx.marshal_as<const wchar_t*>(path);
-				if (!OpenJTalk_setVoice_u16(m_openjtalk, (const char16_t*)str))
-				{
-					throw gcnew System::Exception("‰¹‹¿ƒtƒ@ƒCƒ‹‚ğİ’è‚Å‚«‚Ü‚¹‚ñB");
-				}
-			}
+			check_openjtalk_object();
+			return openjtalk_isFinished(m_openjtalk);
 		}
+	}
 
-		/// <summary>
-		/// <para>“¯Šú”­º‚·‚éB</para>
-		/// <para>“Ç‚İã‚°‚ªI‚í‚é‚Ü‚Åˆ—‚Í–ß‚ç‚È‚¢B</para>
-		/// <para>”­º’†‚È‚ç‚ÎA‚»‚ê‚ğI—¹‚³‚¹‚Ä”­º‚·‚éB</para>
-		/// </summary>
-		/// <param name="text">“Ç‚İã‚°•¶š—ñ</param>
-		virtual void SpeakSync(System::String^ text)
+	/// <summary>
+	/// <para>éåŒæœŸç™ºå£°ä¸­ãªã‚‰ã°ã€åœæ­¢ã™ã‚‹ã¾ã§å¾…æ©Ÿã™ã‚‹ã€‚</para>
+	/// <para>Wait(void)ã®åˆ¥å</para>
+	/// </summary>
+	virtual void WaitUntilDone()
+	{
+		check_openjtalk_object();
+		openjtalk_waitUntilDone(m_openjtalk);
+	}
+
+	/// <summary>
+	/// <para>éåŒæœŸç™ºå£°ä¸­ãªã‚‰ã°ã€åœæ­¢ã™ã‚‹ã¾ã§å¾…æ©Ÿã™ã‚‹ã€‚</para>
+	/// <para>WaitUntilDoneã®åˆ¥å</para>
+	/// <para>Wait(void)ã®åˆ¥å</para>
+	/// </summary>
+	virtual void WaitUntilFinished()
+	{
+		check_openjtalk_object();
+		openjtalk_waitUntilDone(m_openjtalk);
+	}
+
+	/// <summary>
+	/// <para>æŒ‡å®šãƒŸãƒªç§’ã®é–“å¾…æ©Ÿã™ã‚‹ã€‚</para>
+	/// <para>éåŒæœŸç™ºå£°ã¯ç¶šãã€‚</para>
+	/// <para>durationãŒ0ã®ã¨ãã¯ã€WaitUntilDoneã¨åŒã˜å‡¦ç†</para>
+	/// </summary>
+	/// <param name="duration">å¾…æ©Ÿæ™‚é–“ï¼ˆãƒŸãƒªç§’ï¼‰</param>
+	virtual void Wait(int duration)
+	{
+		check_openjtalk_object();
+
+		if (duration == 0)
 		{
-			check_struct();
-
-			if (!text)
-			{
-				throw gcnew System::Exception("“Ç‚İã‚°•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ªNULL‚Å‚·B");
-			}
-			marshal_context ctx;
-			const wchar_t* str = ctx.marshal_as<const wchar_t*>(text);
-			OpenJTalk_speakSync_u16(m_openjtalk, (const char16_t*)str);
+			openjtalk_waitUntilDone(m_openjtalk);
 		}
-
-		/// <summary>
-		/// <para>”ñ“¯Šú”­º‚·‚éB</para>
-		/// <para>“Ç‚İã‚°ŠJnŒãAˆ—‚ª–ß‚Á‚Ä‚­‚éB</para>
-		/// <para>”­º’†‚È‚ç‚ÎA‚»‚ê‚ğI—¹‚³‚¹‚Ä”­º‚·‚éB</para>
-		/// </summary>
-		/// <param name="text">“Ç‚İã‚°•¶š—ñ</param>
-		virtual void SpeakAsync(System::String^ text)
+		else
 		{
-			check_struct();
-
-			if (!text)
-			{
-				throw gcnew System::Exception("“Ç‚İã‚°•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ªNULL‚Å‚·B");
-			}
-			marshal_context ctx;
-			const wchar_t* str = ctx.marshal_as<const wchar_t*>(text);
-			OpenJTalk_speakAsync_u16(m_openjtalk, (const char16_t*)str);
+			openjtalk_wait(m_openjtalk, duration);
 		}
+	}
 
-		/// <summary>
-		/// ”­º’†‚È‚ç‚ÎA”­º‚ğ‹­§’â~‚·‚éB
-		/// </summary>
-		virtual void  Stop()
+	/// <summary>
+	/// <para>ç™ºå£°ã—ã¦ã„ã‚‹é–“å¾…æ©Ÿã™ã‚‹ã€‚</para>
+	/// <para>éåŒæœŸç™ºå£°ã¯ç¶šãã€‚</para>
+	/// <para>WaitUntilDoneã®åˆ¥å</para>
+	/// </summary>
+	virtual void Wait()
+	{
+		check_openjtalk_object();
+		openjtalk_waitUntilDone(m_openjtalk);
+	}
+
+	/// <summary>
+	/// <para>æŒ‡å®šãƒ•ã‚¡ã‚¤ãƒ«ã«æ–‡å­—åˆ—ã®éŸ³å£°ã‚’ä¿å­˜ã™ã‚‹</para>
+	/// </summary>
+	/// <param name="text">æ–‡å­—åˆ—</param>
+	/// <param name="file">ãƒ•ã‚¡ã‚¤ãƒ«å</param>
+	virtual void SpeakToFile(System::String ^ text, System::String ^ file)
+	{
+		check_openjtalk_object();
+
+		if (!text)
 		{
-			check_struct();
-
-			OpenJTalk_stop(m_openjtalk);
+			throw gcnew System::Exception("èª­ã¿ä¸Šã’æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãŒNULLã§ã™ã€‚");
 		}
-
-		/// <summary>
-		/// <para>ƒvƒƒpƒeƒBF”ñ“¯Šú”­º’†‚©‚Ç‚¤‚©</para>
-		/// </summary>
-		property bool IsSpeaking
+		if (text->Length == 0)
 		{
-			/// <summary>
-			/// ”­º’†‚©‚Ç‚¤‚©’²‚×‚é
-			/// </summary>
-			/// <returns>”­º’†‚©‚Ç‚¤‚©‚Ì^‹U’l</returns>
-			virtual bool get()
-			{
-				check_struct();
-
-				return OpenJTalk_isSpeaking(m_openjtalk);
-			}
+			throw gcnew System::Exception("èª­ã¿ä¸Šã’æ–‡å­—åˆ—ãŒç©ºã§ã™ã€‚");
 		}
-
-		/// <summary>
-		/// <para>”ñ“¯Šú”­º’†‚È‚ç‚ÎA’â~‚·‚é‚Ü‚Å‘Ò‹@‚·‚éB</para>
-		/// <para>Wait(void)‚Ì•Ê–¼</para>
-		/// </summary>
-		virtual void WaitUntilDone()
+		if (file->Length == 0)
 		{
-			check_struct();
-
-			OpenJTalk_waitUntilDone(m_openjtalk);
+			throw gcnew System::Exception("ãƒ•ã‚¡ã‚¤ãƒ«åæ–‡å­—åˆ—ãŒç©ºã§ã™ã€‚");
 		}
-
-		/// <summary>
-		/// <para>w’èƒ~ƒŠ•b‚ÌŠÔ‘Ò‹@‚·‚éB</para>
-		/// <para>”ñ“¯Šú”­º‚Í‘±‚­B</para>
-		/// <para>duration‚ª0‚Ì‚Æ‚«‚ÍAWaitUntilDone‚Æ“¯‚¶ˆ—</para>
-		/// </summary>
-		/// <param name="duration">‘Ò‹@ŠÔiƒ~ƒŠ•bj</param>
-		virtual void Wait(int duration)
+		marshal_context ctx;
+		const wchar_t *str_text = ctx.marshal_as<const wchar_t *>(text);
+		const wchar_t *str_file = ctx.marshal_as<const wchar_t *>(file);
+		if (!openjtalk_speakToFileU16(m_openjtalk, (const char16_t *)str_text, (const char16_t *)str_file))
 		{
-			check_struct();
-
-			if (duration == 0)
-			{
-				OpenJTalk_waitUntilDone(m_openjtalk);
-			}
-			else
-			{
-				OpenJTalk_wait(m_openjtalk, duration);
-			}
+			throw gcnew System::Exception("éŸ³å£°ãƒ•ã‚¡ã‚¤ãƒ«ã®ä½œæˆä¸­ã«ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚");
 		}
-
-		/// <summary>
-		/// <para>”­º‚µ‚Ä‚¢‚éŠÔ‘Ò‹@‚·‚éB</para>
-		/// <para>”ñ“¯Šú”­º‚Í‘±‚­B</para>
-		/// <para>WaitUntilDone‚Ì•Ê–¼</para>
-		/// </summary>
-		virtual void Wait()
-		{
-			check_struct();
-
-			OpenJTalk_waitUntilDone(m_openjtalk);
-		}
-
-		/// <summary>
-		/// <para>w’èƒtƒ@ƒCƒ‹‚É•¶š—ñ‚Ì‰¹º‚ğ•Û‘¶‚·‚é</para>
-		/// </summary>
-		/// <param name="text">•¶š—ñ</param>
-		/// <param name="file">ƒtƒ@ƒCƒ‹–¼</param>
-		virtual void SpeakToFile(System::String^text, System::String^file)
-		{
-			check_struct();
-
-			if (!text)
-			{
-				throw gcnew System::Exception("“Ç‚İã‚°•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ªNULL‚Å‚·B");
-			}
-			if (text->Length == 0)
-			{
-				throw gcnew System::Exception("“Ç‚İã‚°•¶š—ñ‚ª‹ó‚Å‚·B");
-			}
-			if (file->Length == 0)
-			{
-				throw gcnew System::Exception("ƒtƒ@ƒCƒ‹–¼•¶š—ñ‚ª‹ó‚Å‚·B");
-			}
-			marshal_context ctx;
-			const wchar_t* str_text = ctx.marshal_as<const wchar_t*>(text);
-			const wchar_t* str_file = ctx.marshal_as<const wchar_t*>(file);
-			if (!OpenJTalk_speakToFile_u16(m_openjtalk, (const char16_t*)str_text, (const char16_t*)str_file))
-			{
-				throw gcnew System::Exception("‰¹ºƒtƒ@ƒCƒ‹‚Ìì¬’†‚ÉƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B");
-			}
-		}
-	};
+	}
+};
 }
-
