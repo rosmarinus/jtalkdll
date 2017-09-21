@@ -47,9 +47,7 @@ typedef unsigned short char16_t;
 
 typedef struct Open_JTalk_tag Open_JTalk;
 #ifdef __cplusplus
-struct OpenJTalk
-{
-};
+struct OpenJTalk;
 #else
 typedef struct OpenJTalk_tag OpenJTalk;
 #endif

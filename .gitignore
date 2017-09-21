@@ -100,3 +100,5 @@ ffi/nodejs/node_modules/*
 ffi/swift/jtalk.h
 ffi/objc/jtalk.h
 ffi/node_modules/*
+moc_jtd_cppqt.cpp
+.qmake.stash

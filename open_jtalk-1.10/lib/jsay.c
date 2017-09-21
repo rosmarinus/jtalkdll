@@ -20,14 +20,18 @@ char message[MAX_PATH];
 
 void usage_exit()
 {
+	fprintf(stderr, "jsay - Convert text to audible japanese speech\n");
+	fprintf(stderr, "Usage: jsay [-v voice/?] [-o outfile(wav)] [-f in | message]\n\n");
 	jtalkdll_copyright();
-	fprintf(stderr, "Usage: jsay [-v voice/?] [-o out] [-f in | message]\n");
 	exit(EXIT_FAILURE);
 }
 
 void error_exit(char *text)
 {
-	fprintf(stderr, "jsay: %s\n", text);
+	if (strlen(text)!='\0')
+	{
+		fprintf(stderr, "error: %s\n\n", text);
+	}
 	usage_exit();
 }
 

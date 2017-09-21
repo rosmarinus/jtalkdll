@@ -646,6 +646,7 @@ HTS_ENGINE_LIBRARY_DIR
 HTS_ENGINE_LIBRARY
 HTS_ENGINE_HEADER_DIR
 HTS_ENGINE_HEADER
+LIB_PATH
 LIB_ICONV
 MECAB_LIBS
 DIC_VERSION
@@ -18773,6 +18774,12 @@ case "$host" in
       ;;
 esac
 
+LIB_PATH=$lpath
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for LIB_PATH" >&5
+$as_echo_n "checking for LIB_PATH... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $lpath" >&5
+$as_echo "$lpath" >&6; }
+
 # Define HTS_ENGINE_HEADER
 
 # Check whether --with-hts-engine-header-path was given.
@@ -18805,15 +18812,15 @@ else
   hts_engine_library_path=$lpath
 fi
 
-if test ! -f "${hts_engine_library_path}/libHTSEngine.a"; then
-   as_fn_error $? "Cannot find libHTSEngine.a" "$LINENO" 5
+if test ! -f "${hts_engine_library_path}/libHTSEngine.la"; then
+   as_fn_error $? "Cannot find libHTSEngine.la" "$LINENO" 5
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libHTSEngine.a" >&5
-$as_echo_n "checking for libHTSEngine.a... " >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $hts_engine_library_path/libHTSEngine.a" >&5
-$as_echo "$hts_engine_library_path/libHTSEngine.a" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libHTSEngine.la" >&5
+$as_echo_n "checking for libHTSEngine.la... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $hts_engine_library_path/libHTSEngine.la" >&5
+$as_echo "$hts_engine_library_path/libHTSEngine.la" >&6; }
 
-HTS_ENGINE_LIBRARY=${hts_engine_library_path}/libHTSEngine.a
+HTS_ENGINE_LIBRARY=${hts_engine_library_path}/libHTSEngine.la
 
 # Define HTS_ENGINE_LIBRARY_DIR
 

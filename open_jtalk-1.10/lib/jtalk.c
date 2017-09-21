@@ -6397,7 +6397,7 @@ OPENJTALK_DLL_API OPENJTALK_ARCH OPENJTALK_CONVENTION openjtalk_getArch(OpenJTal
 #elif defined(__arm__) || defined(_M_ARM) || defined(__aarch64__)
 	return OPENJTALK_ARCH_ARM;
 #else
-	return OPENJTALK_OS_OTHER;
+	return OPENJTALK_ARCH_UNKNOWN;
 #endif
 }
 

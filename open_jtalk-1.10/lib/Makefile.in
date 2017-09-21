@@ -130,7 +130,7 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
 LTLIBRARIES = $(lib_LTLIBRARIES) $(noinst_LTLIBRARIES)
-libjtalk_la_DEPENDENCIES = libopenjtalk.la
+libjtalk_la_DEPENDENCIES = libopenjtalk.la @LIB_PATH@/libHTSEngine.la
 am_libjtalk_la_OBJECTS = libjtalk_la-jtalk.lo
 libjtalk_la_OBJECTS = $(am_libjtalk_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -162,13 +162,13 @@ libopenjtalk_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am_jsay_OBJECTS = jsay-jsay.$(OBJEXT) jsay-jtalk.$(OBJEXT)
 jsay_OBJECTS = $(am_jsay_OBJECTS)
-jsay_LDADD = $(LDADD)
+jsay_DEPENDENCIES =
 jsay_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(jsay_CFLAGS) $(CFLAGS) \
 	$(jsay_LDFLAGS) $(LDFLAGS) -o $@
 am_jtd_c_OBJECTS = jtd_c-jtd_c.$(OBJEXT) jtd_c-jtalk.$(OBJEXT)
 jtd_c_OBJECTS = $(am_jtd_c_OBJECTS)
-jtd_c_LDADD = $(LDADD)
+jtd_c_DEPENDENCIES =
 jtd_c_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(jtd_c_CFLAGS) $(CFLAGS) \
 	$(jtd_c_LDFLAGS) $(LDFLAGS) -o $@
@@ -288,6 +288,7 @@ LIBS = @LIBS@
 LIBS_PORTAUDIO = @LIBS_PORTAUDIO@
 LIBTOOL = @LIBTOOL@
 LIB_ICONV = @LIB_ICONV@
+LIB_PATH = @LIB_PATH@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -373,8 +374,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-MAJOR = 1
-MINOR = 10
+MAJOR = 0
+MINOR = 9
 BUILD = 52
 EXTRA_DIST = Makefile.mak
 DISTCLEANFILES = *.log *.out *~
@@ -383,8 +384,12 @@ lib_LTLIBRARIES = libjtalk.la
 libjtalk_la_SOURCES = jtalk.c main.version build.version
 
 #libjtalk_la_LIBADD = 	@top_srcdir@/lib/libopenjtalk.la 
-libjtalk_la_LIBADD = libopenjtalk.la 
-libjtalk_la_LDFLAGS = -fvisibility=hidden -no-undefined -version-info 0:0:0 @LIB_ICONV@ @LIBS_PORTAUDIO@ -lm -lstdc++ -lHTSEngine
+#libjtalk_la_LIBADD = libopenjtalk.la  @LIB_ICONV@ @LIBS_PORTAUDIO@ -lm -lstdc++ -lHTSEngine
+libjtalk_la_LIBADD = libopenjtalk.la @LIB_ICONV@ @LIBS_PORTAUDIO@ @LIB_PATH@/libHTSEngine.la -lm -lstdc++
+
+#libjtalk_la_LDFLAGS =  -fvisibility=hidden -no-undefined -version-info 0:0:0
+#libjtalk_la_LDFLAGS =  -fvisibility=hidden -no-undefined -version-info 0:0:0 @LIB_ICONV@ @LIBS_PORTAUDIO@ -lm -lstdc++ -lHTSEngine
+libjtalk_la_LDFLAGS = -fvisibility=hidden -no-undefined -version-info 0:0:0
 libjtalk_la_CFLAGS = -I ../lib/ -DVER_MAJOR=$(MAJOR) -DVER_MINOR=$(MINOR) -DVER_BUILD=$(BUILD) -DGIT_REV=\"@GIT_REV@\"
 noinst_LTLIBRARIES = libopenjtalk.la
 libopenjtalk_la_LIBADD = @top_srcdir@/text2mecab/libtext2mecab.la \
@@ -418,10 +423,12 @@ libopenjtalk_la_CFLAGS = -I @top_srcdir@/text2mecab \
 libopenjtalk_la_SOURCES = openjtalk.c
 jsay_SOURCES = jsay.c jtalk.c openjtalk main.version build.version
 jsay_CFLAGS = -DVER_MAJOR=$(MAJOR) -DVER_MINOR=$(MINOR) -DVER_BUILD=$(BUILD) -DGIT_REV=\"@GIT_REV@\"
-jsay_LDFLAGS = -no-undefined -o jsay -L/usr/local/lib -ljtalk
+jsay_LDFLAGS = -no-undefined -o jsay
+jsay_LDADD = -L@LIB_PATH@ -ljtalk
 jtd_c_SOURCES = jtd_c.c jtalk.c openjtalk main.version build.version
 jtd_c_CFLAGS = -DVER_MAJOR=$(MAJOR) -DVER_MINOR=$(MINOR) -DVER_BUILD=$(BUILD) -DGIT_REV=\"@GIT_REV@\"
-jtd_c_LDFLAGS = -no-undefined -o jtd_c -L/usr/local/lib -ljtalk 
+jtd_c_LDFLAGS = -no-undefined -o jtd_c 
+jtd_c_LDADD = -L@LIB_PATH@ -ljtalk
 all: all-am
 
 .SUFFIXES:
