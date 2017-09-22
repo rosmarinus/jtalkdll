@@ -1,1 +1,2 @@
+#!/usr/bin/env bash
 mcs jtd_csc.cs jtalk.cs

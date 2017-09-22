@@ -11,13 +11,13 @@ voice=voice
 mmdagent_example_ver=1.7
 
 # check command
-#commands=(wget tar git unzip)
-#for command in ${commands[@]}; do
-#	if ! type $command >/dev/null 2>&1; then
-#		echo "$command: command not found"
-#		exit
-#	fi
-#done
+commands=(wget tar git unzip)
+for command in ${commands[@]}; do
+	if ! type $command >/dev/null 2>&1; then
+		echo "$command: command not found"
+		exit
+	fi
+done
 
 # make voice dir
 if [ ! -d $voice ]; then
@@ -28,14 +28,14 @@ fi
 name=hts_voice_nitech_jp_atr503_m001-1.05
 if [ ! -d $voice/$name ]; then
 	if [ ! -e $name.tar.gz ]; then
-		$command=wget
+		command=wget
 		if ! type $command >/dev/null 2>&1; then
 			echo "$command: command not found"
 			exit
 		fi
 		wget http://downloads.sourceforge.net/open-jtalk/$name.tar.gz
 	fi
-	$command=tar
+	command=tar
 	if ! type $command >/dev/null 2>&1; then
 		echo "$command: command not found"
 		exit
@@ -46,7 +46,7 @@ fi
 # download from tohoku github
 name=htsvoice-tohoku-f01
 if [ ! -d $voice/$name ]; then
-	$command=git
+	command=git
 	if ! type $command >/dev/null 2>&1; then
 		echo "$command: command not found"
 		exit
@@ -62,14 +62,14 @@ name=MMDAgent_Example-$mmdagent_example_ver
 if [ ! -d $dir ]; then
 	mkdir $dir
 	if [ ! -e $name.zip ]; then
-		$command=wget
+		command=wget
 		if ! type $command >/dev/null 2>&1; then
 			echo "$command: command not found"
 			exit
 		fi
-		wget $http://downloads.sourceforge.net/mmdagent/$name.zip
+		wget http://downloads.sourceforge.net/mmdagent/$name.zip
 	fi
-	$command=unzip
+	command=unzip
 	if ! type $command >/dev/null 2>&1; then
 		echo "$command: command not found"
 		exit

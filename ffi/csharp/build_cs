@@ -1,1 +1,2 @@
+#!/usr/bin/env bash
 mcs jtd_cs.cs jtalk.cs -t:winexe -r:System.Drawing -r:System.Windows.Forms

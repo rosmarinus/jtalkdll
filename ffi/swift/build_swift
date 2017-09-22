@@ -1,1 +1,2 @@
+#!/usr/bin/env bash
 xcrun swiftc main.swift -import-objc-header jtalkswift.h -L /usr/local/lib -ljtalk jtalk.swift -o jtd_swift 

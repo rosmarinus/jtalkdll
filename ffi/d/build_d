@@ -1,2 +1,3 @@
+#!/usr/bin/env bash
 gdc jtd_d.d jtalk.d -l jtalk -ojtd_d
 #dmd jtd_d.d jtalk.d -L-ljtalk
