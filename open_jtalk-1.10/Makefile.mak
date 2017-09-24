@@ -102,13 +102,20 @@ install::
 	@if not exist "$(INSTALLDIR)\lib" mkdir "$(INSTALLDIR)\lib"
 	@cd lib
 	copy jsay.exe $(INSTALLDIR)\bin
-	copy *.dll $(INSTALLDIR)\bin
-	copy *.lib $(INSTALLDIR)\lib
+	copy jtd_c.exe $(INSTALLDIR)\bin
+	@rem copy *.dll $(INSTALLDIR)\bin
+	@rem copy *.lib $(INSTALLDIR)\lib
 	copy jtalk.h $(INSTALLDIR)\include
-	if $(REAL) == x86   if exist "jtalk32.dll" copy jtalk32.dll $(INSTALLDIR)\bin\jtalk.dll
-	if $(REAL) == AMD64 if exist "jtalk64.dll" copy jtalk64.dll $(INSTALLDIR)\bin\jtalk.dll
-	if $(REAL) == x86   if exist "jtalk32.dll" copy jtalk32.dll ..\..\ffi\luajit\jtalk.dll
-	if $(REAL) == AMD64 if exist "jtalk64.dll" copy jtalk64.dll ..\..\ffi\luajit\jtalk.dll
+	if exist "jtalk32.dll" copy jtalk32.dll $(INSTALLDIR)\bin\jtalk32.dll
+	if exist "jtalk32.lib" copy jtalk32.lib $(INSTALLDIR)\bin\jtalk32.lib
+	if exist "jtalk64.dll" copy jtalk64.dll $(INSTALLDIR)\bin\jtalk64.dll
+	if exist "jtalk64.lib" copy jtalk64.lib $(INSTALLDIR)\bin\jtalk64.lib
+	if $(REAL) == x86   if exist "jtalk.dll" copy jtalk.dll $(INSTALLDIR)\bin\jtalk.dll
+	if $(REAL) == x86   if exist "jtalk.lib" copy jtalk.dll $(INSTALLDIR)\bin\jtalk.lib
+	if $(REAL) == AMD64 if exist "jtalk.dll" copy jtalk.dll $(INSTALLDIR)\bin\jtalk.dll
+	if $(REAL) == AMD64 if exist "jtalk.lib" copy jtalk.dll $(INSTALLDIR)\bin\jtalk.lib
+	@rem if $(REAL) == x86   if exist "jtalk32.dll" copy jtalk32.dll ..\..\ffi\luajit\jtalk.dll
+	@rem if $(REAL) == AMD64 if exist "jtalk64.dll" copy jtalk64.dll ..\..\ffi\luajit\jtalk.dll
 	if exist "jtalkcom32.dll" copy regist_jtalkcom.bat $(INSTALLDIR)\bin
 	if exist "jtalkcom32.dll" copy unregist_jtalkcom.bat $(INSTALLDIR)\bin
 	if exist "jtalkcom64.dll" copy regist_jtalkcom.bat $(INSTALLDIR)\bin
@@ -132,7 +139,8 @@ install::
 
 	@cd ..
 	@cd bin
-	copy *.exe $(INSTALLDIR)\bin
+	copy open_jtalk.exe $(INSTALLDIR)\bin
+	@rem copy *.exe $(INSTALLDIR)\bin
 	@cd ..
 	@cd mecab-naist-jdic
 	copy char.bin $(INSTALLDIR)\dic_utf_8

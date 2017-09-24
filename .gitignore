@@ -71,6 +71,9 @@ ffi/test+AF8-bcb/Win32/
 *.class
 ffi/META-INF/*
 
+#cmake
+build.dir/*
+
 # else
 *.pc
 *.pyc
@@ -102,3 +105,4 @@ ffi/objc/jtalk.h
 ffi/node_modules/*
 moc_jtd_cppqt.cpp
 .qmake.stash
+

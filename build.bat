@@ -1,14 +1,14 @@
 @echo off
 setlocal
-set BUILD32=
+set BUILD32=ON
 set BUILD64=ON
-set CPPCLI=0
 if not "%BUILD32%""%BUILD64%" == """" goto :skip
 echo BUILD32、BUILD64 の少なくとも一方に何か値を入れて、有効にしてください
 echo 終了します
 pause
 goto :eof
 :skip
+set CPPCLI=0
 rem ****************************************
 rem copy voices
 rem ****************************************

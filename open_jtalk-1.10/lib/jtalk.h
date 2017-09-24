@@ -35,19 +35,14 @@ typedef unsigned short char16_t;
 
 #define OPENJTALK_BLOCKSIZE 1024
 
-//#if (defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW))
-//#if !defined(__cplusplus)
-//#define char16_t unsigned short
-//#endif
-//#else
-//#if !defined(__cplusplus)
-//#define char16_t unsigned short
-//#endif
-//#endif
 
 typedef struct Open_JTalk_tag Open_JTalk;
 #ifdef __cplusplus
+#if (defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW))
+struct OpenJTalk{};
+#else
 struct OpenJTalk;
+#endif
 #else
 typedef struct OpenJTalk_tag OpenJTalk;
 #endif
