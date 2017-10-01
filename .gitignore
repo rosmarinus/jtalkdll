@@ -109,3 +109,10 @@ ffi/node_modules/*
 moc_jtd_cppqt.cpp
 .qmake.stash
 
+ffi/objc/jtd_objc
+ffi/swift/jtd_swift
+hts_engine_API-1.10/bin/hts_engine
+open_jtalk-1.10/bin/open_jtalk
+open_jtalk-1.10/lib/jsay
+open_jtalk-1.10/lib/jtd_c
+.DS_Store
