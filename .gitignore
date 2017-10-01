@@ -14,6 +14,9 @@ right-id.def
 sys.dic
 unk.dic
 
+Makefile
+lobtool
+
 # annoying files
 +ACoAKg-/.DS+AF8-Store
 

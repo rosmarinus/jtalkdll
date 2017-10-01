@@ -2,13 +2,13 @@
 setlocal
 set BUILD32=ON
 set BUILD64=ON
+set CPPCLI=0
 if not "%BUILD32%""%BUILD64%" == """" goto :skip
 echo BUILD32、BUILD64 の少なくとも一方に何か値を入れて、有効にしてください
 echo 終了します
 pause
 goto :eof
 :skip
-set CPPCLI=0
 rem ****************************************
 rem copy voices
 rem ****************************************
@@ -37,6 +37,10 @@ echo 終了します
 pause
 goto :eof
 :build
+rem ****************************************
+rem increment counter
+rem ****************************************
+if exist ..\countup.bat call ..\countup.bat
 if "%BUILD32%" == "" goto :build64
 rem ****************************************
 rem 32bit build
@@ -56,7 +60,7 @@ del/q %name%.*
 cd portaudio\build\msvc
 msbuild portaudio.sln /p:Configuration=Release;Platform=x86
 if not exist ..\lib mkdir ..\..\lib
-copy Win32\Release\portaudio_static_32.lib ..\..\lib\
+copy Win32\Release\portaudio_static_x86.lib ..\..\lib\
 cd ..\..\..
 
 cd hts_engine_API-1.10
@@ -91,17 +95,17 @@ del/q %name%.*
 cd portaudio\build\msvc
 msbuild portaudio.sln /p:Configuration=Release;Platform=x64
 if not exist ..\lib mkdir ..\..\lib
-copy x64\Release\portaudio_static_64.lib ..\..\lib\
+copy x64\Release\portaudio_static_x64.lib ..\..\lib\
 cd ..\..\..
 
 cd hts_engine_API-1.10
-rem nmake -f makefile.mak clean
+nmake -f makefile.mak clean
 nmake -f makefile.mak
 nmake -f makefile.mak install
 cd ..
 
 cd open_jtalk-1.10
-rem nmake -f makefile.mak clean
+nmake -f makefile.mak clean
 nmake -f makefile.mak
 nmake -f makefile.mak install
 cd ..

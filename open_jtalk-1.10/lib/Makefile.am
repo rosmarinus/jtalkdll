@@ -13,13 +13,14 @@ libjtalk_la_SOURCES = jtalk.c main.version build.version
 
 #libjtalk_la_LIBADD = 	@top_srcdir@/lib/libopenjtalk.la 
 #libjtalk_la_LIBADD = libopenjtalk.la  @LIB_ICONV@ @LIBS_PORTAUDIO@ -lm -lstdc++ -lHTSEngine
-libjtalk_la_LIBADD = libopenjtalk.la @LIB_ICONV@ @LIBS_PORTAUDIO@ @LIB_PATH@/libHTSEngine.la -lm -lstdc++
+libjtalk_la_LIBADD = libopenjtalk.la  @LIB_ICONV@ @LIBS_PORTAUDIO@ -lm -lstdc++
+#libjtalk_la_LIBADD = libopenjtalk.la @LIB_ICONV@ /mingw64/lib/libportaudio.la /mingw64/lib/libHTSEngine.la -lm -lstdc++
 
 #libjtalk_la_LDFLAGS =  -fvisibility=hidden -no-undefined -version-info 0:0:0
 #libjtalk_la_LDFLAGS =  -fvisibility=hidden -no-undefined -version-info 0:0:0 @LIB_ICONV@ @LIBS_PORTAUDIO@ -lm -lstdc++ -lHTSEngine
 libjtalk_la_LDFLAGS =  -fvisibility=hidden -no-undefined -version-info 0:0:0
 
-libjtalk_la_CFLAGS = -I ../lib/ -DVER_MAJOR=$(MAJOR) -DVER_MINOR=$(MINOR) -DVER_BUILD=$(BUILD) -DGIT_REV=\"@GIT_REV@\"
+libjtalk_la_CFLAGS = -I ../lib/ -I ../../portaudio/include -DVER_MAJOR=$(MAJOR) -DVER_MINOR=$(MINOR) -DVER_BUILD=$(BUILD) -DGIT_REV=\"@GIT_REV@\"
 
 noinst_LTLIBRARIES = libopenjtalk.la
 
@@ -34,8 +35,8 @@ libopenjtalk_la_LIBADD = @top_srcdir@/text2mecab/libtext2mecab.la \
 	@top_srcdir@/njd_set_unvoiced_vowel/libnjd_set_unvoiced_vowel.la \
 	@top_srcdir@/njd_set_long_vowel/libnjd_set_long_vowel.la \
 	@top_srcdir@/njd2jpcommon/libnjd2jpcommon.la \
-	@top_srcdir@/jpcommon/libjpcommon.la 
-#	@top_srcdir@/hts_engine_API/libHTSEngine.la
+	@top_srcdir@/jpcommon/libjpcommon.la \
+	-lHTSEngine
 
 libopenjtalk_la_CFLAGS = -I @top_srcdir@/text2mecab \
               -I @top_srcdir@/mecab/src \
@@ -49,7 +50,8 @@ libopenjtalk_la_CFLAGS = -I @top_srcdir@/text2mecab \
               -I @top_srcdir@/njd_set_long_vowel \
               -I @top_srcdir@/njd2jpcommon \
               -I @top_srcdir@/jpcommon \
-              -I @HTS_ENGINE_HEADER_DIR@
+              -I @HTS_ENGINE_HEADER_DIR@ \
+			  -I ../../portaudio/include 
 
 libopenjtalk_la_SOURCES = openjtalk.c
 
@@ -59,9 +61,9 @@ noinst_PROGRAMS = jtd_c
 jsay_SOURCES = jsay.c jtalk.c openjtalk main.version build.version
 jsay_CFLAGS  = -DVER_MAJOR=$(MAJOR) -DVER_MINOR=$(MINOR) -DVER_BUILD=$(BUILD) -DGIT_REV=\"@GIT_REV@\"
 jsay_LDFLAGS = -no-undefined -o jsay
-jsay_LDADD   = -L@LIB_PATH@ -ljtalk
+jsay_LDADD   = -L/usr/local/lib -ljtalk
 
 jtd_c_SOURCES = jtd_c.c jtalk.c openjtalk main.version build.version
 jtd_c_CFLAGS  = -DVER_MAJOR=$(MAJOR) -DVER_MINOR=$(MINOR) -DVER_BUILD=$(BUILD) -DGIT_REV=\"@GIT_REV@\"
 jtd_c_LDFLAGS = -no-undefined -o jtd_c 
-jtd_c_LDADD   = -L@LIB_PATH@ -ljtalk
+jtd_c_LDADD   = -L/usr/local/lib -ljtalk

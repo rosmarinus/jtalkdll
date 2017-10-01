@@ -50,9 +50,9 @@ JTALK_C_START;
 #ifdef WINDOWS_PORTAUDIO
 #include <portaudio.h>
 #if defined(_WIN64)
-#pragma comment(lib, "portaudio_static_64.lib")
+#pragma comment(lib, "portaudio_static_x64.lib")
 #else
-#pragma comment(lib, "portaudio_static_32.lib")
+#pragma comment(lib, "portaudio_static_x86.lib")
 #endif
 #else
 #error "WinOut関数による処理はまだ実装していません。"
@@ -64,13 +64,6 @@ JTALK_C_START;
 
 #if defined(ICONV_ENABLE)
 #include <iconv.h>
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-#if defined(_WIN64)
-#pragma comment(lib, "iconv64.lib")
-#else
-#pragma comment(lib, "iconv32.lib")
-#endif
-#endif
 #endif
 
 /*****************************************************************
@@ -4350,7 +4343,7 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION jtalkdll_copyright()
 		fprintf(stderr, "version %d.%d.%d\n", VER_MAJOR, VER_MINOR ,VER_BUILD);
 	}
 	fprintf(stderr, "https://github.com/rosmarinus/jtalkdll.git\n");
-	fprintf(stderr, "Copyright (C) 2017- takayan\n");
+	fprintf(stderr, "Copyright (C) 2017 takayan\n");
 	fprintf(stderr, "All rights reserved.\n");
 	fprintf(stderr, "\n");
 	Open_JTalk_COPYRIGHT();

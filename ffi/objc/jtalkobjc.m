@@ -98,7 +98,7 @@ gvWeightForSpectrum, gvWeightForLogF0, volume, s,p,a,b,r,fm,u,jm,jf,g, speaking,
 // サンプリング周波数
 - (void)setSamplingFrequency:(unsigned int)value {
     if (value < 1) {
-        NSString *str = [NSString stringWithFormat:@"sampling frequency の範囲は1以上の整数です:%ld",value];
+        NSString *str = [NSString stringWithFormat:@"sampling frequency の範囲は1以上の整数です:%u",value];
         [[NSException exceptionWithName:@"valueError" reason:str userInfo:nil] raise];
     }
     openjtalk_setSamplingFrequency(handle, value);
@@ -119,7 +119,7 @@ gvWeightForSpectrum, gvWeightForLogF0, volume, s,p,a,b,r,fm,u,jm,jf,g, speaking,
 // フレームピリオド
 - (void)setFperiod:(unsigned int)value {
     if (value < 1) {
-        NSString *str = [NSString stringWithFormat:@"frame period の範囲は1以上の整数です:%ld",value];
+        NSString *str = [NSString stringWithFormat:@"frame period の範囲は1以上の整数です:%u",value];
         [[NSException exceptionWithName:@"valueError" reason:str userInfo:nil] raise];
     }
     openjtalk_setFperiod(handle, value);

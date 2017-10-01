@@ -4,8 +4,7 @@
 dist=/usr/local/OpenJTalk
 windist=/c/open_jtalk
 dicname=dic_utf_8
-#commanddir=../../build.dir/Release
-commanddir=../../build.dir
+commanddir=../../build.dir/Release
 
 files=(left-id.def pos-id.def rewrite.def right-id.def)
 for file in ${files[@]}; do
@@ -25,9 +24,6 @@ fi
 files=(char.bin matrix.bin sys.dic unk.dic left-id.def pos-id.def rewrite.def right-id.def)
 for file in ${files[@]}; do
 	if [[ $(uname) =~ "linux" ]]; then
-		sudo mkdir -p $dist/$dicname
-		sudo cp $file $dist/$dicname/
-	elif [[ $(uname) =~ "Darwin" ]]; then
 		sudo mkdir -p $dist/$dicname
 		sudo cp $file $dist/$dicname/
 	else

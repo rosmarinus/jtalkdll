@@ -35,27 +35,26 @@ DLLMACROS = /DVER_MAJOR=$(VER_MAJOR) /DVER_MINOR=$(VER_MINOR) /DVER_BUILD=$(VER_
 !IF $(AMD64)
 ARCH=64
 DLLMACROS = $(DLLMACROS) /D _x64_
+PORTAUDIOLIB = ..\..\portaudio\lib\portaudio_static_x64.lib
 !ELSE
 DLLMACROS = $(DLLMACROS)
 ARCH=32
+PORTAUDIOLIB = ..\..\portaudio\lib\portaudio_static_x86.lib
 !ENDIF
 
-PORTAUDIOLIB = ..\..\portaudio\lib\portaudio_static_$(ARCH).lib
 DLLFILE = $(DLLNAME)$(ARCH).dll
-DLLNOARCHFILE = $(DLLNAME).dll
 DEFFILE = $(DLLNAME).def
 MANAGEDDLLFILE = $(MDLLNAME)$(ARCH).dll
 IMPORTLIB = $(DLLNAME)$(ARCH).lib
-IMPORTNOARCHLIB = $(DLLNAME)$(ARCH).lib
 LIBFILE = $(LIBNAME)$(ARCH).lib
 SNKFILE = $(MDLLNAME)$(ARCH).snk
 TLBFILE = $(MDLLNAME)$(ARCH).tlb
 DOCFILE = $(MDLLNAME)$(ARCH).xdc
 SAMPLES = jtd_c.exe
-TARGET = $(DLLFILE) $(DLLNOARCHFILE) $(MANAGEDDLLFILE) jsay.exe $(SAMPLES) 
+TARGET = $(DLLFILE) $(MANAGEDDLLFILE) jsay.exe $(SAMPLES)
 
-!IF EXIST($(SNKFILE))
-OPTKEY = /KEYFILE:$(SNKFILE)
+!IF EXIST(..\..\..\$(SNKFILE))
+OPTKEY = /KEYFILE:..\..\..\$(SNKFILE)
 !ELSE
 OPTKEY = 
 !ENDIF
@@ -91,10 +90,6 @@ $(LIBFILE) : $(LIBNAME).obj main.version build.version git.revision
 $(DLLFILE) : $(DLLNAME).obj $(LIBFILE) main.version build.version git.revision
 	$(CC) $(COPTDEF) $(CFLAGS) /c jtalk.c $(DLLMACROS)
 	$(CL) /LTCG $(OPTDEF) /DLL /implib:$(IMPORTLIB) /OUT:$@ $(DLLNAME).obj $(LIBFILE) $(LIBS) $(PORTAUDIOLIB) user32.lib Advapi32.lib winmm.lib Shell32.lib kernel32.lib Shlwapi.lib
-
-$(DLLNOARCHFILE) : $(DLLNAME).obj $(LIBFILE) main.version build.version git.revision
-	$(CC) $(COPTDEF) $(CFLAGS) /c jtalk.c $(DLLMACROS)
-	$(CL) /LTCG $(OPTDEF) /DLL /implib:$(IMPORTNOARCHLIB) /OUT:$@ $(DLLNAME).obj $(LIBFILE) $(LIBS) $(PORTAUDIOLIB) user32.lib Advapi32.lib winmm.lib Shell32.lib kernel32.lib Shlwapi.lib
 
 $(MANAGEDDLLFILE) : $(MDLLNAME).cpp $(DLLNAME).obj $(LIBNAME).obj
 	$(CC) /clr /c  $(MDLLNAME).cpp $(DLLMACROS) /doc"$(DOCFILE)"

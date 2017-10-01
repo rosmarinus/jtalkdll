@@ -43,9 +43,9 @@ OPEN_JTALK_C_START;
 #if defined(AUDIO_PLAY_PORTAUDIO)
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #if defined(_WIN64)
-#pragma comment(lib, "portaudio_static_64.lib")
+#pragma comment(lib, "portaudio_static_x64.lib")
 #else
-#pragma comment(lib, "portaudio_static_32.lib")
+#pragma comment(lib, "portaudio_static_x86.lib")
 #endif
 #endif
 #endif

@@ -1,23 +1,23 @@
 ﻿// jtalk.h
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW)
-#ifdef NODEFFILE
-#define OPENJTALK_DLL_API __declspec(dllexport)
+	#ifdef NODEFFILE
+		#define OPENJTALK_DLL_API __declspec(dllexport)
+	#else
+		#define OPENJTALK_DLL_API
+	#endif
+	//#define OPENJTALK_CONVENTION __cdecl
+	#define OPENJTALK_CONVENTION __stdcall
 #else
-#define OPENJTALK_DLL_API
-#endif
-//#define OPENJTALK_CONVENTION __cdecl
-#define OPENJTALK_CONVENTION __stdcall
-#else
-#define OPENJTALK_DLL_API __attribute__((visibility("default")))
-#define OPENJTALK_CONVENTION
+	#define OPENJTALK_DLL_API __attribute__((visibility("default")))
+	#define OPENJTALK_CONVENTION
 #endif
 
 #ifdef __cplusplus
-#define JTALK_H_START extern "C" {
-#define JTALK_H_END }
+	#define JTALK_H_START extern "C" {
+	#define JTALK_H_END }
 #else
-#define JTALK_H_START
-#define JTALK_H_END
+	#define JTALK_H_START
+	#define JTALK_H_END
 #endif
 
 JTALK_H_START
@@ -26,25 +26,24 @@ JTALK_H_START
 #include <stdint.h>
 #include <stddef.h>
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW)
-#include <uchar.h>
+	#include <uchar.h>
 #else
-#if !defined(__cplusplus)
-typedef unsigned short char16_t;
-#endif
+	#if !defined(__cplusplus)
+		typedef unsigned short char16_t;
+	#endif
 #endif
 
 #define OPENJTALK_BLOCKSIZE 1024
 
-
 typedef struct Open_JTalk_tag Open_JTalk;
 #ifdef __cplusplus
-#if (defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW))
-struct OpenJTalk{};
+	#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW)
+		struct OpenJTalk{};
+	#else
+		struct OpenJTalk;
+	#endif
 #else
-struct OpenJTalk;
-#endif
-#else
-typedef struct OpenJTalk_tag OpenJTalk;
+	typedef struct OpenJTalk_tag OpenJTalk;
 #endif
 
 /*****************************************************************

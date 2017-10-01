@@ -8,11 +8,11 @@ hts_engine_api_ver=1.10
 open_jtalk=open_jtalk-${open_jtalk_ver}
 hts_engine_api=hts_engine_API-${hts_engine_api_ver}
 
-cd portaudio
-./configure
-make
-make install
-cd ..
+#cd portaudio
+#./configure
+#make
+#make install
+#cd ..
 
 cd ${hts_engine_api}
 ./configure

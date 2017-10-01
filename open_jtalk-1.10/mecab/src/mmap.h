@@ -87,7 +87,7 @@ template <class T> class Mmap {
   // This code is imported from sufary, develoved by
   //  TATUO Yamashita <yto@nais.to> Thanks!
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-  bool open(const char *filename, const char *mode = "r") {
+bool open(const char *filename, const char *mode = "r") {
     this->close();
     unsigned long mode1, mode2, mode3;
     fileName = std::string(filename);
@@ -140,8 +140,7 @@ template <class T> class Mmap {
   Mmap(): text(0), hFile(INVALID_HANDLE_VALUE), hMap(0) {}
 
 #else
-
-  bool open(const char *filename, const char *mode = "r") {
+    bool open(const char *filename, const char *mode = "r") {
     this->close();
     struct stat st;
     fileName = std::string(filename);

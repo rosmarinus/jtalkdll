@@ -9,11 +9,15 @@ project(jtalkdll)
 if(MINGW)
     set(CMAKE_C_COMPILER gcc)
     set(CMAKE_CXX_COMPILER g++)
-    if($ENV{MINGW_CHOST})
-        #set(CMAKE_C_COMPILER $ENV{MINGW_CHOST}-gcc)
-        #set(CMAKE_CXX_COMPILER $ENV{MINGW_CHOST}-g++)
-        message("cxx: ${CMAKE_CXX_COMPILER}")
+    set(mingw_chost $ENV{MINGW_CHOST})
+    #message("MINGW_CHOST: ${mingw_chost}")
+    if(${mingw_chost} MATCHES "mingw")
+        set(CMAKE_C_COMPILER ${mingw_chost}-gcc)
+        set(CMAKE_CXX_COMPILER ${mingw_chost}-g++)
+        #message("cxx: ${CMAKE_CXX_COMPILER}")
     endif()
+    message("cc : ${CMAKE_C_COMPILER}")
+    message("cxx: ${CMAKE_CXX_COMPILER}")
 endif()
 
 set(CMAKE_BUILD_TYPE Release)
@@ -73,20 +77,21 @@ else()
     # cygwin
     #if(${CMAKE_SYSTEM_NAME} MATCHES "Cygwin")
     if(CYGWIN)
-        set(openjtalk_compile_flags "${openjtalk_compile_flags}-std=gnu11 ${openjtalk_compile_flags}")
-        set(hts_c_compile_flags     "${hts_c_compile_flags}")
+        set(openjtalk_compile_flags "${openjtalk_compile_flags} -std=gnu11")
+        set(hts_c_compile_flags "${hts_c_compile_flags} -std=gnu11")
         set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -std=gnu++11")
 
     # mingw
     elseif(MINGW)
-        set(openjtalk_compile_flags "${openjtalk_compile_flags} -static-libgcc -static")
-        set(hts_c_compile_flags     "${hts_c_compile_flags} -static-libstdc++ -static")
-        set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -static-libgcc -static")
+        message("mingw compiler")
+        set(openjtalk_compile_flags "${openjtalk_compile_flags} -static-libgcc -static-libstdc++ -static")
+        set(hts_c_compile_flags "${hts_c_compile_flags} -static-libgcc -static-libstdc++ -static")
+        set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -static-libgcc -static-libstdc++ -static")
 
     # linux
     else()
         set(openjtalk_compile_flags "${openjtalk_compile_flags} -fPIC")
-        set(hts_c_compile_flags     "${hts_c_compile_flags} -fPIC")
+        set(hts_c_compile_flags "${hts_c_compile_flags} -fPIC")
         set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -fPIC")
     endif()
 
@@ -158,6 +163,7 @@ target_link_libraries(mecab-dict-index mecab)
 if(APPLE)
     target_link_libraries(mecab-dict-index iconv)
 endif()
+
 
 # project(njd C)
 include_directories(${OPEN_JTALK_PATH}/njd)
@@ -373,15 +379,18 @@ set_target_properties(jtalk PROPERTIES COMPILE_FLAGS ${jtalk_compile_flags})
 target_link_libraries(jtalk
     openjtalk
 )
-if(MINGW)
+if(CYGWIN)
     target_link_libraries(jtalk iconv)
+    #set_target_properties(jtalk PROPERTIES PREFIX "" SUFFIX ".dll")
+elseif(MINGW)
+    #target_link_libraries(jtalk iconv)
     set_target_properties(jtalk PROPERTIES PREFIX "" SUFFIX ".dll")
 elseif(APPLE)
     target_link_libraries(jtalk iconv)
 endif()
 
 
-install(FILES  ${OPEN_JTALK_PATH}/lib/jtalk.h DESTINATION include)
+install(FILES ${OPEN_JTALK_PATH}/lib/jtalk.h DESTINATION include)
 install(TARGETS jtalk
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib

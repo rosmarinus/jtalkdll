@@ -168,7 +168,7 @@ class Jtalk {
         if i < 1 {
             throw JtalkError.ValueError("sampling frequency (s) の範囲は1以上の整数です: " + String(i))
         }
-        openjtalk_setSamplingFrequency(self.handle, Int(i))
+        openjtalk_setSamplingFrequency(self.handle, UInt32(i))
     }
     func getSamplingFrequency() -> UInt {
         return UInt(openjtalk_getSamplingFrequency(self.handle))
@@ -203,7 +203,7 @@ class Jtalk {
         if i < 1 {
             throw JtalkError.ValueError("frame period (p) の範囲は1以上の整数です: " + String(i))
         }
-        openjtalk_setFperiod(self.handle, Int(i))
+        openjtalk_setFperiod(self.handle, UInt32(i))
     }
     func getFperiod() -> UInt {
         return UInt(openjtalk_getFperiod(self.handle))

@@ -17,8 +17,8 @@ int main() {
             printf("current voice: %s\n", [tts.voice.name UTF8String]);
             printf("dic: %s\n", [tts.dic UTF8String]);
 
-            printf("s  = %ld\n", tts.s);
-            printf("p  = %ld\n", tts.p);
+            printf("s  = %u\n", tts.s);
+            printf("p  = %u\n", tts.p);
             printf("a  = %f\n", tts.a);
             printf("b  = %f\n", tts.b);
             printf("r  = %f\n", tts.r);
