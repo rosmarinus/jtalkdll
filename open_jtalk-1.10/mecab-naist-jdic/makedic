@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+#var
+dist=/usr/local/OpenJTalk
+windist=/c/open_jtalk
+dicname=dic_utf_8
+#commanddir=../../build.dir/Release
+commanddir=../../build.dir
+
+files=(left-id.def pos-id.def rewrite.def right-id.def)
+for file in ${files[@]}; do
+	if [ ! -f $file ]; then
+		cp _$file $file
+	fi
+done
+$commanddir/mecab-dict-index -d . -o . -f UTF-8 -t UTF-8
+# install
+if [[ $(uname) =~ "MINGW" ]]; then
+	dist=$windist
+elif [[ $(uname) =~ "CYGWIN" ]]; then
+	dist=/cygdrive$windist
+elif [[ $(uname) =~ "-Microsoft" ]]; then
+	dist=/mnt$windist
+fi
+files=(char.bin matrix.bin sys.dic unk.dic left-id.def pos-id.def rewrite.def right-id.def)
+for file in ${files[@]}; do
+	if [[ $(uname) =~ "linux" ]]; then
+		sudo mkdir -p $dist/$dicname
+		sudo cp $file $dist/$dicname/
+	elif [[ $(uname) =~ "Darwin" ]]; then
+		sudo mkdir -p $dist/$dicname
+		sudo cp $file $dist/$dicname/
+	else
+		mkdir -p $dist/$dicname
+		cp $file $dist/$dicname/
+	fi
+done

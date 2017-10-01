@@ -11,8 +11,11 @@
 JTALK_C_START;
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+//#if defined(_WIN32) && !defined(__CYGWIN__)
 //#define ICONV_ENABLE
 #define WINDOWS_PORTAUDIO
+#elif defined(__MINGW32__)
+#include <comip.h>
 #else
 #define ICONV_ENABLE
 #endif

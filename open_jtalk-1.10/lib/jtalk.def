@@ -121,3 +121,4 @@ openjtalk_test	@119
 openjtalk_wait	@120
 openjtalk_waitUntilDone	@121
 openjtalk_waitUntilFinished	@122
+jtalkdll_copyright @123
