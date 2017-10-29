@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+build_dir=build.dir
+if [ -f ../incbuild ]; then
+    bash ../incbuild
+fi
+
+# machine
+if [[ $(uname) =~ "MINGW" ]]; then
+    export AR="ar"
+    export RANLIB="ranlib"
+    export CC="gcc"
+    export CXX="g++"
+    host=""
+    target=""
+    build=""
+    prefix=/usr/local
+elif [[ $(uname) =~ "CYGWIN" ]]; then
+	if [ "$1" == "" ] ; then
+		mach=$(uname -m)
+	else
+		mach=$1
+	fi
+    #mach=x86_64
+    #mach=i686
+    mach=$mach-w64-mingw32
+    export AR="$mach-ar"
+    export RANLIB="$mach-ranlib"
+    export CC="$mach-gcc"
+    export CXX="$mach-g++"
+    host="--host=$mach"
+    target="--target=$mach"
+    build="--build=$mach"
+    prefix=/usr/$mach
+fi
+echo ${mach}
+
+re="(MINGW|CYGWIN)"
+if [[ $(uname) =~ $re ]]; then
+    cd portaudio
+    chmod +x configure
+    #./configure $host --prefix=$prefix
+    #./configure $host $target $build --prefix=$prefix
+    ./configure $host $target --prefix=$prefix
+    make clean
+    make
+    make install
+    cd ..
+else
+    cd portaudio
+    chmod +x configure
+    ./configure
+    make clean
+    make
+    sudo make install
+    cd ..
+fi

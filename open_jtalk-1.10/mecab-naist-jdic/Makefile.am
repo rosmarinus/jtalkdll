@@ -5,7 +5,7 @@ DISTCLEANFILES = *.log *.out *~
 
 MAINTAINERCLEANFILES = Makefile.in char.bin matrix.bin sys.dic unk.dic left-id.def rewrite.def pos-id.def right-id.def
 
-dicdir = @DICDIR@
+dicdir = @prefix@/dic
 
 dic_DATA   = char.bin matrix.bin sys.dic unk.dic left-id.def rewrite.def pos-id.def right-id.def
 
@@ -14,7 +14,11 @@ char.bin matrix.bin sys.dic unk.dic left-id.def rewrite.def pos-id.def right-id.
 	cp _rewrite.def rewrite.def
 	cp _pos-id.def pos-id.def
 	cp _right-id.def right-id.def
-	../mecab/src/mecab-dict-index -d . -o . -f UTF-8 -t UTF-8
+	../mecab/src/mecab-dict-index -d . -o . -f UTF-8 -t @MECAB_CHARSET@
+	iconv -f UTF-8 -t @MECAB_CHARSET@ < _left-id.def > left-id.def
+	iconv -f UTF-8 -t @MECAB_CHARSET@ < _rewrite.def > rewrite.def
+	iconv -f UTF-8 -t @MECAB_CHARSET@ < _pos-id.def > pos-id.def
+	iconv -f UTF-8 -t @MECAB_CHARSET@ < _right-id.def > right-id.def
 
 clean:
 	rm -f char.bin matrix.bin sys.dic unk.dic left-id.def rewrite.def pos-id.def right-id.def

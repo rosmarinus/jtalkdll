@@ -1,2 +1,3 @@
-cl /EHsc /c jtalkcpp.cpp
-cl /EHsc jtd_cpp.cpp jtalkcpp.obj jtalk64.lib
+set JTALKDIR=c:\open_jtalk
+cl /EHsc /I %JTALKDIR%\include /c jtalkcpp.cpp
+cl /EHsc /I %JTALKDIR%\include jtd_cpp.cpp jtalkcpp.obj %JTALKDIR%\lib\jtalk.lib

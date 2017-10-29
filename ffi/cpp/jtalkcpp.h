@@ -27,35 +27,30 @@ class JTalk
 		std::u16string name;
 	};
 
-	struct voiceFileInfoSjis
-	{
-		std::string path;
-		std::string name;
-	};
-
   private:
 	OpenJTalk *m_openjtalk = NULL;
 	std::vector<voiceFileInfo *> m_voices;
 	std::vector<voiceFileInfoU16 *> m_voicesU16;
-	std::vector<voiceFileInfoSjis *> m_voicesSjis;
 
 	std::vector<JTalk::voiceFileInfo *> generate_voicelist();
 	std::vector<JTalk::voiceFileInfoU16 *> generate_voicelistU16();
-	std::vector<JTalk::voiceFileInfoSjis *> generate_voicelistSjis();
 	void delete_voicelist();
 	void check_openjtalk_object();
 
   public:
 	// コンストラクタ
-	JTalk(const std::string &voicePath = "", const std::string &dicPath = "", const std::string &voiceDicPath = "");
-
+	JTalk();
+	JTalk(const std::string &voicePath, const std::string &dicPath = u8"", const std::string &voiceDicPath = u8"");
+	JTalk(const char *voicePath, const char *dicPath = NULL, const char *voiceDicPath = NULL);
+	JTalk(const std::u16string &voicePath, const std::u16string &dicPath = u"", const std::u16string &voiceDicPath = u"");
+	JTalk(const char16_t *voicePath, const char16_t *dicPath = NULL, const char16_t *voiceDicPath = NULL);
+	
 	// デストラクタ
 	~JTalk();
 
 	// 音響モデルファイルリストの取得
 	std::vector<voiceFileInfo *> getVoices();
 	std::vector<voiceFileInfoU16 *> getVoicesU16();
-	std::vector<voiceFileInfoSjis *> getVoicesSjis();
 
 	// サンプリング周波数
 	void setSamplingFrequency(unsigned int i);
@@ -122,22 +117,16 @@ class JTalk
 	void setDic(const char *path);
 	void setDicU16(const std::u16string &path);
 	void setDicU16(const char16_t *path);
-	void setDicSjis(const std::string &path);
-	void setDicSjis(const char *path);
 	std::string getDic();
 	std::u16string getDicU16();
-	std::string getDicSjis();
 
 	// 音響モデルファイルディレクトリ指定
 	void setVoiceDir(const std::string &path);
 	void setVoiceDir(const char *path);
 	void setVoiceDirU16(const std::u16string &path);
 	void setVoiceDirU16(const char16_t *path);
-	void setVoiceDirSjis(const std::string &path);
-	void setVoiceDirSjis(const char *path);
 	std::string getVoiceDir();
 	std::u16string getVoiceDirU16();
-	std::string getVoiceDirSjis();
 
 	// 音響モデルファイル指定
 	//  絶対パス...直接、相対パス...音響モデルファイルディレクトリ基準、名前のみ...探索
@@ -145,72 +134,59 @@ class JTalk
 	void setVoice(const char *path);
 	void setVoiceU16(const std::u16string &path);
 	void setVoiceU16(const char16_t *path);
-	void setVoiceSjis(const std::string &path);
-	void setVoiceSjis(const char *path);
 	std::string getVoice();
 	std::u16string getVoiceU16();
-	std::string getVoiceSjis();
 
 	void setVoicePath(const std::string &path);
 	void setVoicePath(const char *path);
 	void setVoicePathU16(const std::u16string &path);
 	void setVoicePathU16(const char16_t *path);
-	void setVoicePathSjis(const std::string &path);
-	void setVoicePathSjis(const char *path);
 	std::string getVoicePath();
 	std::u16string getVoicePathU16();
-	std::string getVoicePathSjis();
 
 	void setVoiceName(const std::string &name);
 	void setVoiceName(const char *name);
 	void setVoiceNameU16(const std::u16string &name);
 	void setVoiceNameU16(const char16_t *name);
-	void setVoiceNameSjis(const std::string &name);
-	void setVoiceNameSjis(const char *name);
 	std::string getVoiceName();
 	std::u16string getVoiceNameU16();
-	std::string getVoiceNameSjis();
 
 	// 同期発声
 	void speakSync(const std::string &text);
 	void speakSync(const char *text);
 	void speakSyncU16(const std::u16string &text);
 	void speakSyncU16(const char16_t *text);
-	void speakSyncSjis(const std::string &text);
-	void speakSyncSjis(const char *text);
 
 	// 非同期発声
 	void speakAsync(const std::string &text);
 	void speakAsync(const char *text);
 	void speakAsyncU16(const std::u16string &text);
 	void speakAsyncU16(const char16_t *text);
-	void speakAsyncSjis(const std::string &text);
-	void speakAsyncSjis(const char *text);
 
-	// 発声の一時停止
+	// 非同期発声の一時停止
 	void pause();
 
-	// 発声の再開
+	// 非同期発声の再開
 	void resume();
 
-	// 発声の強制停止
+	// 非同期発声の強制停止
 	void stop();
 
-	// 発声中かどうか
+	// 非同期発声中かどうか
 	bool isSpeaking();
 
-	// 一時停止中かどうか
+	// 非同期発声が一時停止中かどうか
 	bool isPaused();
 
-	// 完了したかどうか
+	// 非同期発声が完了したかどうか
 	bool isFinished();
 
-	// 発声している間待機する
+	// 非同期発声している間待機する
 	void waitUntilDone();
 	void waitUntilFinished();
 
-	// 指定時間待機する
-	// 0のときは、waitUntilDone
+	// 発声と関係なく指定時間待機する
+	// ただし、引数無し、引数が0のときは waitUntilDone と同じ
 	void wait(int duration = 0);
 
 	// 指定ファイルに音声を記録する
@@ -218,24 +194,31 @@ class JTalk
 	void speakToFile(const char *text, const char *file);
 	void speakToFileU16(const std::u16string &text, const std::u16string &file);
 	void speakToFileU16(const char16_t *text, const char16_t *file);
-	void speakToFileSjis(const std::string &text, const std::string &file);
-	void speakToFileSjis(const char *text, const char *file);
 
-	// コンソール出力用の文字コード変換
-	// WindowsのときはShiftJISに、それ以外はUTF-8に変換する
-	std::string consoleString(const std::string &text);
-	std::string consoleString(const char *text);
-	std::string consoleStringU16(const std::u16string &text);
-	std::string consoleStringU16(const char16_t *text);
-	
 	// エラー出力に情報をよく出力するかどうか
 	void setVerbose(bool sw);
 
 	// テスト（聞こえますか？と発声テスト）
 	void test(void *text);
 
+	/*** 以下クラスメソッド ***/
+
 	// 文字のコードを返す
 	// 呼び出し側で用意したC型文字列（1文字）の文字コードを返す
-	long getCharCode(char *text);
-	long getWideCharCode(char16_t *text);
+	static long getCharCode(char *text);
+	static long getWideCharCode(char16_t *text);
+
+	// コンソール出力用の文字コード変換
+	// WindowsのときはShiftJISに、それ以外はUTF-8に変換する
+	static std::string consoleString(const std::string &text);
+	static std::string consoleString(const char *text);
+	static std::string consoleStringU16(const std::u16string &text);
+	static std::string consoleStringU16(const char16_t *text);
+
+	// 文字列変換 SJIS <-> UTF8
+	// WindowsでShiftJISの文字列をメソッドとやりとりするときに使う
+	static std::string SjisToUtf8(const std::string &source);
+	static std::string SjisToUtf8(const char *source);
+	static std::string Utf8ToSjis(const std::string &source);
+	static std::string Utf8ToSjis(const char *source);
 };

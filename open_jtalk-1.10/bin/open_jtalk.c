@@ -451,6 +451,5 @@ int main(int argc, char **argv)
    return 0;
 }
 
-
 OPEN_JTALK_C_END;
 #endif                          /* !OPEN_JTALK_C */

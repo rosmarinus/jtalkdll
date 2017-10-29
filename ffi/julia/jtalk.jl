@@ -6,7 +6,7 @@ module Jtalk
       name::Ptr{UInt8}
   end
 
-  const dll = is_unix() ? "libjtalk" : (Sys.WORD_SIZE==64 ? "jtalk64" : "jtalk32" )
+  const dll = is_unix() ? "libjtalk" : "jtalk"
 
   type JTalk
 
@@ -284,7 +284,6 @@ module Jtalk
     return result
   end
 
-
   # OPENJTALK_DLL_API bool __stdcall openjtalk_setVoice(OpenJTalk*oj, const char*path);
   function setVoice(j::JTalk,value)
     if typeof(value)==Dict{Symbol,String} && haskey(value,:path)
@@ -317,6 +316,16 @@ module Jtalk
     ccall((:openjtalk_speakToFile,dll),Void,(Ptr{Void},Ptr{UInt8},Ptr{UInt8},),j.handle,text,path)
   end
 
+  ### pause
+  function pause(j::JTalk)
+    ccall((:openjtalk_pause,dll),Void,(Ptr{Void},),j.handle)
+  end
+
+  ### resume
+  function resume(j::JTalk)
+    ccall((:openjtalk_resume,dll),Void,(Ptr{Void},),j.handle)
+  end
+
   ### Stop
   function stop(j::JTalk)
     ccall((:openjtalk_stop,dll),Void,(Ptr{Void},),j.handle)
@@ -325,6 +334,16 @@ module Jtalk
   ### isSpeaking
   function isSpeaking(j::JTalk)
     ccall((:openjtalk_isSpeaking,dll),Void,(Ptr{Void},),j.handle)
+  end
+
+  ### isPaused
+  function isPaused(j::JTalk)
+    ccall((:openjtalk_isPaused,dll),Void,(Ptr{Void},),j.handle)
+  end
+
+  ### isFinished
+  function isFinished(j::JTalk)
+    ccall((:openjtalk_isFinished,dll),Void,(Ptr{Void},),j.handle)
   end
 
   ### Wait

@@ -1,36 +1,16 @@
 #!/usr/bin/env bash
-
-# version
-open_jtalk_ver=1.10
-hts_engine_api_ver=1.10
-
-# folder name
-open_jtalk=open_jtalk-${open_jtalk_ver}
-hts_engine_api=hts_engine_API-${hts_engine_api_ver}
-
-#cd portaudio
-#./configure
-#make
-#make install
-#cd ..
-
-cd ${hts_engine_api}
-./configure
+build_dir=build.dir
+if [ -f ../incbuild ]; then
+    bash ../incbuild
+fi
+mkdir -p ${build_dir}
+cd ${build_dir}
+cmake ..
 make
 re="(MINGW|CYGWIN)"
 if [[ $(uname) =~ $re ]]; then
-make install
+    make install
 else
-sudo make install
-fi
-cd ..
-
-cd ${open_jtalk}
-./configure
-make
-if [[ $(uname) =~ $re ]]; then
-make install
-else
-sudo make install
+    sudo make install
 fi
 cd ..

@@ -8,7 +8,7 @@ for(var e = new Enumerator(tts.Voices);!e.atEnd();e.moveNext()) {
 }
 WScript.Echo(str);
 
-var n = Math.floor(Math.random() * tts.Voices.Count + 1);
+var n = Math.floor(Math.random() * tts.Voices.Count);
 tts.Voice = tts.Voices.GetItem(n);
 str = "";
 str += "現在の音声:\n" + tts.VoiceName + "\n\n";

@@ -34,7 +34,7 @@ static const int pathbuflen = 260;
 
 @implementation JTalk : NSObject
 @synthesize samplingFrequency, alpha, beta, speed, additionalHalfTone, msdThreshold,
-gvWeightForSpectrum, gvWeightForLogF0, volume, s,p,a,b,r,fm,u,jm,jf,g, speaking, voices;
+gvWeightForSpectrum, gvWeightForLogF0, volume, s,p,a,b,r,fm,u,jm,jf,g, speaking, paused, finished, voices;
 
 - (id)initWithVoicePath:(NSString *)voicePath withDicPath:(NSString *)dicPath withVoiceDirPath:(NSString *)voiceDirPath {
     self = [super init];
@@ -413,12 +413,28 @@ gvWeightForSpectrum, gvWeightForLogF0, volume, s,p,a,b,r,fm,u,jm,jf,g, speaking,
     return openjtalk_isSpeaking(handle);
 }
 
+- (bool)isPaused {
+    return openjtalk_isPaused(handle);
+}
+
+- (bool)isFinished {
+    return openjtalk_isFinished(handle);
+}
+
 - (void)speakSync:(NSString *)text {
     openjtalk_speakSync(handle, [text UTF8String]);
 }
 
 - (void)speakAsync:(NSString *)text {
     openjtalk_speakAsync(handle, [text UTF8String]);
+}
+
+- (void)pause {
+    openjtalk_pause(handle);
+}
+
+- (void)resume {
+    openjtalk_resume(handle);
 }
 
 - (void)stop {

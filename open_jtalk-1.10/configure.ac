@@ -1,13 +1,11 @@
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT(open_jtalk, 1.10, )
+AC_INIT(open_jtalk, 1.10, open-jtalk-users@lists.sourceforge.net)
 AC_CONFIG_AUX_DIR([config])
 AC_COPYRIGHT(Copyright 2008-2016 Nagoya Institute of Technology)
 AM_INIT_AUTOMAKE
 
 # Checks for C/C++ compiler
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
 AC_PROG_CC
 AC_PROG_CXX
 AM_PROG_CC_C_O
@@ -17,16 +15,6 @@ AN_MAKEVAR([AR], [AC_PROG_AR])
 AN_PROGRAM([ar], [AC_PROG_AR])
 AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
 AC_PROG_AR
-case "$host_os" in
-   *cygwin* )
-      CFLAGS="$CFLAGS -std=gnu11"
-      CXXFLAGS="$CXXFLAGS -std=gnu++11"
-      ;;
-   *)
-      CFLAGS="$CFLAGS -std=c11"
-      CXXFLAGS="$CXXFLAGS -std=c++11"
-      ;;
-esac
 
 # Check for endian
 AC_C_BIGENDIAN
@@ -75,14 +63,6 @@ if test "$use_iconv" == "yes"; then
    AC_DEFINE(HAVE_ICONV,1,Define to 1 if you have the `iconv_open' library(-liconv).)
    AC_DEFINE(ICONV_CONST,,Define to 1 if you have the `iconv_open' library(-liconv).)
 fi
-# mingw iconv libs
-AC_MSG_CHECKING(mingw iconv)
-case $host_os in
-   *win32* | *wince* | *cygwin* | *mingw* )
-	LIB_ICONV="-liconv"
-        ;;
-esac
-
 AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(char)
 AC_CHECK_SIZEOF(short)
@@ -94,7 +74,6 @@ AC_TYPE_SIZE_T
 AC_LANG(C++)
 LIBS="$LIBS $MECAB_LIBS"
 AC_SUBST(MECAB_LIBS)
-AC_SUBST(LIB_ICONV)
 AC_MSG_CHECKING(whether make is GNU Make)
 if $ac_make --version 2>/dev/null | grep '^GNU Make ' >/dev/null ; then
    AC_MSG_RESULT(yes)
@@ -230,31 +209,11 @@ case "$host_os" in
 esac
 fi
 
-# header & library path
-case "$host" in
-   x86_64-w64-mingw32 )
-      hpath=/mingw64/include
-	lpath=/mingw64/lib
-      ;;
-   *mingw32 )
-      hpath=/mingw32/include
-	lpath=/mingw32/lib
-      ;;
-   *)
-      hpath=/usr/local/include
-	lpath=/usr/local/lib
-      ;;
-esac
-AC_SUBST(LIB_PATH)
-LIB_PATH=$lpath
-AC_MSG_CHECKING(for LIB_PATH)
-AC_MSG_RESULT($lpath)
-
 # Define HTS_ENGINE_HEADER
 AC_ARG_WITH(hts-engine-header-path,
             AS_HELP_STRING([--with-hts-engine-header-path],[specify the hts_engine_API header path]),
             [hts_engine_header_path=$withval],
-            [hts_engine_header_path=$hpath])
+            [hts_engine_header_path='/usr/local/include'])
 if test ! -f "${hts_engine_header_path}/HTS_engine.h"; then
    AC_MSG_ERROR(Cannot find HTS_engine.h)
 fi
@@ -271,14 +230,14 @@ HTS_ENGINE_HEADER_DIR=${hts_engine_header_path}
 AC_ARG_WITH(hts-engine-library-path,
             AS_HELP_STRING([--with-hts-engine-library-path],[specify the hts_engine_API library path]),
             [hts_engine_library_path=$withval],
-            [hts_engine_library_path=$lpath])
-if test ! -f "${hts_engine_library_path}/libHTSEngine.la"; then
-   AC_MSG_ERROR(Cannot find libHTSEngine.la)
+            [hts_engine_library_path='/usr/local/lib'])
+if test ! -f "${hts_engine_library_path}/libHTSEngine.a"; then
+   AC_MSG_ERROR(Cannot find libHTSEngine.a)
 fi
-AC_MSG_CHECKING(for libHTSEngine.la)
-AC_MSG_RESULT($hts_engine_library_path/libHTSEngine.la)
+AC_MSG_CHECKING(for libHTSEngine.a)
+AC_MSG_RESULT($hts_engine_library_path/libHTSEngine.a)
 AC_SUBST(HTS_ENGINE_LIBRARY)
-HTS_ENGINE_LIBRARY=${hts_engine_library_path}/libHTSEngine.la
+HTS_ENGINE_LIBRARY=${hts_engine_library_path}/libHTSEngine.a
 
 # Define HTS_ENGINE_LIBRARY_DIR
 AC_SUBST(HTS_ENGINE_LIBRARY_DIR)
@@ -293,61 +252,44 @@ case "$host_os" in
       ;;
 esac
 
-# Define VERSION VARIABLE
-git_revision=$(git show --format="%h" -s)
-AC_SUBST(GIT_REV)
-GIT_REV=${git_revision}
-
-# portaudio libs
-AC_MSG_CHECKING(libraries for portaudio)
-AC_SUBST(LIBS_PORTAUDIO)
-case $host_os in
-  linux*)
-        LIBS_PORTAUDIO="-lportaudio -lasound -pthread"
-        ;;
-    *)
-        LIBS_PORTAUDIO="-lportaudio"
-        ;;
-esac
-case "$host" in
-   x86_64-w64-mingw32 )
-      LIBS_PORTAUDIO="-L/mingw64/lib/ $LIBS_PORTAUDIO "
-      ;;
-   *mingw32 )
-      LIBS_PORTAUDIO="-L/mingw32/lib/ $LIBS_PORTAUDIO "
-      ;;
-esac
-AC_MSG_RESULT($LIBS_PORTAUDIO)
-
-# Define dicdir
-AC_MSG_CHECKING(dicdir)
-AC_SUBST(DICDIR)
-case "$host_os" in
-   *win32* | *wince* | *mingw* )
-      DICDIR="/c/open_jtalk/dic_utf_8"
-      ;;
-   *)
-      DICDIR="/usr/local/OpenJTalk/dic_utf_8"
-      ;;
-esac
-AC_MSG_RESULT($DICDIR)
-
 # Define charset
+AC_ARG_WITH(charset,
+            [  --with-charset          specify charset (EUC-JP/SHIFT_JIS/UTF-8)],
+            [charset=$withval],
+            [charset='UTF-8'])
 AC_MSG_CHECKING(charset)
-AC_MSG_RESULT(utf-8)
+AC_MSG_RESULT($charset)
 AC_SUBST(MECAB_CHARSET)
 AC_SUBST(MECAB_DEFAULT_CHARSET)
 AC_SUBST(MECAB_USE_UTF8_ONLY)
 AC_SUBST(CHARSET)
-MECAB_CHARSET=UTF-8
-MECAB_DEFAULT_CHARSET="UTF-8"
-MECAB_USE_UTF8_ONLY="-D MECAB_USE_UTF8_ONLY"
-CHARSET="-D CHARSET_UTF_8"
-CFLAGS="$CFLAGS -finput-charset=UTF-8 -fexec-charset=UTF-8 "
-CXXFLAGS="$CXXFLAGS -finput-charset=UTF-8 -fexec-charset=UTF-8 "
+if test x$charset = xeucjp -o x$charset = xeuc-jp -o x$charset = xeuc_jp -o x$charset = xEUCJP -o x$charset = xEUC-JP -o x$charset = xEUC_JP ; then
+   MECAB_CHARSET=EUC-JP
+   MECAB_DEFAULT_CHARSET="EUC-JP"
+   MECAB_USE_UTF8_ONLY=""
+   CHARSET="-D CHARSET_EUC_JP"
+   CFLAGS="$CFLAGS -finput-charset=EUC-JP -fexec-charset=EUC-JP "
+   CXXFLAGS="$CXXFLAGS -finput-charset=EUC-JP -fexec-charset=EUC-JP "
+elif test x$charset = xsjis -o x$charset = xshift-jis -o x$charset = xshift_jis -o x$charset = xSJIS -o x$charset = xSHIFT-JIS -o x$charset = xSHIFT_JIS ; then
+   MECAB_CHARSET=SHIFT-JIS
+   MECAB_DEFAULT_CHARSET="SHIFT-JIS"
+   MECAB_USE_UTF8_ONLY=""
+   CHARSET="-D CHARSET_SHIFT_JIS"
+   CFLAGS="$CFLAGS -finput-charset=cp932 -fexec-charset=cp932 "
+   CXXFLAGS="$CXXFLAGS -finput-charset=cp932 -fexec-charset=cp932 "
+elif test x$charset = xutf8 -o x$charset = xutf-8 -o x$charset = xutf_8 -o x$charset = xUTF8 -o x$charset = xUTF-8 -o x$charset = xUTF_8 ; then
+   MECAB_CHARSET=UTF-8
+   MECAB_DEFAULT_CHARSET="UTF-8"
+   MECAB_USE_UTF8_ONLY="-D MECAB_USE_UTF8_ONLY"
+   CHARSET="-D CHARSET_UTF_8"
+   CFLAGS="$CFLAGS -finput-charset=UTF-8 -fexec-charset=UTF-8 "
+   CXXFLAGS="$CXXFLAGS -finput-charset=UTF-8 -fexec-charset=UTF-8 "
+else
+   AC_MSG_ERROR(Cannot recognize $charset)
+fi
 
 # Makefiles
-AC_CONFIG_FILES([Makefile bin/Makefile lib/Makefile text2mecab/Makefile mecab/Makefile mecab/src/Makefile mecab2njd/Makefile njd/Makefile njd_set_pronunciation/Makefile njd_set_digit/Makefile njd_set_accent_phrase/Makefile njd_set_accent_type/Makefile njd_set_unvoiced_vowel/Makefile njd_set_long_vowel/Makefile njd2jpcommon/Makefile jpcommon/Makefile mecab-naist-jdic/Makefile])
+AC_CONFIG_FILES([Makefile bin/Makefile text2mecab/Makefile mecab/Makefile mecab/src/Makefile mecab2njd/Makefile njd/Makefile njd_set_pronunciation/Makefile njd_set_digit/Makefile njd_set_accent_phrase/Makefile njd_set_accent_type/Makefile njd_set_unvoiced_vowel/Makefile njd_set_long_vowel/Makefile njd2jpcommon/Makefile jpcommon/Makefile mecab-naist-jdic/Makefile])
 
 # Make mecab/config.h
 AC_OUTPUT

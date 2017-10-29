@@ -55,13 +55,7 @@ namespace JTalkDll
 
         public class JTalkTTS : IDisposable
     {
-#if (PLATFORMx64)
-		private const String dll = "jtalk64.dll";
-#elif (PLATFORMx86)
-		private const String dll = "jtalk32.dll";
-#else
         private const String dll = "jtalk";
-#endif
 
         private const int MAX_PATH = 260;
         private bool disposed = false;
@@ -234,10 +228,22 @@ namespace JTalkDll
         private extern static void openjtalk_speakAsync(IntPtr handle, String text);
 
         [DllImport(dll, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        private extern static void openjtalk_pause(IntPtr handle);
+
+        [DllImport(dll, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        private extern static void openjtalk_resume(IntPtr handle);
+
+        [DllImport(dll, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         private extern static void openjtalk_stop(IntPtr handle);
 
         [DllImport(dll, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         private extern static bool openjtalk_isSpeaking(IntPtr handle);
+
+        [DllImport(dll, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        private extern static bool openjtalk_isPaused(IntPtr handle);
+
+        [DllImport(dll, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        private extern static bool openjtalk_isFinished(IntPtr handle);
 
         [DllImport(dll, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         private extern static void openjtalk_waitUntilDone(IntPtr handle);
@@ -1034,6 +1040,24 @@ namespace JTalkDll
         }
 
         /// <summary>
+        /// 発声を一時停止する。
+        /// </summary>
+        public void Pause()
+        {
+            check_openjtalk_object();
+            openjtalk_pause(handle);
+        }
+
+        /// <summary>
+        /// 発声を再開する。
+        /// </summary>
+        public void Resume()
+        {
+            check_openjtalk_object();
+            openjtalk_resume(handle);
+        }
+
+        /// <summary>
         /// 発声中ならば、発声を強制停止する。
         /// </summary>
         public void Stop()
@@ -1055,6 +1079,37 @@ namespace JTalkDll
             {
                 check_openjtalk_object();
                 return openjtalk_isSpeaking(handle);
+            }
+        }
+        /// <summary>
+        /// <para>プロパティ：非同期発声が一時停止中かどうか</para>
+        /// </summary>
+        public bool IsPaused
+        {
+            /// <summary>
+            /// 一時停止中かどうか調べる
+            /// </summary>
+            /// <returns>一時停止中かどうかの真偽値</returns>
+            get
+            {
+                check_openjtalk_object();
+                return openjtalk_isPaused(handle);
+            }
+        }
+
+        /// <summary>
+        /// <para>プロパティ：非同期発声が完了したかどうか</para>
+        /// </summary>
+        public bool IsFinished
+        {
+            /// <summary>
+            /// 発声が完了したかどうか調べる
+            /// </summary>
+            /// <returns>発声が完了したかかどうかの真偽値</returns>
+            get
+            {
+                check_openjtalk_object();
+                return openjtalk_isFinished(handle);
             }
         }
 

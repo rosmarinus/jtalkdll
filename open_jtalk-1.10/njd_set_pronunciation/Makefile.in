@@ -98,15 +98,18 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/mecab/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-LTLIBRARIES = $(noinst_LTLIBRARIES)
-libnjd_set_pronunciation_la_LIBADD =
-am_libnjd_set_pronunciation_la_OBJECTS = njd_set_pronunciation.lo
-libnjd_set_pronunciation_la_OBJECTS =  \
-	$(am_libnjd_set_pronunciation_la_OBJECTS)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
+LIBRARIES = $(noinst_LIBRARIES)
+ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR      " $@;
+am__v_AR_1 = 
+libnjd_set_pronunciation_a_AR = $(AR) $(ARFLAGS)
+libnjd_set_pronunciation_a_LIBADD =
+am_libnjd_set_pronunciation_a_OBJECTS =  \
+	njd_set_pronunciation.$(OBJEXT)
+libnjd_set_pronunciation_a_OBJECTS =  \
+	$(am_libnjd_set_pronunciation_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -125,24 +128,18 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
 am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
 am__v_CC_0 = @echo "  CC      " $@;
 am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libnjd_set_pronunciation_la_SOURCES)
-DIST_SOURCES = $(libnjd_set_pronunciation_la_SOURCES)
+SOURCES = $(libnjd_set_pronunciation_a_SOURCES)
+DIST_SOURCES = $(libnjd_set_pronunciation_a_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -173,7 +170,6 @@ ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
-AS = @AS@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -185,24 +181,17 @@ CHARSET = @CHARSET@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
-CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DICDIR = @DICDIR@
 DIC_VERSION = @DIC_VERSION@
-DLLTOOL = @DLLTOOL@
-DSYMUTIL = @DSYMUTIL@
-DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-FGREP = @FGREP@
-GIT_REV = @GIT_REV@
 GREP = @GREP@
 HTS_ENGINE_HEADER = @HTS_ENGINE_HEADER@
 HTS_ENGINE_HEADER_DIR = @HTS_ENGINE_HEADER_DIR@
@@ -213,31 +202,18 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBS_PORTAUDIO = @LIBS_PORTAUDIO@
-LIBTOOL = @LIBTOOL@
-LIB_ICONV = @LIB_ICONV@
-LIPO = @LIPO@
-LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
-LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
-MANIFEST_TOOL = @MANIFEST_TOOL@
 MECAB_CHARSET = @MECAB_CHARSET@
 MECAB_DEFAULT_CHARSET = @MECAB_DEFAULT_CHARSET@
 MECAB_DEFAULT_RC = @MECAB_DEFAULT_RC@
 MECAB_LIBS = @MECAB_LIBS@
 MECAB_USE_UTF8_ONLY = @MECAB_USE_UTF8_ONLY@
 MKDIR_P = @MKDIR_P@
-NM = @NM@
-NMEDIT = @NMEDIT@
-OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
-OTOOL = @OTOOL@
-OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -247,7 +223,6 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -256,10 +231,8 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -297,6 +270,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -309,8 +283,8 @@ EXTRA_DIST = Makefile.mak
 DISTCLEANFILES = *.log *.out *~
 MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = -I @top_srcdir@/njd @CHARSET@
-noinst_LTLIBRARIES = libnjd_set_pronunciation.la
-libnjd_set_pronunciation_la_SOURCES = njd_set_pronunciation.h \
+noinst_LIBRARIES = libnjd_set_pronunciation.a
+libnjd_set_pronunciation_a_SOURCES = njd_set_pronunciation.h \
                                      njd_set_pronunciation.c \
                                      njd_set_pronunciation_rule_ascii_for_euc_jp.h \
                                      njd_set_pronunciation_rule_ascii_for_shift_jis.h \
@@ -322,7 +296,7 @@ libnjd_set_pronunciation_la_SOURCES = njd_set_pronunciation.h \
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -353,19 +327,13 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 
-clean-noinstLTLIBRARIES:
-	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-	@list='$(noinst_LTLIBRARIES)'; \
-	locs=`for p in $$list; do echo $$p; done | \
-	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
-	      sort -u`; \
-	test -z "$$locs" || { \
-	  echo rm -f $${locs}; \
-	  rm -f $${locs}; \
-	}
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 
-libnjd_set_pronunciation.la: $(libnjd_set_pronunciation_la_OBJECTS) $(libnjd_set_pronunciation_la_DEPENDENCIES) $(EXTRA_libnjd_set_pronunciation_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(LINK)  $(libnjd_set_pronunciation_la_OBJECTS) $(libnjd_set_pronunciation_la_LIBADD) $(LIBS)
+libnjd_set_pronunciation.a: $(libnjd_set_pronunciation_a_OBJECTS) $(libnjd_set_pronunciation_a_DEPENDENCIES) $(EXTRA_libnjd_set_pronunciation_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libnjd_set_pronunciation.a
+	$(AM_V_AR)$(libnjd_set_pronunciation_a_AR) libnjd_set_pronunciation.a $(libnjd_set_pronunciation_a_OBJECTS) $(libnjd_set_pronunciation_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libnjd_set_pronunciation.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -373,7 +341,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/njd_set_pronunciation.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/njd_set_pronunciation.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -388,19 +356,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -486,7 +441,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LIBRARIES)
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -522,8 +477,7 @@ maintainer-clean-generic:
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
-	mostlyclean-am
+clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -578,8 +532,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-am
 
@@ -594,18 +547,17 @@ uninstall-am:
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLTLIBRARIES cscopelist-am ctags \
-	ctags-am distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	clean-noinstLIBRARIES cscopelist-am ctags ctags-am distclean \
+	distclean-compile distclean-generic distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am
+	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
+	uninstall-am
 
 .PRECIOUS: Makefile
 

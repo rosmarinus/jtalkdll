@@ -15,11 +15,11 @@ AM_CPPFLAGS = -D DIC_VERSION=@DIC_VERSION@ \
 noinst_PROGRAMS = mecab-dict-index
 
 mecab_dict_index_SOURCES = mecab-dict-index.cpp
-mecab_dict_index_LDADD = libmecab.la
+mecab_dict_index_LDADD = libmecab.a
 
-noinst_LTLIBRARIES = libmecab.la
+noinst_LIBRARIES = libmecab.a
 
-libmecab_la_SOURCES = char_property.cpp \
+libmecab_a_SOURCES = char_property.cpp \
                      char_property.h \
                      common.h \
                      connector.cpp \

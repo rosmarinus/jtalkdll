@@ -667,6 +667,16 @@ class Jtalk {
         openjtalk_speakAsync(self.handle, text)
     }
 
+    // 発声の一時停止
+    func pause() {
+        openjtalk_pause(self.handle)
+    }
+
+    // 発声の再開
+    func resume() {
+        openjtalk_resume(self.handle)
+    }
+
     // 発声の強制停止
     func stop() {
         openjtalk_stop(self.handle)
@@ -676,6 +686,20 @@ class Jtalk {
     var isSpeaking: Bool {
         get {
             return openjtalk_isSpeaking(self.handle)
+        }
+    }
+
+    // 発声が一時停止中かどうか
+    var isPaused: Bool {
+        get {
+            return openjtalk_isPaused(self.handle)
+        }
+    }
+
+    // 発声が完了したかどうか
+    var isFinished: Bool {
+        get {
+            return openjtalk_isFinished(self.handle)
         }
     }
 

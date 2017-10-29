@@ -10,6 +10,8 @@ typedef struct {
 	char *name;
 } HtsVoiceFilelist;
 bool openjtalk_isSpeaking(void *oj);
+bool openjtalk_isPaused(void *oj);
+bool openjtalk_isFinished(void *oj);
 bool openjtalk_setDic(void *oj, const char *path);
 bool openjtalk_setVoice(void *oj, const char *path);
 bool openjtalk_setVoiceDir(void *oj, const char *path);
@@ -17,7 +19,6 @@ bool openjtalk_setVoiceName(void *oj, const char *path);
 bool openjtalk_setVoicePath(void *oj, const char *path);
 bool openjtalk_speakToFile(void *oj, const char *text, const char *file);
 char *openjtalk_getDic(void *oj, char *path);
-char *openjtalk_getFullVoicePath(void *oj, const char *path, char *buffer);
 char *openjtalk_getVoice(void *oj, char *path);
 char *openjtalk_getVoiceDir(void *oj,char *path);
 char *openjtalk_getVoiceName(void *oj, char *path);
@@ -39,7 +40,6 @@ double openjtalk_getMsdThreshold(void *oj);
 double openjtalk_getSpeed(void *oj);
 double openjtalk_getVolume(void *oj);
 HtsVoiceFilelist *openjtalk_getHTSVoiceList(void *oj);
-long openjtalk_getCharCode(char *text);
 void *openjtalk_initialize(const char *voice, const char *dic, const char *voiceDir);
 unsigned int openjtalk_get_p(void *oj);
 unsigned int openjtalk_get_s(void *oj);
@@ -75,22 +75,13 @@ void openjtalk_speakSync(void *oj, const char *text);
 void openjtalk_pause(void *oj);
 void openjtalk_resume(void *oj);
 void openjtalk_stop(void *oj);
-void openjtalk_test(void *oj, void *text);
 void openjtalk_wait(void *oj, int duration);
 void openjtalk_waitUntilDone(void *oj);
 char *openjtalk_convertUtf8ToSjis(const char *text);
 char *openjtalk_free(void *mem);
 ]]
 
-local dll = "jtalk"
-if ffi.os == "Windows" then
-    if ffi.arch == "x64" then
-        dll = "jtalk64"
-    elseif ffi.arch == "x86" then
-        dll = "jtalk32"
-    end
-end
-local jt = ffi.load(dll)
+local jt = ffi.load("jtalk")
 
 local voiceArray = {}
 
@@ -127,8 +118,9 @@ function Jtalk.destroy(self)
     voiceArray = {}
 end
 
-function Jtalk.new(voice, dic, voiceDir)
-    local handle = jt.openjtalk_initialize(voice, dic, voiceDir)
+function Jtalk.new(...)
+    local n = {...}
+    local handle = jt.openjtalk_initialize(n[1], n[2], n[3])
     if not checkobject(handle) then
         return
     end
@@ -477,12 +469,12 @@ function Jtalk.speakToFile(self, text, path)
 end
 
 -- Pause
-function Jtalk.stop(self)
+function Jtalk.pause(self)
     jt.openjtalk_pause(self.handle)
 end
 
 -- Resume
-function Jtalk.stop(self)
+function Jtalk.resume(self)
     jt.openjtalk_resume(self.handle)
 end
 

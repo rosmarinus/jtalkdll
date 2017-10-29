@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# filename=$1
+filename=jtalk/build.version
+if [ ${filename} = "" ]; then
+	exit 0
+fi
+c=1
+if [ ! -e ${filename} ]; then
+	echo $c
+	echo BUILD=$c>${filename}
+	exit 0
+fi
+cat ${filename} | while read line
+do
+	c=0
+	if [[ ${line} =~ ^BUILD=([0-9]+) ]]; then
+	    c=${BASH_REMATCH[1]}
+	fi
+	c=`expr 1 + $c`
+	echo $c
+	echo BUILD=$c>${filename}
+	break
+done

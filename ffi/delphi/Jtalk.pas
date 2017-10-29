@@ -14,103 +14,57 @@ type
     name: PAnsiChar;
   end;
 
-{$IFDEF Win64}
-function openjtalk_getHTSVoiceListSjis(oj: Pointer): PHtsVoiceFilelist; stdcall; external 'jtalk64.dll';
-procedure openjtalk_clearHTSVoiceList(oj: Pointer; list: PHtsVoiceFilelist); stdcall; external 'jtalk64.dll';
+function openjtalk_getHTSVoiceListSjis(oj: Pointer): PHtsVoiceFilelist; stdcall; external 'jtalk.dll';
+procedure openjtalk_clearHTSVoiceList(oj: Pointer; list: PHtsVoiceFilelist); stdcall; external 'jtalk.dll';
 
-function openjtalk_initializeU16(voice: PChar; dic: PChar; voiceDir: PChar): Pointer; stdcall; external 'jtalk64.dll';
-procedure openjtalk_clear(oj: Pointer); stdcall; external 'jtalk64.dll';
-procedure openjtalk_refresh(oj: Pointer); stdcall; external 'jtalk64.dll';
+function openjtalk_initializeU16(voice: PChar; dic: PChar; voiceDir: PChar): Pointer; stdcall; external 'jtalk.dll';
+procedure openjtalk_clear(oj: Pointer); stdcall; external 'jtalk.dll';
+procedure openjtalk_refresh(oj: Pointer); stdcall; external 'jtalk.dll';
 
-procedure openjtalk_setSamplingFrequency(oj: Pointer; i: Cardinal); stdcall; external 'jtalk64.dll';
-function openjtalk_getSamplingFrequency(oj: Pointer): Cardinal; stdcall; external 'jtalk64.dll';
-procedure openjtalk_setFperiod(oj: Pointer; i: Cardinal); stdcall; external 'jtalk64.dll';
-function openjtalk_getFperiod(oj: Pointer): Cardinal; stdcall; external 'jtalk64.dll';
-procedure openjtalk_setAlpha(oj: Pointer; f: double); stdcall external 'jtalk64.dll';
-function openjtalk_getAlpha(oj: Pointer): double; stdcall external 'jtalk64.dll';
-procedure openjtalk_setBeta(oj: Pointer; f: double); stdcall; external 'jtalk64.dll';
-function openjtalk_getBeta(oj: Pointer): double; stdcall; external 'jtalk64.dll';
-procedure openjtalk_setSpeed(oj: Pointer; f: double); stdcall; external 'jtalk64.dll';
-function openjtalk_getSpeed(oj: Pointer): double; stdcall; external 'jtalk64.dll';
-procedure openjtalk_setAdditionalHalfTone(oj: Pointer; f: double); stdcall; external 'jtalk64.dll';
-function openjtalk_getAdditionalHalfTone(oj: Pointer): double; stdcall; external 'jtalk64.dll';
-procedure openjtalk_setMsdThreshold(oj: Pointer; f: double); stdcall; external 'jtalk64.dll';
-function openjtalk_getMsdThreshold(oj: Pointer): double; stdcall; external 'jtalk64.dll';
-procedure openjtalk_setGvWeightForSpectrum(oj: Pointer; f: double); stdcall; external 'jtalk64.dll';
-function openjtalk_getGvWeightForSpectrum(oj: Pointer): double; stdcall; external 'jtalk64.dll';
-procedure openjtalk_setGvWeightForLogF0(oj: Pointer; f: double); stdcall; external 'jtalk64.dll';
-function openjtalk_getGvWeightForLogF0(oj: Pointer): double; stdcall; external 'jtalk64.dll';
-procedure openjtalk_setVolume(oj: Pointer; f: double); stdcall; external 'jtalk64.dll';
-function openjtalk_getVolume(oj: Pointer): double; stdcall; external 'jtalk64.dll';
+procedure openjtalk_setSamplingFrequency(oj: Pointer; i: Cardinal); stdcall; external 'jtalk.dll';
+function openjtalk_getSamplingFrequency(oj: Pointer): Cardinal; stdcall; external 'jtalk.dll';
+procedure openjtalk_setFperiod(oj: Pointer; i: Cardinal); stdcall; external 'jtalk.dll';
+function openjtalk_getFperiod(oj: Pointer): Cardinal; stdcall; external 'jtalk.dll';
+procedure openjtalk_setAlpha(oj: Pointer; f: double); stdcall external 'jtalk.dll';
+function openjtalk_getAlpha(oj: Pointer): double; stdcall external 'jtalk.dll';
+procedure openjtalk_setBeta(oj: Pointer; f: double); stdcall; external 'jtalk.dll';
+function openjtalk_getBeta(oj: Pointer): double; stdcall; external 'jtalk.dll';
+procedure openjtalk_setSpeed(oj: Pointer; f: double); stdcall; external 'jtalk.dll';
+function openjtalk_getSpeed(oj: Pointer): double; stdcall; external 'jtalk.dll';
+procedure openjtalk_setAdditionalHalfTone(oj: Pointer; f: double); stdcall; external 'jtalk.dll';
+function openjtalk_getAdditionalHalfTone(oj: Pointer): double; stdcall; external 'jtalk.dll';
+procedure openjtalk_setMsdThreshold(oj: Pointer; f: double); stdcall; external 'jtalk.dll';
+function openjtalk_getMsdThreshold(oj: Pointer): double; stdcall; external 'jtalk.dll';
+procedure openjtalk_setGvWeightForSpectrum(oj: Pointer; f: double); stdcall; external 'jtalk.dll';
+function openjtalk_getGvWeightForSpectrum(oj: Pointer): double; stdcall; external 'jtalk.dll';
+procedure openjtalk_setGvWeightForLogF0(oj: Pointer; f: double); stdcall; external 'jtalk.dll';
+function openjtalk_getGvWeightForLogF0(oj: Pointer): double; stdcall; external 'jtalk.dll';
+procedure openjtalk_setVolume(oj: Pointer; f: double); stdcall; external 'jtalk.dll';
+function openjtalk_getVolume(oj: Pointer): double; stdcall; external 'jtalk.dll';
 
-function openjtalk_setDicU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk64.dll';
-function openjtalk_getDicU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk64.dll';
-function openjtalk_setVoiceDirU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk64.dll';
-function openjtalk_getVoiceDirU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk64.dll';
-function openjtalk_setVoiceU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk64.dll';
-function openjtalk_getVoiceU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk64.dll';
-function openjtalk_setVoicePathU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk64.dll';
-function openjtalk_getVoicePathU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk64.dll';
-function openjtalk_setVoiceNameU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk64.dll';
-function openjtalk_getVoiceNameU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk64.dll';
+function openjtalk_setDicU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk.dll';
+function openjtalk_getDicU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk.dll';
+function openjtalk_setVoiceDirU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk.dll';
+function openjtalk_getVoiceDirU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk.dll';
+function openjtalk_setVoiceU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk.dll';
+function openjtalk_getVoiceU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk.dll';
+function openjtalk_setVoicePathU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk.dll';
+function openjtalk_getVoicePathU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk.dll';
+function openjtalk_setVoiceNameU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk.dll';
+function openjtalk_getVoiceNameU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk.dll';
 
-procedure openjtalk_speakSyncU16(oj: Pointer; text: PChar); stdcall; external 'jtalk64.dll';
-procedure openjtalk_speakAsyncU16(oj: Pointer; text: PChar); stdcall; external 'jtalk64.dll';
-procedure openjtalk_stop(oj: Pointer); stdcall; external 'jtalk64.dll';
-function openjtalk_isSpeaking(oj: Pointer): Boolean; stdcall; external 'jtalk64.dll';
-procedure openjtalk_waitUntilDone(oj: Pointer); stdcall; external 'jtalk64.dll';
-procedure openjtalk_wait(oj: Pointer; duration: Integer); stdcall; external 'jtalk64.dll';
-function openjtalk_speakToFileU16(oj: Pointer; text: PChar; filename: PChar): Boolean; stdcall; external 'jtalk64.dll';
-procedure openjtalk_test(oj: Pointer; text: Pointer); stdcall; external 'jtalk64.dll';
-{$ELSE}
-function openjtalk_getHTSVoiceListSjis(oj: Pointer): PHtsVoiceFilelist; stdcall; external 'jtalk32.dll';
-procedure openjtalk_clearHTSVoiceList(oj: Pointer; list: PHtsVoiceFilelist); stdcall; external 'jtalk32.dll';
-
-function openjtalk_initializeU16(voice: PChar; dic: PChar; voiceDir: PChar): Pointer; stdcall; external 'jtalk32.dll';
-procedure openjtalk_clear(oj: Pointer); stdcall; external 'jtalk32.dll';
-procedure openjtalk_refresh(oj: Pointer); stdcall; external 'jtalk32.dll';
-
-procedure openjtalk_setSamplingFrequency(oj: Pointer; i: Cardinal); stdcall; external 'jtalk32.dll';
-function openjtalk_getSamplingFrequency(oj: Pointer): Cardinal; stdcall; external 'jtalk32.dll';
-procedure openjtalk_setFperiod(oj: Pointer; i: Cardinal); stdcall; external 'jtalk32.dll';
-function openjtalk_getFperiod(oj: Pointer): Cardinal; stdcall; external 'jtalk32.dll';
-procedure openjtalk_setAlpha(oj: Pointer; f: double); stdcall external 'jtalk32.dll';
-function openjtalk_getAlpha(oj: Pointer): double; stdcall external 'jtalk32.dll';
-procedure openjtalk_setBeta(oj: Pointer; f: double); stdcall; external 'jtalk32.dll';
-function openjtalk_getBeta(oj: Pointer): double; stdcall; external 'jtalk32.dll';
-procedure openjtalk_setSpeed(oj: Pointer; f: double); stdcall; external 'jtalk32.dll';
-function openjtalk_getSpeed(oj: Pointer): double; stdcall; external 'jtalk32.dll';
-procedure openjtalk_setAdditionalHalfTone(oj: Pointer; f: double); stdcall; external 'jtalk32.dll';
-function openjtalk_getAdditionalHalfTone(oj: Pointer): double; stdcall; external 'jtalk32.dll';
-procedure openjtalk_setMsdThreshold(oj: Pointer; f: double); stdcall; external 'jtalk32.dll';
-function openjtalk_getMsdThreshold(oj: Pointer): double; stdcall; external 'jtalk32.dll';
-procedure openjtalk_setGvWeightForSpectrum(oj: Pointer; f: double); stdcall; external 'jtalk32.dll';
-function openjtalk_getGvWeightForSpectrum(oj: Pointer): double; stdcall; external 'jtalk32.dll';
-procedure openjtalk_setGvWeightForLogF0(oj: Pointer; f: double); stdcall; external 'jtalk32.dll';
-function openjtalk_getGvWeightForLogF0(oj: Pointer): double; stdcall; external 'jtalk32.dll';
-procedure openjtalk_setVolume(oj: Pointer; f: double); stdcall; external 'jtalk32.dll';
-function openjtalk_getVolume(oj: Pointer): double; stdcall; external 'jtalk32.dll';
-
-function openjtalk_setDicU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk32.dll';
-function openjtalk_getDicU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk32.dll';
-function openjtalk_setVoiceDirU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk32.dll';
-function openjtalk_getVoiceDirU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk32.dll';
-function openjtalk_setVoiceU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk32.dll';
-function openjtalk_getVoiceU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk32.dll';
-function openjtalk_setVoicePathU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk32.dll';
-function openjtalk_getVoicePathU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk32.dll';
-function openjtalk_setVoiceNameU16(oj: Pointer; path: PChar): Boolean; stdcall; external 'jtalk32.dll';
-function openjtalk_getVoiceNameU16(oj: Pointer; path: PChar): PChar; stdcall; external 'jtalk32.dll';
-
-procedure openjtalk_speakSyncU16(oj: Pointer; text: PChar); stdcall; external 'jtalk32.dll';
-procedure openjtalk_speakAsyncU16(oj: Pointer; text: PChar); stdcall; external 'jtalk32.dll';
-procedure openjtalk_stop(oj: Pointer); stdcall; external 'jtalk32.dll';
-function openjtalk_isSpeaking(oj: Pointer): Boolean; stdcall; external 'jtalk32.dll';
-procedure openjtalk_waitUntilDone(oj: Pointer); stdcall; external 'jtalk32.dll';
-procedure openjtalk_wait(oj: Pointer; duration: Integer); stdcall; external 'jtalk32.dll';
-function openjtalk_speakToFileU16(oj: Pointer; text: PChar; filename: PChar): Boolean; stdcall; external 'jtalk32.dll';
-procedure openjtalk_test(oj: Pointer; text: Pointer); stdcall; external 'jtalk32.dll';
-{$ENDIF}
+procedure openjtalk_speakSyncU16(oj: Pointer; text: PChar); stdcall; external 'jtalk.dll';
+procedure openjtalk_speakAsyncU16(oj: Pointer; text: PChar); stdcall; external 'jtalk.dll';
+procedure openjtalk_stop(oj: Pointer); stdcall; external 'jtalk.dll';
+procedure openjtalk_pause(oj: Pointer); stdcall; external 'jtalk.dll';
+procedure openjtalk_resume(oj: Pointer); stdcall; external 'jtalk.dll';
+function openjtalk_isSpeaking(oj: Pointer): Boolean; stdcall; external 'jtalk.dll';
+function openjtalk_isPaused(oj: Pointer): Boolean; stdcall; external 'jtalk.dll';
+function openjtalk_isFinished(oj: Pointer): Boolean; stdcall; external 'jtalk.dll';
+procedure openjtalk_waitUntilDone(oj: Pointer); stdcall; external 'jtalk.dll';
+procedure openjtalk_wait(oj: Pointer; duration: Integer); stdcall; external 'jtalk.dll';
+function openjtalk_speakToFileU16(oj: Pointer; text: PChar; filename: PChar): Boolean; stdcall; external 'jtalk.dll';
+procedure openjtalk_test(oj: Pointer; text: Pointer); stdcall; external 'jtalk.dll';
 
 type
   PVoiceFileInfo = ^VoiceFileInfo;
@@ -179,10 +133,14 @@ type
     procedure SpeakSync(text: String);
     procedure SpeakToFile(text: String; filename: String);
     procedure Stop;
+    procedure Pause;
+    procedure Resume;
     procedure Wait(duration: Integer = 0);
     procedure WaitUntilDone;
 
     function IsSpeaking: Boolean;
+    function IsPaused: Boolean;
+    function IsFinished: Boolean;
 
     property A: double read GetAlpha write SetAlpha;
     property AdditionalHalfTone: double read GetAdditionalHalfTone write SetAdditionalHalfTone;
@@ -544,6 +502,20 @@ implementation
     openjtalk_speakAsyncU16(oj, PChar(text));
   end;
 
+  // 発声の一時停止
+  procedure JTalkTTS.Pause;
+  begin
+    CheckhHandleObject;
+    openjtalk_pause(oj);
+  end;
+
+  // 発声の再開
+  procedure JTalkTTS.Resume;
+  begin
+    CheckhHandleObject;
+    openjtalk_resume(oj);
+  end;
+
   // 発声の強制停止
   procedure JTalkTTS.Stop;
   begin
@@ -556,6 +528,20 @@ implementation
   begin
     CheckhHandleObject;
     Result := openjtalk_isSpeaking(oj);
+  end;
+
+  // 一時停止中かどうか
+  function JTalkTTS.IsPaused: Boolean;
+  begin
+    CheckhHandleObject;
+    Result := openjtalk_isPaused(oj);
+  end;
+
+  // 完了したかどうか
+  function JTalkTTS.IsFinished: Boolean;
+  begin
+    CheckhHandleObject;
+    Result := openjtalk_isFinished(oj);
   end;
 
   // 発声している間待機する

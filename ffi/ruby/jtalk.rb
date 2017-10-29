@@ -13,17 +13,7 @@ module OpenJTalk
     )
   end
 
-  dll = case RbConfig::CONFIG["host_os"]
-  when /mswin|msys|mingw|cygwin/
-    case RbConfig::CONFIG["host_cpu"]
-    when "x86_64"; "jtalk64"
-    when "i686"  ; "jtalk32"
-    else "jtalk"
-    end
-  else "jtalk"
-  end
-
-  ffi_lib dll
+  ffi_lib "jtalk"
   attach_function :openjtalk_clearHTSVoiceList, [:pointer,HTSVoiceList.ptr], :void
   attach_function :openjtalk_getHTSVoiceList, [:pointer], HTSVoiceList.ptr
   attach_function :openjtalk_initialize, [:string,:string,:string], :pointer
@@ -55,8 +45,12 @@ module OpenJTalk
   attach_function :openjtalk_getVoice, [:pointer,:pointer], :string
   attach_function :openjtalk_speakSync, [:pointer,:string], :void
   attach_function :openjtalk_speakAsync, [:pointer,:string], :void
+  attach_function :openjtalk_pause, [:pointer], :void
+  attach_function :openjtalk_resume, [:pointer], :void
   attach_function :openjtalk_stop, [:pointer], :void
   attach_function :openjtalk_isSpeaking, [:pointer], :bool
+  attach_function :openjtalk_isPaused, [:pointer], :bool
+  attach_function :openjtalk_isFinished, [:pointer], :bool
   attach_function :openjtalk_waitUntilDone, [:pointer], :void
   attach_function :openjtalk_wait, [:pointer,:int], :void
   attach_function :openjtalk_speakToFile, [:pointer, :string, :string], :bool
@@ -427,6 +421,16 @@ class JTalk
     OpenJTalk::openjtalk_speakToFile(@h,text,path)
   end
 
+  ### pause
+  def pause
+    OpenJTalk::openjtalk_pause(@h)
+  end
+
+  ### resume
+  def resume
+    OpenJTalk::openjtalk_resume(@h)
+  end
+
   ### Stop
   def stop
     OpenJTalk::openjtalk_stop(@h)
@@ -435,6 +439,16 @@ class JTalk
   ### isSpeaking
   def isSpeaking
     OpenJTalk::openjtalk_isSpeaking(@h)
+  end
+
+  ### isPaused
+  def isPaused
+    OpenJTalk::openjtalk_isPaused(@h)
+  end
+
+  ### isFinished
+  def isFinished
+    OpenJTalk::openjtalk_isFinished(@h)
   end
 
   ### Wait

@@ -98,7 +98,6 @@ DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -165,8 +164,7 @@ am__recursive_targets = \
   $(am__extra_recursive_targets)
 AM_RECURSIVE_TARGETS = $(am__recursive_targets:-recursive=) TAGS CTAGS \
 	cscope distdir dist dist-all distcheck
-am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
-	$(LISP)config.h.in
+am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
 # *not* preserved.
@@ -187,14 +185,13 @@ ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
 DIST_SUBDIRS = $(SUBDIRS)
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/config/compile $(top_srcdir)/config/config.guess \
+am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/config/compile \
+	$(top_srcdir)/config/config.guess \
 	$(top_srcdir)/config/config.sub \
-	$(top_srcdir)/config/install-sh $(top_srcdir)/config/ltmain.sh \
-	$(top_srcdir)/config/missing AUTHORS COPYING ChangeLog INSTALL \
-	NEWS README config/compile config/config.guess \
-	config/config.sub config/depcomp config/install-sh \
-	config/ltmain.sh config/missing
+	$(top_srcdir)/config/install-sh $(top_srcdir)/config/missing \
+	AUTHORS COPYING ChangeLog INSTALL NEWS README config/compile \
+	config/config.guess config/config.sub config/depcomp \
+	config/install-sh config/missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -253,39 +250,24 @@ CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DLLTOOL = @DLLTOOL@
-DSYMUTIL = @DSYMUTIL@
-DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-FGREP = @FGREP@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LIPO = @LIPO@
-LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
-LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
-MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
-NM = @NM@
-NMEDIT = @NMEDIT@
-OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
-OTOOL = @OTOOL@
-OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -295,7 +277,6 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -304,9 +285,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -356,14 +335,11 @@ EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL NEWS README Makefile.mak
 SUBDIRS = lib bin
 include_HEADERS = include/HTS_engine.h
 DISTCLEANFILES = *.log *.out *~ config/*~ include/*~
-MAINTAINERCLEANFILES = aclocal.m4 configure Makefile.in        \
-                       config/config.guess config/config.sub   \
-                       config/depcomp config/install-sh        \
-                       config/missing config/compile           \
-                       config/ltmain.sh
+MAINTAINERCLEANFILES = aclocal.m4 configure Makefile.in config/compile \
+                       config/config.guess config/config.sub config/depcomp \
+                       config/install-sh config/missing
 
-all: config.h
-	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+all: all-recursive
 
 .SUFFIXES:
 am--refresh: Makefile
@@ -399,30 +375,6 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
-
-config.h: stamp-h1
-	@test -f $@ || rm -f stamp-h1
-	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) stamp-h1
-
-stamp-h1: $(srcdir)/config.h.in $(top_builddir)/config.status
-	@rm -f stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status config.h
-$(srcdir)/config.h.in:  $(am__configure_deps) 
-	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
-	rm -f stamp-h1
-	touch $@
-
-distclean-hdr:
-	-rm -f config.h stamp-h1
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool config.lt
 install-includeHEADERS: $(include_HEADERS)
 	@$(NORMAL_INSTALL)
 	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
@@ -741,7 +693,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(HEADERS) config.h
+all-am: Makefile $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(includedir)"; do \
@@ -781,13 +733,12 @@ maintainer-clean-generic:
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-recursive
 
-clean-am: clean-generic clean-libtool mostlyclean-am
+clean-am: clean-generic mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags
+distclean-am: clean-am distclean-generic distclean-tags
 
 dvi: dvi-recursive
 
@@ -837,7 +788,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-generic mostlyclean-libtool
+mostlyclean-am: mostlyclean-generic
 
 pdf: pdf-recursive
 
@@ -849,24 +800,24 @@ ps-am:
 
 uninstall-am: uninstall-includeHEADERS
 
-.MAKE: $(am__recursive_targets) all install-am install-strip
+.MAKE: $(am__recursive_targets) install-am install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--refresh check check-am clean clean-cscope clean-generic \
-	clean-libtool cscope cscopelist-am ctags ctags-am dist \
-	dist-all dist-bzip2 dist-gzip dist-lzip dist-shar dist-tarZ \
-	dist-xz dist-zip distcheck distclean distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags distcleancheck \
-	distdir distuninstallcheck dvi dvi-am html html-am info \
-	info-am install install-am install-data install-data-am \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-includeHEADERS \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-includeHEADERS
+	cscope cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
+	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
+	distcheck distclean distclean-generic distclean-tags \
+	distcleancheck distdir distuninstallcheck dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am \
+	install-includeHEADERS install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-includeHEADERS
 
 .PRECIOUS: Makefile
 

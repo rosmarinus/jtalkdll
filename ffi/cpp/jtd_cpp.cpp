@@ -12,7 +12,7 @@ int main()
 		auto voices = jtalk->getVoices();
 		for (auto voice : voices)
 		{
-			printf("%s\n", jtalk->consoleString(voice->path).c_str());
+			printf("%s\n", JTalk::consoleString(voice->path).c_str());
 		}
 
 		srand((unsigned)time(NULL));
@@ -20,8 +20,8 @@ int main()
 		jtalk->setVoice(voices[num]->name);
 
 		auto v = jtalk->getVoiceName();
-		printf("current voice: %s\n", jtalk->consoleString(v).c_str());
-		printf("dic: %s\n", jtalk->consoleString(jtalk->getDic()).c_str());
+		printf("current voice: %s\n", JTalk::consoleString(v).c_str());
+		printf("dic: %s\n", JTalk::consoleString(jtalk->getDic()).c_str());
 		printf("s  = %d\n", jtalk->get_s());
 		printf("p  = %d\n", jtalk->get_p());
 		printf("a  = %f\n", jtalk->get_a());

@@ -36,6 +36,8 @@
 @property (nonatomic, getter=getVolume, setter=setVolume:) double volume;
 @property (nonatomic, getter=getG, setter=setG:) double g;
 @property (nonatomic, readonly, getter=isSpeaking) bool speaking;
+@property (nonatomic, readonly, getter=isPaused) bool paused;
+@property (nonatomic, readonly, getter=isFinished) bool finished;
 @property (nonatomic, readonly, getter=getVoices) NSMutableArray* voices;
 
 @property (nonatomic, copy, getter=getVoice, setter=setVoice:) HTSVoice *voice;
@@ -54,6 +56,8 @@
 
 - (void)speakSync:(NSString*)text;
 - (void)speakAsync:(NSString*)text;
+- (void)pause;
+- (void)resume;
 - (void)stop;
 - (void)waitUntilDone;
 - (void)wait;

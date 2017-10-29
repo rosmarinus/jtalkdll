@@ -2,6 +2,8 @@
 
 // コンストラクタ
 JTalk::JTalk(String voice, String dic, String voiceDir) {
+	openjtalk = NULL;
+	currentVoice = NULL;
 	openjtalk = openjtalk_initializeU16(voice.c_str(),dic.c_str(),voiceDir.c_str());
 	generate_voicelist();
 }
@@ -315,6 +317,18 @@ void JTalk::SpeakAsync(String text) {
 	openjtalk_speakAsyncU16(openjtalk, text.c_str());
 }
 
+// 発声の一時停止
+void JTalk::Pause() {
+	checkopenjtalkObject();
+	openjtalk_pause(openjtalk);
+}
+
+// 発声の再開
+void JTalk::Resume() {
+	checkopenjtalkObject();
+	openjtalk_resume(openjtalk);
+}
+
 // 発声の強制停止
 void JTalk::Stop() {
 	checkopenjtalkObject();
@@ -325,6 +339,18 @@ void JTalk::Stop() {
 bool JTalk::IsSpeaking() {
 	checkopenjtalkObject();
 	return openjtalk_isSpeaking(openjtalk);
+}
+
+// 一時停止中かどうか
+bool JTalk::IsPaused() {
+	checkopenjtalkObject();
+	return openjtalk_isPaused(openjtalk);
+}
+
+// 完了したかどうか
+bool JTalk::IsFinished() {
+	checkopenjtalkObject();
+	return openjtalk_isFinished(openjtalk);
 }
 
 // 発声している間待機する

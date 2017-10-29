@@ -54,8 +54,12 @@ extern (C) {
 
 	void openjtalk_speakSync(OpenJTalk* oj, char* text);
 	void openjtalk_speakAsync(OpenJTalk* oj, char* text);
+	void openjtalk_pause(OpenJTalk* oj);
+	void openjtalk_resume(OpenJTalk* oj);
 	void openjtalk_stop(OpenJTalk* oj);
 	bool openjtalk_isSpeaking(OpenJTalk* oj);
+	bool openjtalk_isPaused(OpenJTalk* oj);
+	bool openjtalk_isFinished(OpenJTalk* oj);
 	void openjtalk_waitUntilDone(OpenJTalk* oj);
 	void openjtalk_wait(OpenJTalk* oj, int duration);
 	bool openjtalk_speakToFile(OpenJTalk* oj, char* text, char* file);
@@ -392,6 +396,18 @@ public:
 		openjtalk_speakAsync(oj, cast(char*)toStringz(text));
 	}
 
+	// 発声の一時停止
+	void pause() {
+		checkOpenjtalkObject();
+		openjtalk_pause(oj);
+	}
+
+	// 発声の再開
+	void resume() {
+		checkOpenjtalkObject();
+		openjtalk_resume(oj);
+	}
+
 	// 発声の強制停止
 	void stop() {
 		checkOpenjtalkObject();
@@ -402,6 +418,18 @@ public:
 	bool isSpeakingFunc() {
 		checkOpenjtalkObject();
 		return openjtalk_isSpeaking(oj);
+	}
+
+	// 発声が一時停止中かどうか
+	bool isPausedFunc() {
+		checkOpenjtalkObject();
+		return openjtalk_isPaused(oj);
+	}
+
+	// 発声が完了したかどうか
+	bool isFinishedFunc() {
+		checkOpenjtalkObject();
+		return openjtalk_isFinished(oj);
 	}
 
 	// 発声している間待機する
@@ -520,10 +548,15 @@ public:
 	@property string voiceName() { return getVoiceName(); }
 
 
-
 	// 音響モデルファイルの情報配列
 	@property voiceFileInfo[] voices() { return m_voices; }
 
 	// 発声中かどうか
 	@property bool isSpeaking() { return isSpeakingFunc; } 
+
+	// 一時停止中かどうか
+	@property bool isPaused() { return isPausedFunc; } 
+
+	// 発声が完了したかどうか
+	@property bool isFinished() { return isFinishedFunc; } 
 }

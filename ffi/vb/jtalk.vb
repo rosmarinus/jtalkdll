@@ -89,107 +89,55 @@ Namespace JTalkDll
             <MarshalAs(UnmanagedType.LPWStr)> Public name As String
         End Class
 
-#If (PLATFORMx64) Then
-        Declare Unicode Sub openjtalk_clearHTSVoiceList Lib "jtalk64.dll" (handle As IntPtr, list As IntPtr)
-        Declare Unicode Function openjtalk_getHTSVoiceListU16 Lib "jtalk64.dll" (handle As IntPtr) As IntPtr
-        Declare Unicode Function openjtalk_initializeU16 Lib "jtalk64.dll" (voice As String, dic As String, voiceDir As String) As IntPtr
-        Declare Unicode Sub openjtalk_clear Lib "jtalk64.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_refresh Lib "jtalk64.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_setSamplingFrequency Lib "jtalk64.dll" (handle As IntPtr, i As SizeT)
-        Declare Unicode Function openjtalk_getSamplingFrequency Lib "jtalk64.dll" (handle As IntPtr) As SizeT
-        Declare Unicode Sub openjtalk_setFperiod Lib "jtalk64.dll" (handle As IntPtr, i As SizeT)
-        Declare Unicode Function openjtalk_getFperiod Lib "jtalk64.dll" (handle As IntPtr) As SizeT
-        Declare Unicode Sub openjtalk_setAlpha Lib "jtalk64.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getAlpha Lib "jtalk64.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setBeta Lib "jtalk64.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getBeta Lib "jtalk64.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setSpeed Lib "jtalk64.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getSpeed Lib "jtalk64.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setAdditionalHalfTone Lib "jtalk64.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getAdditionalHalfTone Lib "jtalk64.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setMsdThreshold Lib "jtalk64.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getMsdThreshold Lib "jtalk64.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setGvWeightForSpectrum Lib "jtalk64.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getGvWeightForSpectrum Lib "jtalk64.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setGvWeightForLogF0 Lib "jtalk64.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getGvWeightForLogF0 Lib "jtalk64.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setVolume Lib "jtalk64.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getVolume Lib "jtalk64.dll" (handle As IntPtr) As Double
-        Declare Unicode Function openjtalk_setDicU16 Lib "jtalk64.dll" (handle As IntPtr, path As String) As Boolean
-        Declare Unicode Function openjtalk_getDicU16 Lib "jtalk64.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
-        Declare Unicode Function openjtalk_setVoiceDirU16 Lib "jtalk64.dll" (handle As IntPtr, path As String) As Boolean
-        Declare Unicode Function openjtalk_getVoiceDirU16 Lib "jtalk64.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
-        Declare Unicode Function openjtalk_setVoiceU16 Lib "jtalk64.dll" (handle As IntPtr, path As String) As Boolean
-        Declare Unicode Function openjtalk_getVoiceU16 Lib "jtalk64.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
-        Declare Unicode Function openjtalk_setVoiceNameU16 Lib "jtalk64.dll" (handle As IntPtr, path As String) As Boolean
-        Declare Unicode Function openjtalk_getVoiceNameU16 Lib "jtalk64.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
-        Declare Unicode Function openjtalk_setVoicePathU16 Lib "jtalk64.dll" (handle As IntPtr, path As String) As Boolean
-        Declare Unicode Function openjtalk_getVoicePathU16 Lib "jtalk64.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
-        Declare Unicode Sub openjtalk_speakSyncU16 Lib "jtalk64.dll" (handle As IntPtr, text As String)
-        Declare Unicode Sub openjtalk_speakAsyncU16 Lib "jtalk64.dll" (handle As IntPtr, text As String)
-        Declare Unicode Sub openjtalk_pause Lib "jtalk64.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_resume Lib "jtalk64.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_stop Lib "jtalk64.dll" (handle As IntPtr)
-        Declare Unicode Function openjtalk_isSpeaking Lib "jtalk64.dll" (handle As IntPtr) As Boolean
-        Declare Unicode Function openjtalk_isPaused Lib "jtalk64.dll" (handle As IntPtr) As Boolean
-        Declare Unicode Function openjtalk_isFinished Lib "jtalk64.dll" (handle As IntPtr) As Boolean
-        Declare Unicode Sub openjtalk_setOnFinishedCallback Lib "jtalk64.dll" (handle As IntPtr,callback As OnFinishedCallbackDelegate)
-        Declare Unicode Sub openjtalk_waitUntilDone Lib "jtalk64.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_waitUntilFinished Lib "jtalk64.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_wait Lib "jtalk64.dll" (handle As IntPtr, duration As Integer)
-        Declare Unicode Function openjtalk_speakToFileU16 Lib "jtalk64.dll" (handle As IntPtr, text As String, file As String) As Boolean
-        Declare Unicode Sub openjtalk_test Lib "jtalk64.dll" (handle As IntPtr, text As IntPtr)
-#ElseIf (PLATFORMx86) Then
-        Declare Unicode Sub openjtalk_clearHTSVoiceList Lib "jtalk32.dll" (handle As IntPtr, list As IntPtr)
-        Declare Unicode Function openjtalk_getHTSVoiceListU16 Lib "jtalk32.dll" (handle As IntPtr) As IntPtr
-        Declare Unicode Function openjtalk_initializeU16 Lib "jtalk32.dll" (voice As String, dic As String, voiceDir As String) As IntPtr
-        Declare Unicode Sub openjtalk_clear Lib "jtalk32.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_refresh Lib "jtalk32.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_setSamplingFrequency Lib "jtalk32.dll" (handle As IntPtr, i As SizeT)
-        Declare Unicode Function openjtalk_getSamplingFrequency Lib "jtalk32.dll" (handle As IntPtr) As SizeT
-        Declare Unicode Sub openjtalk_setFperiod Lib "jtalk32.dll" (handle As IntPtr, i As SizeT)
-        Declare Unicode Function openjtalk_getFperiod Lib "jtalk32.dll" (handle As IntPtr) As SizeT
-        Declare Unicode Sub openjtalk_setAlpha Lib "jtalk32.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getAlpha Lib "jtalk32.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setBeta Lib "jtalk32.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getBeta Lib "jtalk32.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setSpeed Lib "jtalk32.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getSpeed Lib "jtalk32.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setAdditionalHalfTone Lib "jtalk32.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getAdditionalHalfTone Lib "jtalk32.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setMsdThreshold Lib "jtalk32.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getMsdThreshold Lib "jtalk32.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setGvWeightForSpectrum Lib "jtalk32.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getGvWeightForSpectrum Lib "jtalk32.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setGvWeightForLogF0 Lib "jtalk32.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getGvWeightForLogF0 Lib "jtalk32.dll" (handle As IntPtr) As Double
-        Declare Unicode Sub openjtalk_setVolume Lib "jtalk32.dll" (handle As IntPtr, f As Double)
-        Declare Unicode Function openjtalk_getVolume Lib "jtalk32.dll" (handle As IntPtr) As Double
-        Declare Unicode Function openjtalk_setDicU16 Lib "jtalk32.dll" (handle As IntPtr, path As String) As Boolean
-        Declare Unicode Function openjtalk_getDicU16 Lib "jtalk32.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
-        Declare Unicode Function openjtalk_setVoiceDirU16 Lib "jtalk32.dll" (handle As IntPtr, path As String) As Boolean
-        Declare Unicode Function openjtalk_getVoiceDirU16 Lib "jtalk32.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
-        Declare Unicode Function openjtalk_setVoiceU16 Lib "jtalk32.dll" (handle As IntPtr, path As String) As Boolean
-        Declare Unicode Function openjtalk_getVoiceU16 Lib "jtalk32.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
-        Declare Unicode Function openjtalk_setVoiceNameU16 Lib "jtalk32.dll" (handle As IntPtr, path As String) As Boolean
-        Declare Unicode Function openjtalk_getVoiceNameU16 Lib "jtalk32.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
-        Declare Unicode Function openjtalk_setVoicePathU16 Lib "jtalk32.dll" (handle As IntPtr, path As String) As Boolean
-        Declare Unicode Function openjtalk_getVoicePathU16 Lib "jtalk32.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
-        Declare Unicode Sub openjtalk_speakSyncU16 Lib "jtalk32.dll" (handle As IntPtr, text As String)
-        Declare Unicode Sub openjtalk_speakAsyncU16 Lib "jtalk32.dll" (handle As IntPtr, text As String)
-        Declare Unicode Sub openjtalk_pause Lib "jtalk32.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_resume Lib "jtalk32.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_stop Lib "jtalk32.dll" (handle As IntPtr)
-        Declare Unicode Function openjtalk_isSpeaking Lib "jtalk32.dll" (handle As IntPtr) As Boolean
-        Declare Unicode Function openjtalk_isPaused Lib "jtalk32.dll" (handle As IntPtr) As Boolean
-        Declare Unicode Function openjtalk_isFinished Lib "jtalk32.dll" (handle As IntPtr) As Boolean
-        Declare Unicode Sub openjtalk_setOnFinishedCallback Lib "jtalk32.dll" (handle As IntPtr,callback As OnFinishedCallbackDelegate)
-        Declare Unicode Sub openjtalk_waitUntilDone Lib "jtalk32.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_waitUntilFinished Lib "jtalk32.dll" (handle As IntPtr)
-        Declare Unicode Sub openjtalk_wait Lib "jtalk32.dll" (handle As IntPtr, duration As Integer)
-        Declare Unicode Function openjtalk_speakToFileU16 Lib "jtalk32.dll" (handle As IntPtr, text As String, file As String) As Boolean
-        Declare Unicode Sub openjtalk_test Lib "jtalk32.dll" (handle As IntPtr, text As IntPtr)
-#End If
+        Declare Unicode Sub openjtalk_clearHTSVoiceList Lib "jtalk.dll" (handle As IntPtr, list As IntPtr)
+        Declare Unicode Function openjtalk_getHTSVoiceListU16 Lib "jtalk.dll" (handle As IntPtr) As IntPtr
+        Declare Unicode Function openjtalk_initializeU16 Lib "jtalk.dll" (voice As String, dic As String, voiceDir As String) As IntPtr
+        Declare Unicode Sub openjtalk_clear Lib "jtalk.dll" (handle As IntPtr)
+        Declare Unicode Sub openjtalk_refresh Lib "jtalk.dll" (handle As IntPtr)
+        Declare Unicode Sub openjtalk_setSamplingFrequency Lib "jtalk.dll" (handle As IntPtr, i As SizeT)
+        Declare Unicode Function openjtalk_getSamplingFrequency Lib "jtalk.dll" (handle As IntPtr) As SizeT
+        Declare Unicode Sub openjtalk_setFperiod Lib "jtalk.dll" (handle As IntPtr, i As SizeT)
+        Declare Unicode Function openjtalk_getFperiod Lib "jtalk.dll" (handle As IntPtr) As SizeT
+        Declare Unicode Sub openjtalk_setAlpha Lib "jtalk.dll" (handle As IntPtr, f As Double)
+        Declare Unicode Function openjtalk_getAlpha Lib "jtalk.dll" (handle As IntPtr) As Double
+        Declare Unicode Sub openjtalk_setBeta Lib "jtalk.dll" (handle As IntPtr, f As Double)
+        Declare Unicode Function openjtalk_getBeta Lib "jtalk.dll" (handle As IntPtr) As Double
+        Declare Unicode Sub openjtalk_setSpeed Lib "jtalk.dll" (handle As IntPtr, f As Double)
+        Declare Unicode Function openjtalk_getSpeed Lib "jtalk.dll" (handle As IntPtr) As Double
+        Declare Unicode Sub openjtalk_setAdditionalHalfTone Lib "jtalk.dll" (handle As IntPtr, f As Double)
+        Declare Unicode Function openjtalk_getAdditionalHalfTone Lib "jtalk.dll" (handle As IntPtr) As Double
+        Declare Unicode Sub openjtalk_setMsdThreshold Lib "jtalk.dll" (handle As IntPtr, f As Double)
+        Declare Unicode Function openjtalk_getMsdThreshold Lib "jtalk.dll" (handle As IntPtr) As Double
+        Declare Unicode Sub openjtalk_setGvWeightForSpectrum Lib "jtalk.dll" (handle As IntPtr, f As Double)
+        Declare Unicode Function openjtalk_getGvWeightForSpectrum Lib "jtalk.dll" (handle As IntPtr) As Double
+        Declare Unicode Sub openjtalk_setGvWeightForLogF0 Lib "jtalk.dll" (handle As IntPtr, f As Double)
+        Declare Unicode Function openjtalk_getGvWeightForLogF0 Lib "jtalk.dll" (handle As IntPtr) As Double
+        Declare Unicode Sub openjtalk_setVolume Lib "jtalk.dll" (handle As IntPtr, f As Double)
+        Declare Unicode Function openjtalk_getVolume Lib "jtalk.dll" (handle As IntPtr) As Double
+        Declare Unicode Function openjtalk_setDicU16 Lib "jtalk.dll" (handle As IntPtr, path As String) As Boolean
+        Declare Unicode Function openjtalk_getDicU16 Lib "jtalk.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
+        Declare Unicode Function openjtalk_setVoiceDirU16 Lib "jtalk.dll" (handle As IntPtr, path As String) As Boolean
+        Declare Unicode Function openjtalk_getVoiceDirU16 Lib "jtalk.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
+        Declare Unicode Function openjtalk_setVoiceU16 Lib "jtalk.dll" (handle As IntPtr, path As String) As Boolean
+        Declare Unicode Function openjtalk_getVoiceU16 Lib "jtalk.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
+        Declare Unicode Function openjtalk_setVoiceNameU16 Lib "jtalk.dll" (handle As IntPtr, path As String) As Boolean
+        Declare Unicode Function openjtalk_getVoiceNameU16 Lib "jtalk.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
+        Declare Unicode Function openjtalk_setVoicePathU16 Lib "jtalk.dll" (handle As IntPtr, path As String) As Boolean
+        Declare Unicode Function openjtalk_getVoicePathU16 Lib "jtalk.dll" (handle As IntPtr, <MarshalAsAttribute(UnmanagedType.LPWStr)> path As StringBuilder) As IntPtr
+        Declare Unicode Sub openjtalk_speakSyncU16 Lib "jtalk.dll" (handle As IntPtr, text As String)
+        Declare Unicode Sub openjtalk_speakAsyncU16 Lib "jtalk.dll" (handle As IntPtr, text As String)
+        Declare Unicode Sub openjtalk_pause Lib "jtalk.dll" (handle As IntPtr)
+        Declare Unicode Sub openjtalk_resume Lib "jtalk.dll" (handle As IntPtr)
+        Declare Unicode Sub openjtalk_stop Lib "jtalk.dll" (handle As IntPtr)
+        Declare Unicode Function openjtalk_isSpeaking Lib "jtalk.dll" (handle As IntPtr) As Boolean
+        Declare Unicode Function openjtalk_isPaused Lib "jtalk.dll" (handle As IntPtr) As Boolean
+        Declare Unicode Function openjtalk_isFinished Lib "jtalk.dll" (handle As IntPtr) As Boolean
+        Declare Unicode Sub openjtalk_setOnFinishedCallback Lib "jtalk.dll" (handle As IntPtr,callback As OnFinishedCallbackDelegate)
+        Declare Unicode Sub openjtalk_waitUntilDone Lib "jtalk.dll" (handle As IntPtr)
+        Declare Unicode Sub openjtalk_waitUntilFinished Lib "jtalk.dll" (handle As IntPtr)
+        Declare Unicode Sub openjtalk_wait Lib "jtalk.dll" (handle As IntPtr, duration As Integer)
+        Declare Unicode Function openjtalk_speakToFileU16 Lib "jtalk.dll" (handle As IntPtr, text As String, file As String) As Boolean
+        Declare Unicode Sub openjtalk_test Lib "jtalk.dll" (handle As IntPtr, text As IntPtr)
 
         ' <summary>
         ' 下位関数で用いるデータ構造体へのポインタ

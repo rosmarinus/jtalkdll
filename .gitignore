@@ -5,14 +5,14 @@
 *.obj
 
 # Compiled dictionary files
-char.bin
-matrix.bin
-left-id.def
-pos-id.def
-rewrite.def
-right-id.def
-sys.dic
-unk.dic
+#char.bin
+#matrix.bin
+#left-id.def
+#pos-id.def
+#rewrite.def
+#right-id.def
+#sys.dic
+#unk.dic
 
 Makefile
 lobtool
@@ -67,7 +67,8 @@ ffi/test+AF8-bcb/Win32/
 .vscode/
 
 # secure name
-*.snk
+JTalkCOMx64.snk
+JTalkCOMx86.snk
 
 #Java
 *.jar
@@ -92,7 +93,6 @@ ffi/voice
 ffi/jtalk.h
 *.in+AH4-
 *.xdc
-*.snk
 *.exp
 ffi/pkg/*
 ffi/node+AF8-modules/*
@@ -116,3 +116,8 @@ open_jtalk-1.10/bin/open_jtalk
 open_jtalk-1.10/lib/jsay
 open_jtalk-1.10/lib/jtd_c
 .DS_Store
+
+/build.dir/*
+ffi/cpp/jtd_cppqt.vcproj
+ffi/cpp/moc_predefs.h
+ffi/cpp/jtd_cpp

@@ -2,7 +2,7 @@
 CC = cl
 CL = link
 
-CFLAGS = /MD /O2 /Ob2 /Oi /Ot /Oy /GT /GL /TC /I ..\include
+CFLAGS = /O2 /Ob2 /Oi /Ot /Oy /GT /GL /TC /I ..\include
 LFLAGS = /LTCG
 
 LIBS = ..\lib\hts_engine_API.lib winmm.lib

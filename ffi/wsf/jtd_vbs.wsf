@@ -11,7 +11,7 @@ Next
 WScript.Echo str
 
 Randomize
-n = Int((tts.Voices.Count + 1) * Rnd )
+n = Int(tts.Voices.Count * Rnd )
 tts.Voice = tts.Voices.GetItem(n)
 str = ""
 str = str & "現在の音声: " & vbCrLf & tts.VoiceName & vbCrLf & vbCrLf

@@ -39,8 +39,7 @@ class JTalk(object):
 		self._three = platform.python_version_tuple()[0] == '3'
 
 		if platform.system() == 'Windows':
-			bit = '32' if platform.machine() == 'x86' else '64'
-			lib = 'jtalk{0}.dll'.format(bit)
+			lib = 'jtalk'
 		elif platform.system() == 'Darwin':
 			lib = 'libjtalk.dylib'
 		else:

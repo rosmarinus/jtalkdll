@@ -49,39 +49,6 @@ std::vector<JTalk::voiceFileInfo *> JTalk::generate_voicelist()
 	return m_voices;
 }
 
-std::vector<JTalk::voiceFileInfoSjis *> JTalk::generate_voicelistSjis()
-{
-	delete_voicelist();
-	HtsVoiceFilelist *res = openjtalk_getHTSVoiceListSjis(m_openjtalk);
-	if (res)
-	{
-		for (HtsVoiceFilelist *list = res; list != NULL; list = list->succ)
-		{
-			voiceFileInfoSjis *temp = new voiceFileInfoSjis;
-			if (list->pathSjis)
-			{
-				temp->path = std::string(list->pathSjis);
-			}
-			else
-			{
-				temp->path = std::string("");
-			}
-
-			if (list->nameSjis)
-			{
-				temp->name = std::string(list->nameSjis);
-			}
-			else
-			{
-				temp->name = std::string("");
-			}
-			m_voicesSjis.push_back(temp);
-		}
-		openjtalk_clearHTSVoiceList(m_openjtalk, res);
-	}
-	return m_voicesSjis;
-}
-
 std::vector<JTalk::voiceFileInfoU16 *> JTalk::generate_voicelistU16()
 {
 	delete_voicelist();
@@ -118,11 +85,6 @@ std::vector<JTalk::voiceFileInfoU16 *> JTalk::generate_voicelistU16()
 /// <summary>
 /// <para>音響モデルファイルリストの取得</para>
 /// </summary>
-std::vector<JTalk::voiceFileInfoSjis *> JTalk::getVoicesSjis()
-{
-	return generate_voicelistSjis();
-}
-
 std::vector<JTalk::voiceFileInfo *> JTalk::getVoices()
 {
 	return generate_voicelist();
@@ -138,12 +100,6 @@ std::vector<JTalk::voiceFileInfoU16 *> JTalk::getVoicesU16()
 /// </summary>
 void JTalk::delete_voicelist()
 {
-	std::for_each(m_voicesSjis.begin(), m_voicesSjis.end(), [](JTalk::voiceFileInfoSjis *p) {
-		if (!p)
-		{
-			delete p;
-		}
-	});
 	std::for_each(m_voices.begin(), m_voices.end(), [](JTalk::voiceFileInfo *p) {
 		if (!p)
 		{
@@ -156,12 +112,19 @@ void JTalk::delete_voicelist()
 			delete p;
 		}
 	});
-	m_voicesSjis.clear();
 	m_voices.clear();
 	m_voicesU16.clear();
 }
 
 // コンストラクタ
+JTalk::JTalk()
+{
+	m_openjtalk = openjtalk_initialize(NULL,NULL,NULL);
+	if (m_openjtalk)
+	{
+		generate_voicelist();
+	}
+}
 JTalk::JTalk(const std::string &voicePath, const std::string &dicPath, const std::string &voiceDicPath)
 {
 	m_openjtalk = openjtalk_initialize(voicePath.c_str(), dicPath.c_str(), voiceDicPath.c_str());
@@ -170,6 +133,31 @@ JTalk::JTalk(const std::string &voicePath, const std::string &dicPath, const std
 		generate_voicelist();
 	}
 }
+JTalk::JTalk(const char *voicePath, const char *dicPath, const char *voiceDicPath)
+{
+	m_openjtalk = openjtalk_initialize(voicePath, dicPath, voiceDicPath);
+	if (m_openjtalk)
+	{
+		generate_voicelist();
+	}
+}
+JTalk::JTalk(const std::u16string &voicePath, const std::u16string &dicPath, const std::u16string &voiceDicPath)
+{
+	m_openjtalk = openjtalk_initializeU16(voicePath.c_str(), dicPath.c_str(), voiceDicPath.c_str());
+	if (m_openjtalk)
+	{
+		generate_voicelist();
+	}
+}
+JTalk::JTalk(const char16_t *voicePath, const char16_t *dicPath, const char16_t *voiceDicPath)
+{
+	m_openjtalk = openjtalk_initializeU16(voicePath, dicPath, voiceDicPath);
+	if (m_openjtalk)
+	{
+		generate_voicelist();
+	}
+}
+
 
 // デストラクタ
 JTalk::~JTalk()
@@ -496,32 +484,6 @@ void JTalk::setDicU16(const char16_t *path)
 	}
 }
 
-void JTalk::setDicSjis(const std::string &path)
-{
-	JTalk::check_openjtalk_object();
-	if (path.length() == 0)
-	{
-		throw u8"音響モデルファイルを示す文字列が空です。";
-	}
-	if (!openjtalk_setDicSjis(m_openjtalk, path.c_str()))
-	{
-		throw u8"音響モデルファイルフォルダを設定できません。";
-	}
-}
-
-void JTalk::setDicSjis(const char *path)
-{
-	JTalk::check_openjtalk_object();
-	if (std::char_traits<char>::length(path) == 0)
-	{
-		throw u8"音響モデルファイルを示す文字列が空です。";
-	}
-	if (!openjtalk_setDicSjis(m_openjtalk, path))
-	{
-		throw u8"音響モデルファイルフォルダを設定できません。";
-	}
-}
-
 std::string JTalk::getDic()
 {
 	JTalk::check_openjtalk_object();
@@ -540,15 +502,6 @@ std::u16string JTalk::getDicU16()
 	return str;
 }
 
-std::string JTalk::getDicSjis()
-{
-	JTalk::check_openjtalk_object();
-	char path[MAX_PATH];
-	openjtalk_getDicSjis(m_openjtalk, path);
-	std::string str(path);
-	return str;
-}
-
 // 音響モデルファイルディレクトリ指定
 void JTalk::setVoiceDir(const std::string &path)
 {
@@ -557,7 +510,7 @@ void JTalk::setVoiceDir(const std::string &path)
 	{
 		throw u8"音響モデルファイルを示す文字列が空です。";
 	}
-	if (!openjtalk_setVoiceDirSjis(m_openjtalk, path.c_str()))
+	if (!openjtalk_setVoiceDir(m_openjtalk, path.c_str()))
 	{
 		throw u8"音響モデルファイルフォルダを設定できません。";
 	}
@@ -571,7 +524,7 @@ void JTalk::setVoiceDir(const char *path)
 	{
 		throw u8"音響モデルファイルを示す文字列が空です。";
 	}
-	if (!openjtalk_setVoiceDirSjis(m_openjtalk, path))
+	if (!openjtalk_setVoiceDir(m_openjtalk, path))
 	{
 		throw u8"音響モデルファイルフォルダを設定できません。";
 	}
@@ -606,34 +559,6 @@ void JTalk::setVoiceDirU16(const char16_t *path)
 	JTalk::generate_voicelistU16();
 }
 
-void JTalk::setVoiceDirSjis(const std::string &path)
-{
-	JTalk::check_openjtalk_object();
-	if (path.length() == 0)
-	{
-		throw u8"音響モデルファイルを示す文字列が空です。";
-	}
-	if (!openjtalk_setVoiceDirSjis(m_openjtalk, path.c_str()))
-	{
-		throw u8"音響モデルファイルフォルダを設定できません。";
-	}
-	JTalk::generate_voicelistSjis();
-}
-
-void JTalk::setVoiceDirSjis(const char *path)
-{
-	JTalk::check_openjtalk_object();
-	if (std::char_traits<char>::length(path) == 0)
-	{
-		throw u8"音響モデルファイルを示す文字列が空です。";
-	}
-	if (!openjtalk_setVoiceDirSjis(m_openjtalk, path))
-	{
-		throw u8"音響モデルファイルフォルダを設定できません。";
-	}
-	JTalk::generate_voicelistSjis();
-}
-
 std::string JTalk::getVoiceDir()
 {
 	JTalk::check_openjtalk_object();
@@ -652,18 +577,8 @@ std::u16string JTalk::getVoiceDirU16()
 	return str;
 }
 
-std::string JTalk::getVoiceDirSjis()
-{
-	JTalk::check_openjtalk_object();
-	char path[MAX_PATH];
-	openjtalk_getVoiceDirSjis(m_openjtalk, path);
-	std::string str(path);
-	return str;
-}
-
 // 音響モデルファイル指定
 //  絶対パス...直接、相対パス...音響モデルファイルディレクトリ基準、名前のみ...探索
-
 void JTalk::setVoice(const std::string &path)
 {
 	JTalk::check_openjtalk_object();
@@ -716,32 +631,6 @@ void JTalk::setVoiceU16(const char16_t *path)
 	}
 }
 
-void JTalk::setVoiceSjis(const std::string &path)
-{
-	JTalk::check_openjtalk_object();
-	if (path.length() == 0)
-	{
-		throw u8"音響モデルファイルを示す文字列が空です。";
-	}
-	if (!openjtalk_setVoiceSjis(m_openjtalk, path.c_str()))
-	{
-		throw u8"音響モデルファイルを設定できません。";
-	}
-}
-
-void JTalk::setVoiceSjis(const char *path)
-{
-	JTalk::check_openjtalk_object();
-	if (std::char_traits<char>::length(path) == 0)
-	{
-		throw u8"音響モデルファイルを示す文字列が空です。";
-	}
-	if (!openjtalk_setVoiceSjis(m_openjtalk, path))
-	{
-		throw u8"音響モデルファイルを設定できません。";
-	}
-}
-
 std::string JTalk::getVoice()
 {
 	JTalk::check_openjtalk_object();
@@ -757,15 +646,6 @@ std::u16string JTalk::getVoiceU16()
 	char16_t path[MAX_PATH];
 	openjtalk_getVoiceU16(m_openjtalk, path);
 	std::u16string str(path);
-	return str;
-}
-
-std::string JTalk::getVoiceSjis()
-{
-	JTalk::check_openjtalk_object();
-	char path[MAX_PATH];
-	openjtalk_getVoiceSjis(m_openjtalk, path);
-	std::string str(path);
 	return str;
 }
 
@@ -823,32 +703,6 @@ void JTalk::setVoicePathU16(const char16_t *path)
 	}
 }
 
-void JTalk::setVoicePathSjis(const std::string &path)
-{
-	JTalk::check_openjtalk_object();
-	if (path.length() == 0)
-	{
-		throw u8"音響モデルファイルを示す文字列が空です。";
-	}
-	if (!openjtalk_setVoicePathSjis(m_openjtalk, path.c_str()))
-	{
-		throw u8"音響モデルファイルを設定できません。";
-	}
-}
-
-void JTalk::setVoicePathSjis(const char *path)
-{
-	JTalk::check_openjtalk_object();
-	if (std::char_traits<char>::length(path) == 0)
-	{
-		throw u8"音響モデルファイルを示す文字列が空です。";
-	}
-	if (!openjtalk_setVoicePathSjis(m_openjtalk, path))
-	{
-		throw u8"音響モデルファイルを設定できません。";
-	}
-}
-
 std::string JTalk::getVoicePath()
 {
 	JTalk::check_openjtalk_object();
@@ -864,15 +718,6 @@ std::u16string JTalk::getVoicePathU16()
 	char16_t path[MAX_PATH];
 	openjtalk_getVoicePathU16(m_openjtalk, path);
 	std::u16string str(path);
-	return str;
-}
-
-std::string JTalk::getVoicePathSjis()
-{
-	JTalk::check_openjtalk_object();
-	char path[MAX_PATH];
-	openjtalk_getVoicePathSjis(m_openjtalk, path);
-	std::string str(path);
 	return str;
 }
 
@@ -930,32 +775,6 @@ void JTalk::setVoiceNameU16(const char16_t *name)
 	}
 }
 
-void JTalk::setVoiceNameSjis(const std::string &name)
-{
-	JTalk::check_openjtalk_object();
-	if (name.length() == 0)
-	{
-		throw u8"音響モデルファイルを示す文字列が空です。";
-	}
-	if (!openjtalk_setVoiceNameSjis(m_openjtalk, name.c_str()))
-	{
-		throw u8"音響モデルファイルを設定できません。";
-	}
-}
-
-void JTalk::setVoiceNameSjis(const char *name)
-{
-	JTalk::check_openjtalk_object();
-	if (std::char_traits<char>::length(name) == 0)
-	{
-		throw u8"音響モデルファイルを示す文字列が空です。";
-	}
-	if (!openjtalk_setVoiceNameSjis(m_openjtalk, name))
-	{
-		throw u8"音響モデルファイルを設定できません。";
-	}
-}
-
 std::string JTalk::getVoiceName()
 {
 	JTalk::check_openjtalk_object();
@@ -971,15 +790,6 @@ std::u16string JTalk::getVoiceNameU16()
 	char16_t name[MAX_PATH];
 	openjtalk_getVoiceNameU16(m_openjtalk, name);
 	std::u16string str(name);
-	return str;
-}
-
-std::string JTalk::getVoiceNameSjis()
-{
-	JTalk::check_openjtalk_object();
-	char name[MAX_PATH];
-	openjtalk_getVoiceNameSjis(m_openjtalk, name);
-	std::string str(name);
 	return str;
 }
 
@@ -1010,18 +820,6 @@ void JTalk::speakSyncU16(const char16_t *text)
 	openjtalk_speakSyncU16(m_openjtalk, text);
 }
 
-void JTalk::speakSyncSjis(const std::string &text)
-{
-	JTalk::check_openjtalk_object();
-	openjtalk_speakSyncSjis(m_openjtalk, text.c_str());
-}
-
-void JTalk::speakSyncSjis(const char *text)
-{
-	JTalk::check_openjtalk_object();
-	openjtalk_speakSyncSjis(m_openjtalk, text);
-}
-
 // 非同期発声
 void JTalk::speakAsync(const std::string &text)
 {
@@ -1045,18 +843,6 @@ void JTalk::speakAsyncU16(const char16_t *text)
 {
 	JTalk::check_openjtalk_object();
 	openjtalk_speakAsyncU16(m_openjtalk, text);
-}
-
-void JTalk::speakAsyncSjis(const std::string &text)
-{
-	JTalk::check_openjtalk_object();
-	openjtalk_speakAsyncSjis(m_openjtalk, text.c_str());
-}
-
-void JTalk::speakAsyncSjis(const char *text)
-{
-	JTalk::check_openjtalk_object();
-	openjtalk_speakAsyncSjis(m_openjtalk, text);
 }
 
 // 発声の一時停止
@@ -1199,40 +985,6 @@ void JTalk::speakToFileU16(const char16_t *text, const char16_t *file)
 	}
 }
 
-void JTalk::speakToFileSjis(const std::string &text, const std::string &file)
-{
-	JTalk::check_openjtalk_object();
-	if (text.length() == 0)
-	{
-		throw u8"読み上げ文字列が空です。";
-	}
-	if (file.length() == 0)
-	{
-		throw u8"ファイル名文字列が空です。";
-	}
-	if (!openjtalk_speakToFileSjis(m_openjtalk, text.c_str(), file.c_str()))
-	{
-		throw u8"音声ファイルの作成中にエラーが発生しました。";
-	}
-}
-
-void JTalk::speakToFileSjis(const char *text, const char *file)
-{
-	JTalk::check_openjtalk_object();
-	if (std::char_traits<char>::length(text) == 0)
-	{
-		throw u8"読み上げ文字列が空です。";
-	}
-	if (std::char_traits<char>::length(file) == 0)
-	{
-		throw u8"ファイル名文字列が空です。";
-	}
-	if (!openjtalk_speakToFileSjis(m_openjtalk, text, file))
-	{
-		throw u8"音声ファイルの作成中にエラーが発生しました。";
-	}
-}
-
 // コンソール出力用の文字コード変換
 // WindowsのときはShiftJISに、それ以外はUTF-8に変換する
 // 標準以外のコンソールの設定には対応していない
@@ -1314,6 +1066,54 @@ std::string JTalk::consoleStringU16(const std::u16string &text)
 	return res;
 }
 
+// 文字列変換
+std::string JTalk::SjisToUtf8(const std::string &source)
+{
+	std::string res;
+	char *temp = openjtalk_convertSjisToUtf8(source.c_str());
+	if (temp != NULL)
+	{
+		res = std::string(temp);
+		openjtalk_free(temp);
+	}
+	return res;
+}
+std::string JTalk::SjisToUtf8(const char *source)
+{
+	std::string res;
+	char *temp = openjtalk_convertSjisToUtf8(source);
+	if (temp != NULL)
+	{
+		res = std::string(temp);
+		openjtalk_free(temp);
+	}
+	return res;
+}
+std::string JTalk::Utf8ToSjis(const std::string &source)
+{
+	std::string res;
+	char *temp = openjtalk_convertUtf8ToSjis(source.c_str());
+	if (temp != NULL)
+	{
+		res = std::string(temp);
+		openjtalk_free(temp);
+	}
+	return res;	
+}
+std::string JTalk::Utf8ToSjis(const char *source)
+{
+	std::string res;
+	char *temp = openjtalk_convertUtf8ToSjis(source);
+	if (temp != NULL)
+	{
+		res = std::string(temp);
+		openjtalk_free(temp);
+	}
+	return res;
+}
+
+
+
 // エラー出力に情報をよく出力するかどうか
 void JTalk::setVerbose(bool sw)
 {
@@ -1321,7 +1121,7 @@ void JTalk::setVerbose(bool sw)
 	openjtalk_setVerbose(m_openjtalk, sw);
 }
 
-// テスト（聞こえますか？と発声テスト）
+// テスト（何もなければ、聞こえますか？と発声テスト）
 void JTalk::test(void *text)
 {
 	JTalk::check_openjtalk_object();

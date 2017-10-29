@@ -1,3 +1,3 @@
-set jtalkcom=JTalkCOM64.dll
-if "%VSCMD_ARG_HOST_ARCH%" == "x86" set jtalkcom=JTalkCOM32.dll
+set jtalkcom=JTalkCOM%VSCMD_ARG_HOST_ARCH%.dll
+copy %JTALKDIR%\bin\%jtalkcom% .
 vbc /platform:%VSCMD_ARG_HOST_ARCH% /target:exe /reference:%jtalkcom% jtd_vbmc.vb

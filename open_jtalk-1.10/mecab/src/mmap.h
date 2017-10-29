@@ -140,7 +140,8 @@ bool open(const char *filename, const char *mode = "r") {
   Mmap(): text(0), hFile(INVALID_HANDLE_VALUE), hMap(0) {}
 
 #else
-    bool open(const char *filename, const char *mode = "r") {
+
+  bool open(const char *filename, const char *mode = "r") {
     this->close();
     struct stat st;
     fileName = std::string(filename);

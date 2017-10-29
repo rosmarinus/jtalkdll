@@ -9,9 +9,6 @@ AC_COPYRIGHT(Copyright 2001-2008 Tokyo Institute of Technology)
 AM_INIT_AUTOMAKE
 
 # Checks for C compiler
-#AC_LIBTOOL_WIN32_DLL
-#AC_DISABLE_SHARED
-AC_PROG_LIBTOOL
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
@@ -20,7 +17,7 @@ AN_MAKEVAR([AR], [AC_PROG_AR])
 AN_PROGRAM([ar], [AC_PROG_AR])
 AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
 AC_PROG_AR
-CFLAGS="$CFLAGS -std=c11"
+
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [log])
@@ -45,7 +42,7 @@ AC_ARG_ENABLE(embedded, [  --enable-embedded   turn on compiling for embedded de
 AC_MSG_CHECKING(whether to enable compiling for embedded devices)
 if test x$enable_embedded = xyes; then
 	AC_MSG_RESULT(yes)
-	AC_DEFINE(HTS_EMBEDDED,1,hts emveded enable)
+	AC_DEFINE(HTS_EMBEDDED)
 else
 	AC_MSG_RESULT(no)
 fi
@@ -56,7 +53,7 @@ AC_ARG_ENABLE(festival, [  --enable-festival   use memory allocation/free functi
 AC_MSG_CHECKING(whether to use memory allocation/free functions of speech tools)
 if test x$enable_festival = xyes; then
 	AC_MSG_RESULT(yes)
-	AC_DEFINE(FESTIVAL,1,festival enable)
+	AC_DEFINE(FESTIVAL)
 else
 	AC_MSG_RESULT(no)
 fi
@@ -75,7 +72,7 @@ case "$host_os" in
 	;;
 esac
 
-AC_CONFIG_HEADERS([config.h:config.h.in])
+
 AC_CONFIG_FILES([Makefile bin/Makefile lib/Makefile])
 
 AC_OUTPUT

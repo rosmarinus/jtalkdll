@@ -7,9 +7,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = @CHARSET@
 
-noinst_LTLIBRARIES = libjpcommon.la
+noinst_LIBRARIES = libjpcommon.a
 
-libjpcommon_la_SOURCES = jpcommon.h \
+libjpcommon_a_SOURCES = jpcommon.h \
                         jpcommon.c \
                         jpcommon_node.c \
                         jpcommon_label.c \

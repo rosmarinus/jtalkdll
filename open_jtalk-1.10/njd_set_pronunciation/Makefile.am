@@ -7,9 +7,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = -I @top_srcdir@/njd @CHARSET@
 
-noinst_LTLIBRARIES = libnjd_set_pronunciation.la
+noinst_LIBRARIES = libnjd_set_pronunciation.a
 
-libnjd_set_pronunciation_la_SOURCES = njd_set_pronunciation.h \
+libnjd_set_pronunciation_a_SOURCES = njd_set_pronunciation.h \
                                      njd_set_pronunciation.c \
                                      njd_set_pronunciation_rule_ascii_for_euc_jp.h \
                                      njd_set_pronunciation_rule_ascii_for_shift_jis.h \

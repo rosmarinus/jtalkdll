@@ -1,5 +1,4 @@
-Jtalk = require("jtalk")
-tts = Jtalk.new(nil, nil, nil)
+tts = require("jtalk").new()
 print("available voices:")
 voices = tts:getVoices()
 for index, item in ipairs(voices) do
@@ -19,6 +18,5 @@ print("u  = " .. tostring(tts:getU()))
 print("jm = " .. tostring(tts:getJm()))
 print("jf = " .. tostring(tts:getJf()))
 print("g  = " .. tostring(tts:getG()))
-
 tts:speakSync("聞こえてますか？")
 tts:destroy()

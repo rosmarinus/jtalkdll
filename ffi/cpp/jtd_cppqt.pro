@@ -7,7 +7,7 @@ win32 {
     }
     TEMPLATE = vcapp
     LIBS = -L$$(JTALKDIR)/lib
-    LIBS += jtalk64.lib
+    LIBS += jtalk.lib
     INCLUDEPATH = $$(JTALKDIR)/include
 }
 

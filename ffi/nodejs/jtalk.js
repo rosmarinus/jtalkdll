@@ -16,12 +16,7 @@ const max_path = 260;
 
 var dll = 'libjtalk';
 if (os.platform()=='win32') {
-    var arch = os.arch();
-    if (arch == 'x64') {
-        dll = 'jtalk64';
-    } else if (arch == 'x86') {
-        dll = 'jtalk32';
-    }
+    dll = 'jtalk';
 }
 
 var jtalk = ffi.Library(dll, {
@@ -56,8 +51,12 @@ var jtalk = ffi.Library(dll, {
     'openjtalk_getVoice': ['string', [OpenJTalkPtr,'char*']],
     'openjtalk_speakSync': ['void', [OpenJTalkPtr, 'string']],
     'openjtalk_speakAsync': ['void', [OpenJTalkPtr, 'string']],
+    'openjtalk_pause': ['void', [OpenJTalkPtr]],
+    'openjtalk_resume': ['void', [OpenJTalkPtr]],
     'openjtalk_stop': ['void', [OpenJTalkPtr]],
     'openjtalk_isSpeaking': ['bool', [OpenJTalkPtr]],
+    'openjtalk_isPaused': ['bool', [OpenJTalkPtr]],
+    'openjtalk_isFinished': ['bool', [OpenJTalkPtr]],
     'openjtalk_waitUntilDone': ['void', [OpenJTalkPtr]],
     'openjtalk_wait': ['void', [OpenJTalkPtr, 'int']],
     'openjtalk_speakToFile': ['bool', [OpenJTalkPtr, 'string', 'string']],
@@ -444,6 +443,16 @@ class Jtalk {
         jtalk.openjtalk_speakAsync(this[handle], text);
     }
 
+    // 発声の一時停止
+    pause() {
+        jtalk.openjtalk_pause(this[handle]);
+    }
+
+    // 発声の再開
+    resume() {
+        jtalk.openjtalk_resume(this[handle]);
+    }
+
     // 発声の強制停止
     stop() {
         jtalk.openjtalk_stop(this[handle]);
@@ -452,6 +461,16 @@ class Jtalk {
     // 発声中かどうか
     get IsSpeaking() {
         return jtalk.openjtalk_isSpeaking(this[handle]);
+    }
+
+    // 一時停止中かどうか
+    get IsPaused() {
+        return jtalk.openjtalk_isPaused(this[handle]);
+    }
+
+    // 発声が完了したかどうか
+    get IsFinished() {
+        return jtalk.openjtalk_isFinished(this[handle]);
     }
 
     // 発声している間待機する

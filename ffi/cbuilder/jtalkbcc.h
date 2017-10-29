@@ -54,6 +54,10 @@ extern "C" {
 	bool WINAPI __declspec(dllexport) openjtalk_speakToFileU16(void*openjtalk,wchar_t* text, wchar_t* file);
 
 	bool WINAPI __declspec(dllexport) openjtalk_isSpeaking(void*openjtalk);
+	bool WINAPI __declspec(dllexport) openjtalk_isPaused(void*openjtalk);
+	bool WINAPI __declspec(dllexport) openjtalk_isFinished(void*openjtalk);
+	void WINAPI __declspec(dllexport) openjtalk_pause(void*openjtalk);
+	void WINAPI __declspec(dllexport) openjtalk_resume(void*openjtalk);
 	void WINAPI __declspec(dllexport) openjtalk_stop(void*openjtalk);
 	void WINAPI __declspec(dllexport) openjtalk_wait(void*openjtalk,int duration);
 	void WINAPI __declspec(dllexport) openjtalk_waitUntilDone(void*openjtalk);
@@ -77,13 +81,13 @@ private:
 	 */
 
 	// OpenJTalkオブジェクトへのポインタ
-	void *openjtalk = NULL;
+	void *openjtalk;
 
 	// 音響モデルファイル情報のリスト
 	std::vector<VoiceFileInfo*>fvoices;
 
 	// 現在の音響モデルファイル情報
-    VoiceFileInfo *currentVoice = NULL;
+    VoiceFileInfo *currentVoice;
 
 
 	/*
@@ -183,11 +187,23 @@ public:
 	// 非同期発声(UTF-16)
 	void SpeakAsync(String text);
 
+	// 発声の一時停止
+	void Pause();
+
+	// 発声の再開
+	void Resume();
+
 	// 発声の強制停止
 	void Stop();
 
 	// 発声中かどうか
 	bool IsSpeaking();
+
+	// 一時停止中かどうか
+	bool IsPaused();
+
+	// 完了したかどうか
+	bool IsFinished();
 
 	// 発声している間待機する
 	void WaitUntilDone();
