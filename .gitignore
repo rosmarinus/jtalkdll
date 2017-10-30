@@ -71,7 +71,6 @@ JTalkCOMx64.snk
 JTalkCOMx86.snk
 
 #Java
-*.jar
 *.class
 ffi/META-INF/*
 
