@@ -421,7 +421,6 @@ install(TARGETS hts_engine RUNTIME DESTINATION bin)
 
 
 ### portaudio subdirectory
-#if(MSVC AND WIN32 OR APPLE)
 if(NOT EXIST_PORTAUDIO)
     add_subdirectory(portaudio)
 endif()
@@ -549,18 +548,15 @@ install(FILES ${JTALK_PATH}/jtalk.h DESTINATION include)
 if(mingw_build)
     install(TARGETS jtalk RUNTIME DESTINATION bin)
 else()
-    #install(TARGETS jtalk RUNTIME DESTINATION bin)
     install(TARGETS jtalk
-
         RUNTIME DESTINATION bin
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
     )
 endif()
-
-
 ### build JTalkCOM.dll
 if(jtalkcom_build AND MSVC AND WIN32)
+
     ### mecab_eha CXX
     include_directories(${OPEN_JTALK_PATH}/mecab)
     include_directories(${OPEN_JTALK_PATH}/mecab/src)

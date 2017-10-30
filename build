@@ -9,8 +9,8 @@ cmake ..
 make
 re="(MINGW|CYGWIN)"
 if [[ $(uname) =~ $re ]]; then
-    make install
+    make install/strip
 else
-    sudo make install
+    sudo make install/strip
 fi
 cd ..

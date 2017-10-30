@@ -93,6 +93,9 @@ public class JtdJnaJavaSwing extends JFrame {
         comboBox = new JComboBox<String>(model);
         comboBox.setPreferredSize(new Dimension(218, 20));
         comboBox.setMaximumRowCount(16);
+        try {
+            comboBox.setSelectedItem(tts.getVoiceName());
+        } catch (Exception e) {}
         comboBox.addActionListener( event -> {
                 try {
                     tts.setVoiceName((String) comboBox.getSelectedItem());
@@ -257,7 +260,7 @@ public class JtdJnaJavaSwing extends JFrame {
         JFrame frame = new JtdJnaJavaSwing();
         frame.setVisible(true);
         frame.setBounds(200, 200, 240, 150);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }
