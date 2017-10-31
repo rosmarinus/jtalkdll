@@ -11,14 +11,12 @@ mkdir -p ${build_dir}
 cd ${build_dir}
 if [[ $(uname) =~ $re ]]; then
     rm -r *
-else
-    sudo rm -r *
 fi
 cmake ..
 make
 if [[ $(uname) =~ $re ]]; then
     make install/strip
 else
-    sudo make install/strip
+    sudo make install
 fi
 cd ..
