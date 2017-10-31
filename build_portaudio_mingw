@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-build_dir=build.dir
-if [ -f ../incbuild ]; then
-    bash ../incbuild
-fi
 
-# machine
+# command line option
+# $1: i686 | x86_64 :: target architecture
+
+# arch
 if [[ $(uname) =~ "MINGW" ]]; then
     export AR="ar"
     export RANLIB="ranlib"
@@ -12,34 +11,27 @@ if [[ $(uname) =~ "MINGW" ]]; then
     export CXX="g++"
     host=""
     target=""
-    build=""
     prefix=/usr/local
 elif [[ $(uname) =~ "CYGWIN" ]]; then
 	if [ "$1" == "" ] ; then
-		mach=$(uname -m)
+		arch=$(uname -m)
 	else
-		mach=$1
+		arch=$1
 	fi
-    #mach=x86_64
-    #mach=i686
-    mach=$mach-w64-mingw32
-    export AR="$mach-ar"
-    export RANLIB="$mach-ranlib"
-    export CC="$mach-gcc"
-    export CXX="$mach-g++"
-    host="--host=$mach"
-    target="--target=$mach"
-    build="--build=$mach"
-    prefix=/usr/$mach
+    arch=$arch-w64-mingw32
+    export AR="$arch-ar"
+    export RANLIB="$arch-ranlib"
+    export CC="$arch-gcc"
+    export CXX="$arch-g++"
+    host="--host=$arch"
+    target="--target=$arch"
+    prefix=/usr/$arch
 fi
-echo ${mach}
 
 re="(MINGW|CYGWIN)"
 if [[ $(uname) =~ $re ]]; then
     cd portaudio
     chmod +x configure
-    #./configure $host --prefix=$prefix
-    #./configure $host $target $build --prefix=$prefix
     ./configure $host $target --prefix=$prefix
     make clean
     make

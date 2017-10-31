@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 2.8.4)
 
+# command line option
+# -Dtarget_arch=(i686|x86_64) : cygwin
+#    default value = uname -m
+# -Dbuild_jtalkcom=true : msvc
 
 project(jtalkdll)
 set(CMAKE_BUILD_TYPE Release)
 #set(CMAKE_VERBOSE_MAKEFILE TRUE)
-#set(jtalkcom_build TRUE)
+#set(build_jtalkcom TRUE)
 
 
 ### source directory
@@ -19,7 +23,7 @@ set(JTALK_PATH "${CMAKE_SOURCE_DIR}/jtalk")
 if(MSVC AND WIN32)
     set(DATAFILE_INSTALL_PREFIX c:/open_jtalk)
     set(CMAKE_INSTALL_PREFIX c:/open_jtalk)
-elseif(MINGW)
+elseif(MINGW OR MSYS)
     set(DATAFILE_INSTALL_PREFIX /c/open_jtalk)
     set(CMAKE_INSTALL_PREFIX /c/open_jtalk)
 elseif(CYGWIN)
@@ -32,50 +36,52 @@ endif()
 
 
 ### set mingw compiler
-project(dummy NONE)
 if(MINGW)
-	set(target_machine $ENV{MINGW_CHOST})
-    set(mingw_prefix $ENV{MINGW_PREFIX})
-    set(CMAKE_C_COMPILER gcc)
-    set(CMAKE_CXX_COMPILER g++)
-    set(CMAKE_RANLIB ranlib)
-    set(CMAKE_AR ar)
-    set(CMAKE_STRIP strip)
-    set(CMAKE_FIND_ROOT_PATH ${mingw_prefix}/${target_machine})
+	set(target_arch          "$ENV{MINGW_CHOST}")
+    set(mingw_prefix         "$ENV{MINGW_PREFIX}")
+   	set(mingw_gcc_prefix     "${mingw_prefix}/bin/")
+    set(CMAKE_FIND_ROOT_PATH "${mingw_prefix}/${target_arch}")
+
     set(mingw_build 1)
+
 elseif(CYGWIN)
-    if(NOT target_machine)
+    if(NOT target_arch)
 		if(CMAKE_UNAME)
-			exec_program(uname ARGS -m OUTPUT_VARIABLE target_machine)
+			exec_program(uname ARGS -m OUTPUT_VARIABLE target_arch)
 		endif()
 	endif()
-    if(target_machine)
-	   	set(target_machine "${target_machine}-w64-mingw32")
-	    set(CMAKE_C_COMPILER ${target_machine}-gcc)
-	    set(CMAKE_CXX_COMPILER ${target_machine}-g++)
-	    set(CMAKE_RANLIB ${target_machine}-ranlib)
-	    set(CMAKE_AR ${target_machine}-ar)
-	    set(CMAKE_STRIP /usr/${target_machine}/bin/strip)
-	    set(CMAKE_FIND_ROOT_PATH /usr/${target_machine})
+    if(target_arch)
+	   	set(target_arch          "${target_arch}-w64-mingw32")
+	   	set(mingw_gcc_prefix     "/bin/${target_arch}-")
+	    set(CMAKE_FIND_ROOT_PATH "/usr/${target_arch}")
+
 	    set(mingw_build 1)
 	endif()
 endif()
 
-
-message("-- Target: ${target_machine}")
-message("-- CC : ${CMAKE_C_COMPILER}")
-message("-- CXX: ${CMAKE_CXX_COMPILER}")
-message("-- AR: ${CMAKE_AR}")
-message("-- RANLIB: ${CMAKE_RANLIB}")
-message("-- STRIP: ${CMAKE_STRIP}")
-message("-- Find Root Path: ${CMAKE_FIND_ROOT_PATH}")
-
-
 if(mingw_build)
+    set(CMAKE_C_COMPILER     ${mingw_gcc_prefix}gcc)
+    set(CMAKE_CXX_COMPILER   ${mingw_gcc_prefix}g++)
+    set(CMAKE_RANLIB         ${mingw_gcc_prefix}ranlib)
+    set(CMAKE_AR             ${mingw_gcc_prefix}ar)
+    set(CMAKE_STRIP          ${mingw_gcc_prefix}strip)
+
 	set(CMAKE_SYSTEM_NAME Windows)
 	set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 	set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 	set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+endif()
+
+if(mingw_build)
+    message("-- Target: ${target_arch}")
+endif()
+message("-- CC:     ${CMAKE_C_COMPILER}")
+message("-- CXX:    ${CMAKE_CXX_COMPILER}")
+message("-- AR:     ${CMAKE_AR}")
+message("-- RANLIB: ${CMAKE_RANLIB}")
+message("-- STRIP:  ${CMAKE_STRIP}")
+if(mingw_build)
+    message("-- Find Root Path: ${CMAKE_FIND_ROOT_PATH}")
 endif()
 
 
@@ -135,18 +141,25 @@ if(UNIX AND NOT APPLE)
     endif()
 endif()
 if(mingw_build)
-    find_library(PORTAUDIO_LIBRARY NAMES portaudio ONLY_CMAKE_FIND_ROOT_PATH )
+    #find_library(PORTAUDIO_LIBRARY NAMES portaudio PATHS ${CMAKE_FIND_ROOT_PATH} ONLY_CMAKE_FIND_ROOT_PATH)
+    find_library(PORTAUDIO_LIBRARY NAMES portaudio ONLY_CMAKE_FIND_ROOT_PATH)
     mark_as_advanced(PORTAUDIO_LIBRARY)
     if(PORTAUDIO_LIBRARY)
         set(EXIST_PORTAUDIO 1)
     else()
-        message(FATAL_ERROR "libportaudio.a が見つかりません。\nbuild_portaudioでビルド・インストールしてからやり直してください。")
+        message(FATAL_ERROR "libportaudio.a not found\nPlease run the script 'build_portaudio_mingw'.")
     endif()
 endif()
 if(EXIST_PORTAUDIO)
     message("-- Portaudio Library found: ${PORTAUDIO_LIBRARY}")
 else()
     message("-- Portaudio Library not found")
+endif()
+
+
+### portaudio subdirectory
+if(NOT EXIST_PORTAUDIO)
+    add_subdirectory(portaudio)
 endif()
 
 
@@ -420,12 +433,6 @@ endif()
 install(TARGETS hts_engine RUNTIME DESTINATION bin)
 
 
-### portaudio subdirectory
-if(NOT EXIST_PORTAUDIO)
-    add_subdirectory(portaudio)
-endif()
-
-
 ### mecab-dict-index CXX
 include_directories(${OPEN_JTALK_PATH}/mecab/src)
 add_executable(mecab-dict-index
@@ -555,7 +562,7 @@ else()
     )
 endif()
 ### build JTalkCOM.dll
-if(jtalkcom_build AND MSVC AND WIN32)
+if(build_jtalkcom AND MSVC AND WIN32)
 
     ### mecab_eha CXX
     include_directories(${OPEN_JTALK_PATH}/mecab)
