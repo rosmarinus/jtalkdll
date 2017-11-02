@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.4)
+cmake_minimum_required(VERSION 2.8.6)
 
 # command line option
 # -Dtarget_arch=(i686|x86_64) : cygwin
@@ -19,28 +19,18 @@ set(HTS_VOICE_PATH "${CMAKE_SOURCE_DIR}/voice")
 set(JTALK_PATH "${CMAKE_SOURCE_DIR}/jtalk")
 
 
-### set install directory
-if(MSVC AND WIN32)
-    set(DATAFILE_INSTALL_PREFIX c:/open_jtalk)
-    set(CMAKE_INSTALL_PREFIX c:/open_jtalk)
-elseif(MINGW OR MSYS)
-    set(DATAFILE_INSTALL_PREFIX /c/open_jtalk)
-    set(CMAKE_INSTALL_PREFIX /c/open_jtalk)
-elseif(CYGWIN)
-    set(DATAFILE_INSTALL_PREFIX /cygdrive/c/open_jtalk)
-    set(CMAKE_INSTALL_PREFIX /cygdrive/c/open_jtalk)
-else()
-    set(DATAFILE_INSTALL_PREFIX /usr/local/OpenJTalk)
-    set(CMAKE_INSTALL_PREFIX /usr/local)
-endif()
-
-
 ### set mingw compiler
 if(MINGW)
 	set(target_arch          "$ENV{MINGW_CHOST}")
     set(mingw_prefix         "$ENV{MINGW_PREFIX}")
-   	set(mingw_gcc_prefix     "${mingw_prefix}/bin/")
-    set(CMAKE_FIND_ROOT_PATH "${mingw_prefix}/${target_arch}")
+    set(CMAKE_FIND_ROOT_PATH "${mingw_prefix}")
+
+    set(CMAKE_C_COMPILER     gcc)
+    set(CMAKE_CXX_COMPILER   g++)
+    set(CMAKE_RANLIB         ranlib)
+    set(CMAKE_AS             as)
+    set(CMAKE_AR             ar)
+    set(CMAKE_STRIP          strip)
 
     set(mingw_build 1)
 
@@ -52,20 +42,20 @@ elseif(CYGWIN)
 	endif()
     if(target_arch)
 	   	set(target_arch          "${target_arch}-w64-mingw32")
-	   	set(mingw_gcc_prefix     "/bin/${target_arch}-")
 	    set(CMAKE_FIND_ROOT_PATH "/usr/${target_arch}")
+
+        set(CMAKE_C_COMPILER     ${target_arch}-gcc)
+        set(CMAKE_CXX_COMPILER   ${target_arch}-g++)
+        set(CMAKE_RANLIB         ${target_arch}-ranlib)
+        set(CMAKE_AS             ${target_arch}-as)
+        set(CMAKE_AR             ${target_arch}-ar)
+        set(CMAKE_STRIP          ${target_arch}-strip)
 
 	    set(mingw_build 1)
 	endif()
 endif()
 
 if(mingw_build)
-    set(CMAKE_C_COMPILER     ${mingw_gcc_prefix}gcc)
-    set(CMAKE_CXX_COMPILER   ${mingw_gcc_prefix}g++)
-    set(CMAKE_RANLIB         ${mingw_gcc_prefix}ranlib)
-    set(CMAKE_AR             ${mingw_gcc_prefix}ar)
-    set(CMAKE_STRIP          ${mingw_gcc_prefix}strip)
-
 	set(CMAKE_SYSTEM_NAME Windows)
 	set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 	set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
@@ -77,11 +67,30 @@ if(mingw_build)
 endif()
 message("-- CC:     ${CMAKE_C_COMPILER}")
 message("-- CXX:    ${CMAKE_CXX_COMPILER}")
+message("-- AS:     ${CMAKE_AS}")
 message("-- AR:     ${CMAKE_AR}")
 message("-- RANLIB: ${CMAKE_RANLIB}")
 message("-- STRIP:  ${CMAKE_STRIP}")
 if(mingw_build)
     message("-- Find Root Path: ${CMAKE_FIND_ROOT_PATH}")
+endif()
+
+
+### set install directory
+if(MSVC AND WIN32)
+    set(DATAFILE_INSTALL_PREFIX c:/open_jtalk)
+    set(CMAKE_INSTALL_PREFIX c:/open_jtalk)
+elseif(MINGW)
+    set(DATAFILE_INSTALL_PREFIX /c/open_jtalk)
+    #set(CMAKE_INSTALL_PREFIX /c/open_jtalk)
+    set(CMAKE_INSTALL_PREFIX "${mingw_prefix}")
+elseif(CYGWIN)
+    set(DATAFILE_INSTALL_PREFIX /cygdrive/c/open_jtalk)
+    #set(CMAKE_INSTALL_PREFIX /cygdrive/c/open_jtalk)
+    set(CMAKE_INSTALL_PREFIX "/usr/${target_arch}")
+else()
+    set(DATAFILE_INSTALL_PREFIX /usr/local/OpenJTalk)
+    set(CMAKE_INSTALL_PREFIX /usr/local)
 endif()
 
 
@@ -165,7 +174,7 @@ endif()
 
 ### c/cxx flags
 if(MSVC AND WIN32)
-    set(CMAKE_C_FLAGS "/MD /O2 /Ob2 /Oi /Ot /Oy /GT")
+    set(CMAKE_C_FLAGS   "/MD /O2 /Ob2 /Oi /Ot /Oy /GT")
     set(CMAKE_CXX_FLAGS "/MD /O2 /Ob2 /Oi /Ot /Oy /GT")
     set(CMAKE_C_FLAGS_RELEASE "")
     set(CMAKE_CXX_FLAGS_RELEASE "")
@@ -254,7 +263,7 @@ else()
 
     ### mingw
     if(mingw_build)
-        set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+        set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
         set(CMAKE_SHARED_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 
     ### cygwin without mingw compiler
@@ -446,6 +455,7 @@ elseif(UNIX AND ENABLE_LICONV)
     target_link_libraries(mecab-dict-index iconv)
 endif()
 if(mingw_build)
+    set_target_properties(mecab-dict-index PROPERTIES LINK_FLAGS -static)
     set_target_properties(mecab-dict-index PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
 install(TARGETS mecab-dict-index RUNTIME DESTINATION bin)
@@ -472,6 +482,7 @@ target_link_libraries(open_jtalk
 )
 set_target_properties(open_jtalk PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 if(mingw_build)
+    set_target_properties(open_jtalk PROPERTIES LINK_FLAGS -static)
     target_link_libraries(open_jtalk winmm)
 elseif(MSVC AND WIN32)
     target_link_libraries(open_jtalk winmm)
@@ -497,6 +508,8 @@ add_library(openjtalk STATIC
 set_target_properties(openjtalk PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 if(MSVC AND WIN32 OR APPLE)
     set(PORTAUDIO portaudio_static)
+elseif(mingw_build)
+    set(PORTAUDIO ${PORTAUDIO_LIBRARY})
 else()
     set(PORTAUDIO portaudio)
 endif()
@@ -540,6 +553,8 @@ target_link_libraries(jtalk
 if(mingw_build)
     #target_link_libraries(jtalk iconv)
     set_target_properties(jtalk PROPERTIES PREFIX "" SUFFIX ".dll")
+    set_target_properties(jtalk PROPERTIES IMPORT_PREFIX "lib")
+    set_target_properties(jtalk PROPERTIES IMPORT_SUFFIX ".lib")
 elseif(CYGWIN)
     target_link_libraries(jtalk iconv)
     set_target_properties(jtalk PROPERTIES PREFIX "" SUFFIX ".dll")
@@ -553,14 +568,18 @@ if(NOT mingw_build)
 endif()
 install(FILES ${JTALK_PATH}/jtalk.h DESTINATION include)
 if(mingw_build)
-    install(TARGETS jtalk RUNTIME DESTINATION bin)
+    install(TARGETS jtalk
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+    )
 else()
     install(TARGETS jtalk
-        RUNTIME DESTINATION bin
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
     )
 endif()
+
 ### build JTalkCOM.dll
 if(build_jtalkcom AND MSVC AND WIN32)
 

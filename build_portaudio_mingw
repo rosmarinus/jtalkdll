@@ -11,7 +11,7 @@ if [[ $(uname) =~ "MINGW" ]]; then
     export CXX="g++"
     host=""
     target=""
-    prefix=${MSYSTEM_PREFIX}/${MSYSTEM_CHOST}
+    prefix=${MSYSTEM_PREFIX}
 elif [[ $(uname) =~ "CYGWIN" ]]; then
 	if [ "$1" == "" ] ; then
 		arch=$(uname -m)

@@ -262,6 +262,7 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceSjis(OpenJTalk *oj
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceU16(OpenJTalk *oj, const char16_t *path);
 
 // 現在の音響モデルファイルの取得
+// pathは確実に長さMAX_PATHの配列
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoice(OpenJTalk *oj, char *path);
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceSjis(OpenJTalk *oj, char *path);
 OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoiceU16(OpenJTalk *oj, char16_t *path);

@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
+
+# command line option
+# $1: i686 | x86_64 :: target architecture
+
 build_dir=build.dir
 re="(MINGW|CYGWIN)"
 if [[ $(uname) =~ $re ]]; then
-	bash build_portaudio_mingw
+	bash build_portaudio_mingw $1
 fi
 if [ -f ../incbuild ]; then
     bash ../incbuild
@@ -12,7 +16,10 @@ cd ${build_dir}
 if [[ $(uname) =~ $re ]]; then
     rm -r *
 fi
-cmake ..
+if [ ! "$1" == "" ] ; then
+    param=-Dtarget_arch=$1
+fi
+cmake .. $param
 make
 if [[ $(uname) =~ $re ]]; then
     make install/strip
