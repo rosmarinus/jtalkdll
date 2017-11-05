@@ -117,6 +117,7 @@ open_jtalk-1.10/lib/jtd_c
 .DS_Store
 
 /build.dir/*
+/build*.dir/*
 ffi/cpp/jtd_cppqt.vcproj
 ffi/cpp/moc_predefs.h
 ffi/cpp/jtd_cpp

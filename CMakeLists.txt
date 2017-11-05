@@ -4,11 +4,14 @@ cmake_minimum_required(VERSION 2.8.6)
 # -Dtarget_arch=(i686|x86_64) : cygwin
 #    default value = uname -m
 # -Dbuild_jtalkcom=true : msvc
+# -Dinstall_open_jtalk=true : install open_jtalk, hts_engine, mecab-dict-index
+
 
 project(jtalkdll)
 set(CMAKE_BUILD_TYPE Release)
 #set(CMAKE_VERBOSE_MAKEFILE TRUE)
 #set(build_jtalkcom TRUE)
+#set(install_open_jtalk TRUE)
 
 
 ### source directory
@@ -24,16 +27,13 @@ if(MINGW)
 	set(target_arch          "$ENV{MINGW_CHOST}")
     set(mingw_prefix         "$ENV{MINGW_PREFIX}")
     set(CMAKE_FIND_ROOT_PATH "${mingw_prefix}")
-
     set(CMAKE_C_COMPILER     gcc)
     set(CMAKE_CXX_COMPILER   g++)
     set(CMAKE_RANLIB         ranlib)
     set(CMAKE_AS             as)
     set(CMAKE_AR             ar)
     set(CMAKE_STRIP          strip)
-
     set(mingw_build 1)
-
 elseif(CYGWIN)
     if(NOT target_arch)
 		if(CMAKE_UNAME)
@@ -43,35 +43,28 @@ elseif(CYGWIN)
     if(target_arch)
 	   	set(target_arch          "${target_arch}-w64-mingw32")
 	    set(CMAKE_FIND_ROOT_PATH "/usr/${target_arch}")
-
         set(CMAKE_C_COMPILER     ${target_arch}-gcc)
         set(CMAKE_CXX_COMPILER   ${target_arch}-g++)
         set(CMAKE_RANLIB         ${target_arch}-ranlib)
         set(CMAKE_AS             ${target_arch}-as)
         set(CMAKE_AR             ${target_arch}-ar)
         set(CMAKE_STRIP          ${target_arch}-strip)
-
 	    set(mingw_build 1)
 	endif()
 endif()
-
 if(mingw_build)
 	set(CMAKE_SYSTEM_NAME Windows)
 	set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 	set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 	set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-endif()
 
-if(mingw_build)
     message("-- Target: ${target_arch}")
-endif()
-message("-- CC:     ${CMAKE_C_COMPILER}")
-message("-- CXX:    ${CMAKE_CXX_COMPILER}")
-message("-- AS:     ${CMAKE_AS}")
-message("-- AR:     ${CMAKE_AR}")
-message("-- RANLIB: ${CMAKE_RANLIB}")
-message("-- STRIP:  ${CMAKE_STRIP}")
-if(mingw_build)
+    message("-- CC:     ${CMAKE_C_COMPILER}")
+    message("-- CXX:    ${CMAKE_CXX_COMPILER}")
+    message("-- AS:     ${CMAKE_AS}")
+    message("-- AR:     ${CMAKE_AR}")
+    message("-- RANLIB: ${CMAKE_RANLIB}")
+    message("-- STRIP:  ${CMAKE_STRIP}")
     message("-- Find Root Path: ${CMAKE_FIND_ROOT_PATH}")
 endif()
 
@@ -195,28 +188,16 @@ if(MSVC AND WIN32)
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} /DGIT_REV=\"\\\"${GIT_REVISION}\\\"\"")
 
     ### jtalkcom c++/cli flgas
-    if(jtalkcomBuild)
+    if(build_jtalkcom)
         set(jtalkcom_cli_compile_flags "/TP /clr /EHa")
         if(CMAKE_CL_64)
-            set(SNKFILE ${JTALK_PATH}/JTalkCOMx64.snk)
+            set(SNKFILE ${JTALK_PATH}/JTalkCOMx64Pub.snk)
         else()
-            set(SNKFILE ${JTALK_PATH}/JTalkCOMx86.snk)
-        endif()
-        if(NOT EXISTS ${SNKFILE})
-            set(DELAYSIGN 1)
-            if(CMAKE_CL_64)
-                set(SNKFILE ${JTALK_PATH}/JTalkCOMx64pub.snk)
-            else()
-                set(SNKFILE ${JTALK_PATH}/JTalkCOMx86pub.snk)
-            endif()
+            set(SNKFILE ${JTALK_PATH}/JTalkCOMx86Pub.snk)
         endif()
         if(EXISTS ${SNKFILE})
             message("-- SNK File: ${SNKFILE}")
-            if(DELAYSIGN)
-                set(jtalkcom_cli_link_flags "/DELAYSIGN /KEYFILE:${SNKFILE}")
-            else()
-                set(jtalkcom_cli_link_flags "/KEYFILE:${SNKFILE}")
-            endif()
+            set(jtalkcom_cli_link_flags "/DELAYSIGN /KEYFILE:${SNKFILE}")
         endif()
     endif()
     
@@ -284,7 +265,7 @@ else()
 endif()
 
 
-### mecab CXX
+### mecab
 include_directories(${OPEN_JTALK_PATH}/mecab)
 include_directories(${OPEN_JTALK_PATH}/mecab/src)
 add_library(mecab STATIC
@@ -315,7 +296,7 @@ add_library(mecab STATIC
 set_target_properties(mecab PROPERTIES COMPILE_FLAGS ${mecab_cxx_compile_flags})
 
 
-### text2mecab C
+### text2mecab
 include_directories(${OPEN_JTALK_PATH}/text2mecab)
 add_library(text2mecab STATIC
     ${OPEN_JTALK_PATH}/text2mecab/text2mecab.c
@@ -323,7 +304,7 @@ add_library(text2mecab STATIC
 set_target_properties(text2mecab PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### mecab2njd C
+### mecab2njd
 include_directories(${OPEN_JTALK_PATH}/mecab2njd)
 add_library(mecab2njd STATIC
     ${OPEN_JTALK_PATH}/mecab2njd/mecab2njd.c
@@ -331,7 +312,7 @@ add_library(mecab2njd STATIC
 set_target_properties(mecab2njd PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### njd C
+### njd
 include_directories(${OPEN_JTALK_PATH}/njd)
 add_library(njd STATIC
     ${OPEN_JTALK_PATH}/njd/njd.c
@@ -340,7 +321,7 @@ add_library(njd STATIC
 set_target_properties(njd PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### njd_set_pronunciation C
+### njd_set_pronunciation
 include_directories(${OPEN_JTALK_PATH}/njd_set_pronunciation)
 add_library(njd_set_pronunciation STATIC
     ${OPEN_JTALK_PATH}/njd_set_pronunciation/njd_set_pronunciation.c
@@ -348,7 +329,7 @@ add_library(njd_set_pronunciation STATIC
 set_target_properties(njd_set_pronunciation PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### njd_set_digit C
+### njd_set_digit
 include_directories(${OPEN_JTALK_PATH}/njd_set_digit)
 add_library(njd_set_digit STATIC
     ${OPEN_JTALK_PATH}/njd_set_digit/njd_set_digit.c
@@ -356,7 +337,7 @@ add_library(njd_set_digit STATIC
 set_target_properties(njd_set_digit PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### njd_set_accent_phrase C
+### njd_set_accent_phrase
 include_directories(${OPEN_JTALK_PATH}/njd_set_accent_phrase)
 add_library(njd_set_accent_phrase STATIC
     ${OPEN_JTALK_PATH}/njd_set_accent_phrase/njd_set_accent_phrase.c
@@ -364,7 +345,7 @@ add_library(njd_set_accent_phrase STATIC
 set_target_properties(njd_set_accent_phrase PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### njd_set_accent_type C
+### njd_set_accent_type
 include_directories(${OPEN_JTALK_PATH}/njd_set_accent_type)
 add_library(njd_set_accent_type STATIC
     ${OPEN_JTALK_PATH}/njd_set_accent_type/njd_set_accent_type.c
@@ -372,7 +353,7 @@ add_library(njd_set_accent_type STATIC
 set_target_properties(njd_set_accent_type PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### njd_set_unvoiced_vowel C
+### njd_set_unvoiced_vowel
 include_directories(${OPEN_JTALK_PATH}/njd_set_unvoiced_vowel)
 add_library(njd_set_unvoiced_vowel STATIC
     ${OPEN_JTALK_PATH}/njd_set_unvoiced_vowel/njd_set_unvoiced_vowel.c
@@ -380,7 +361,7 @@ add_library(njd_set_unvoiced_vowel STATIC
 set_target_properties(njd_set_unvoiced_vowel PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### njd_set_long_vowel C
+### njd_set_long_vowel
 include_directories(${OPEN_JTALK_PATH}/njd_set_long_vowel)
 add_library(njd_set_long_vowel STATIC
     ${OPEN_JTALK_PATH}/njd_set_long_vowel/njd_set_long_vowel.c
@@ -388,7 +369,7 @@ add_library(njd_set_long_vowel STATIC
 set_target_properties(njd_set_long_vowel PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### njd2jpcommon C
+### njd2jpcommon
 include_directories(${OPEN_JTALK_PATH}/njd2jpcommon)
 add_library(njd2jpcommon STATIC
     ${OPEN_JTALK_PATH}/njd2jpcommon/njd2jpcommon.c
@@ -396,7 +377,7 @@ add_library(njd2jpcommon STATIC
 set_target_properties(njd2jpcommon PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### jpcommon C
+### jpcommon
 include_directories(${OPEN_JTALK_PATH}/jpcommon)
 add_library(jpcommon STATIC
     ${OPEN_JTALK_PATH}/jpcommon/jpcommon.c
@@ -406,7 +387,7 @@ add_library(jpcommon STATIC
 set_target_properties(jpcommon PROPERTIES COMPILE_FLAGS ${openjtalk_compile_flags})
 
 
-### HTSEngine C
+### HTSEngine
 include_directories(${HTS_ENGINE_API_PATH}/include)
 add_library(HTSEngine STATIC
     ${HTS_ENGINE_API_PATH}/lib/HTS_audio.c
@@ -423,7 +404,7 @@ add_library(HTSEngine STATIC
 set_target_properties(HTSEngine PROPERTIES COMPILE_FLAGS ${hts_c_compile_flags})
 
 
-### hts_engine C
+### hts_engine
 add_executable(hts_engine ${HTS_ENGINE_API_PATH}/bin/hts_engine.c)
 target_link_libraries(hts_engine HTSEngine)
 if(mingw_build)
@@ -439,10 +420,11 @@ set_target_properties(hts_engine PROPERTIES COMPILE_FLAGS ${hts_c_compile_flags}
 if(mingw_build)
     set_target_properties(hts_engine PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
-install(TARGETS hts_engine RUNTIME DESTINATION bin)
+if(install_open_jtalk)
+    install(TARGETS hts_engine RUNTIME DESTINATION bin)
+endif()
 
-
-### mecab-dict-index CXX
+### mecab-dict-index
 include_directories(${OPEN_JTALK_PATH}/mecab/src)
 add_executable(mecab-dict-index
     ${OPEN_JTALK_PATH}/mecab/src/mecab-dict-index.cpp
@@ -458,10 +440,11 @@ if(mingw_build)
     set_target_properties(mecab-dict-index PROPERTIES LINK_FLAGS -static)
     set_target_properties(mecab-dict-index PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
-install(TARGETS mecab-dict-index RUNTIME DESTINATION bin)
+if(install_open_jtalk)
+    install(TARGETS mecab-dict-index RUNTIME DESTINATION bin)
+endif()
 
-
-### open_jtalk C
+### open_jtalk
 add_executable(open_jtalk
     ${OPEN_JTALK_PATH}/bin/open_jtalk.c
 )
@@ -496,10 +479,11 @@ endif()
 if(mingw_build)
     set_target_properties(open_jtalk PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
-install(TARGETS open_jtalk RUNTIME DESTINATION bin)
+if(install_open_jtalk)
+    install(TARGETS open_jtalk RUNTIME DESTINATION bin)
+endif()
 
-
-### openjtalk C
+### openjtalk
 include_directories(${OPEN_JTALK_PATH}/bin)
 include_directories(portaudio/include)
 add_library(openjtalk STATIC
@@ -538,7 +522,7 @@ endif()
 
 
 ### main project
-### jtalk C
+### jtalk
 include_directories(${JTALK_PATH})
 include_directories(portaudio/include)
 add_library(jtalk SHARED
@@ -566,6 +550,14 @@ endif()
 if(NOT mingw_build)
 	set_target_properties(jtalk PROPERTIES VERSION ${JTALK_SERIAL} SOVERSION ${JTALK_SOSERIAL})
 endif()
+if(mingw_build)
+    add_custom_command(TARGET jtalk
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${JTALK_PATH}/${target_arch}
+        COMMAND ${CMAKE_COMMAND} -E copy jtalk.dll ${JTALK_PATH}/${target_arch}/.
+        COMMAND ${CMAKE_STRIP} ${JTALK_PATH}/${target_arch}/jtalk.dll
+    )
+endif()
 install(FILES ${JTALK_PATH}/jtalk.h DESTINATION include)
 if(mingw_build)
     install(TARGETS jtalk
@@ -579,6 +571,7 @@ else()
         RUNTIME DESTINATION bin
     )
 endif()
+
 
 ### build JTalkCOM.dll
 if(build_jtalkcom AND MSVC AND WIN32)
@@ -613,7 +606,7 @@ if(build_jtalkcom AND MSVC AND WIN32)
     )
     set_target_properties(mecab_eha PROPERTIES COMPILE_FLAGS ${mecab_cxx_compile_flags_with_EHa})
 
-    #project(JTalkCOM CXX)
+    ###project(JTalkCOM CXX)
     include_directories(${JTALK_PATH})
     include_directories(portaudio/include)
     add_library(jtalkcom_static STATIC
@@ -635,8 +628,8 @@ if(build_jtalkcom AND MSVC AND WIN32)
     set_target_properties(JTalkCOM PROPERTIES VERSION ${JTALK_SERIAL} SOVERSION ${JTALK_SOSERIAL})
     install(TARGETS JTalkCOM
         RUNTIME DESTINATION bin
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
+        #ARCHIVE DESTINATION lib
+        #LIBRARY DESTINATION lib
     )
     install(FILES ${JTALK_PATH}/regist_jtalkcom.bat DESTINATION bin)
     install(FILES ${JTALK_PATH}/unregist_jtalkcom.bat DESTINATION bin)
@@ -644,7 +637,7 @@ endif()
 
 
 ### c sample
-### jsay C
+### jsay
 add_executable(jsay
     ${JTALK_PATH}/jsay.c
 )
@@ -662,7 +655,7 @@ install(TARGETS jsay RUNTIME DESTINATION bin)
 
 
 ### c sample
-### jtd_c C
+### jtd_c
 add_executable(jtd_c
     ${JTALK_PATH}/jtd_c.c
 )

@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-
 # command line option
-# $1: i686 | x86_64 :: target architecture
-
-build_dir=build.dir
+# $1: i686 | x86_64 : target architecture
 re="(MINGW|CYGWIN)"
 if [[ $(uname) =~ $re ]]; then
 	bash build_portaudio_mingw $1
@@ -11,14 +8,22 @@ fi
 if [ -f ../incbuild ]; then
     bash ../incbuild
 fi
-mkdir -p ${build_dir}
-cd ${build_dir}
-if [[ $(uname) =~ $re ]]; then
-    rm -r *
-fi
 if [ ! "$1" == "" ] ; then
     param=-Dtarget_arch=$1
 fi
+if [[ $(uname) =~ "MINGW" ]]; then
+    arch=${MSYSTEM_CHOST}
+elif [[ $(uname) =~ "CYGWIN" ]]; then
+	if [ "$1" == "" ] ; then
+		arch=$(uname -m)
+	else
+		arch=$1
+	fi
+	arch=$arch-w64-mingw32
+fi
+build_dir=build$arch.dir
+mkdir -p ${build_dir}
+cd ${build_dir}
 cmake .. $param
 make
 if [[ $(uname) =~ $re ]]; then

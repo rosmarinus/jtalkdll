@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # command line option
-# $1: i686 | x86_64 :: target architecture
+# $1: i686 | x86_64 : target architecture
 
 # arch
 if [[ $(uname) =~ "MINGW" ]]; then
