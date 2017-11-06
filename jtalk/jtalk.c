@@ -49,11 +49,6 @@ JTALK_C_START;
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #ifdef WINDOWS_PORTAUDIO
 #include <portaudio.h>
-#if defined(_WIN64)
-#pragma comment(lib, "portaudio_static_x64.lib")
-#else
-#pragma comment(lib, "portaudio_static_x86.lib")
-#endif
 #else
 #error "WinOut関数による処理はまだ実装していません。"
 #pragma comment(lib, "winmm.lib")
@@ -101,9 +96,9 @@ struct DataChunk
 typedef struct speakData_t
 {
 	short *data;
-	unsigned long length;
-	unsigned long counter;
-	unsigned long sampling_frequency;
+	size_t length;
+	size_t counter;
+	size_t sampling_frequency;
 	bool stop;
 	bool pause;
 	bool speaking;
