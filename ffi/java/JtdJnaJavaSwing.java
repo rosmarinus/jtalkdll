@@ -1,5 +1,5 @@
+import jtalk.JTalkJna;
 import com.sun.jna.Platform;
-
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;

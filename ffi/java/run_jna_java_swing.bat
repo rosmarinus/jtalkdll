@@ -1,1 +1,1 @@
-java -classpath .;jna-4.4.0.jar;jna-platform-4.4.0.jar; JtdJnaJavaSwing
+java -classpath jna-4.4.0.jar;jna-platform-4.4.0.jar;jtalk.jar;. JtdJnaJavaSwing

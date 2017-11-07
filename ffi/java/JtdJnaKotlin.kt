@@ -1,3 +1,4 @@
+import jtalk.JTalkJna
 import java.util.Random
 fun main(args : Array<String>) {
   var tts = JTalkJna()

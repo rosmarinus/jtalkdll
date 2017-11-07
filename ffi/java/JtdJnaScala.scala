@@ -1,3 +1,4 @@
+import jtalk.JTalkJna
 import scala.util.Random
 import scala.collection.JavaConverters._
 object JtdJnaScala {

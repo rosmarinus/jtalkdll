@@ -1,3 +1,4 @@
+import jtalk.JTalkJna;
 public class JtdJnaGroovy {
   static def void main(String[] args) {
     def tts = new JTalkJna()

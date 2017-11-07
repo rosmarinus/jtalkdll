@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-kotlin -classpath .:jna-4.4.0.jar:jna-platform-4.4.0.jar JtdJnaKotlinKt
+kotlin -classpath jna-4.4.0.jar:jna-platform-4.4.0.jar:jtalk.jar:. JtdJnaKotlinKt

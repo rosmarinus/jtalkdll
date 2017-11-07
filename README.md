@@ -691,6 +691,8 @@ julia で使うには、ホームページから v0.60以降をダウンロー�
 
 #### 他の言語からの利用例
 
+##### LuaJIT での利用例
+
 ここではLuaJITでの例を紹介します。
 
 [LuaJIT](http://luajit.org/)は、[本家Lua](https://www.lua.org/)との大きな違いの一つに、
@@ -728,6 +730,35 @@ function say(message)
 end
 say("こんにちは、世界")
 ```
+
+##### Java VM からの利用例
+
+jtalkdllをJavaから使うために、[JNA](https://github.com/java-native-access/jna)を利用しています。
+簡単にJavaから共有ライブラリを使うことができるライブラリです。
+API関数をラップしてJavaおよびJavaVM言語から利用しやすい形にしたのが、[JTalkJna.java](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/luajit/jtalk.lua) です。
+この JTalkJna.java を``build_jtalk_jar``スクリプトで単純なjarファイル jtalk.jar にしてあるのでこれを import して使います。
+残念ながら、jtalk.jar は JavaSpeechAPI の実装ではありません。
+
+JTalkJnaの内容は、
+[JTalkJna-JavaDoc](http://htmlpreview.github.io/?https://github.com/rosmarinus/jtalkdll/blob/master/ffi/java/doc/index.html)
+を見てください。
+
+ここでは、Java ではなく、[Kotlin](http://kotlinlang.org/) で例を示します。
+
+```Kotlin:Hello.kt
+import jtalk.JTalkJna
+fun say(message:String) {
+  var tts = JTalkJna()
+  tts.speakAsync(message)
+  while(tts.isSpeaking);
+}
+fun main(args:Array<String>) {
+  say("こんにちは、世界")
+}
+```
+
+なお、OpenJTalk には Java クローンである [Gyutan](https://github.com/icn-lab/Gyutan) があります。
+本格的に Java で OpenJTalk の音声合成を使う場合は、こちらを使った方がいいでしょう。
 
 こんな感じで他の言語も書いていけます。
 ただし言語によってはffiモジュールをインストールする手間が必要になります。

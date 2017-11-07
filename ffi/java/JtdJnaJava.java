@@ -1,3 +1,4 @@
+import jtalk.JTalkJna;
 import java.util.Random;
 import java.util.Locale;
 public class JtdJnaJava {

@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-javac -encoding UTF-8 -classpath .:jna-4.4.0.jar:jna-platform-4.4.0.jar JtdJnaJavaSwing.java
+javac -encoding UTF-8 -classpath jna-4.4.0.jar:jna-platform-4.4.0.jar:jtalk.jar:. JtdJnaJavaSwing.java

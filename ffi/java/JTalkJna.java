@@ -1,3 +1,5 @@
+package jtalk;
+
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
@@ -208,7 +210,7 @@ public class JTalkJna {
      * @param voiceDirPath 音響モデルディレクトリ
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    JTalkJna(String voicePath, String dicPath, String voiceDirPath) throws Exception {
+    public JTalkJna(String voicePath, String dicPath, String voiceDirPath) throws Exception {
 
         // "あ"の変換値により文字コードを判別し、Windowsかどうかを調べる
         switch(API.INSTANCE.openjtalk_getCharCode("あ")) {
@@ -237,7 +239,7 @@ public class JTalkJna {
      * @param dicPath 辞書ディレクトリのパス
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    JTalkJna(String voicePath, String dicPath) throws Exception {
+    public JTalkJna(String voicePath, String dicPath) throws Exception {
         this(voicePath, dicPath, null);
     }
 
@@ -246,7 +248,7 @@ public class JTalkJna {
      * @param voicePath 音響モデルファイルのパスもしくは名前
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    JTalkJna(String voicePath) throws Exception {
+    public JTalkJna(String voicePath) throws Exception {
         this(voicePath, null, null);
     }
 
@@ -254,7 +256,7 @@ public class JTalkJna {
      * jtalk.dllをJNAを使ってアクセスするクラスのコンストラクタ（引数なし）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    JTalkJna() throws Exception {
+    public JTalkJna() throws Exception {
         this(null, null, null);
     }
 
@@ -378,7 +380,7 @@ public class JTalkJna {
      * @param i サンプリング周波数(S)（整数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setSamplingFrequency(int i) throws Exception {
+    public void setSamplingFrequency(int i) throws Exception {
         checkOpenjtalkObject();
         if (i < 1) {
             throw new Exception("sampling frequency の範囲は1以上の整数です。");
@@ -390,7 +392,7 @@ public class JTalkJna {
      * サンプリング周波数(S)を取得する
      * @return サンプリング周波数(S)（整数）
      */
-    int getSamplingFrequency() {
+    public int getSamplingFrequency() {
         return API.INSTANCE.openjtalk_getSamplingFrequency(handle);
     }
 
@@ -399,7 +401,7 @@ public class JTalkJna {
      * @param i サンプリング周波数(S)（整数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setS(int i) throws Exception {
+    public void setS(int i) throws Exception {
         setSamplingFrequency(i);
     }
 
@@ -407,7 +409,7 @@ public class JTalkJna {
      * サンプリング周波数(S)を取得する
      * @return サンプリング周波数(S)（整数）
      */
-    int getS() {
+    public int getS() {
         return getSamplingFrequency();
     }
 
@@ -416,7 +418,7 @@ public class JTalkJna {
      * @param i フレームピリオド(P)（整数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setFperiod(int i) throws Exception {
+    public void setFperiod(int i) throws Exception {
         checkOpenjtalkObject();
         if (i < 1) {
             throw new Exception("frame period の範囲は1以上の整数です。");
@@ -428,7 +430,7 @@ public class JTalkJna {
      * フレームピリオド(P)を取得する
      * @return フレームピリオド(P)（整数）
      */
-    int getFperiod() {
+    public int getFperiod() {
         return API.INSTANCE.openjtalk_getFperiod(handle);
     }
 
@@ -437,7 +439,7 @@ public class JTalkJna {
      * @param i フレームピリオド(P)（整数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setP(int i) throws Exception {
+    public void setP(int i) throws Exception {
         setFperiod(i);
     }
 
@@ -445,7 +447,7 @@ public class JTalkJna {
      * フレームピリオド(P)を取得する
      * @return フレームピリオド(P)（整数）
      */
-    int getP() {
+    public int getP() {
         return getFperiod();
     }
 
@@ -454,7 +456,7 @@ public class JTalkJna {
      * @param f オールパス値（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setAlpha(double f) throws Exception {
+    public void setAlpha(double f) throws Exception {
         checkOpenjtalkObject();
         if (f < 0.0 || f > 1.0) {
             throw new Exception("all-pass constant の範囲は0と1の間の浮動小数点数です。");
@@ -466,7 +468,7 @@ public class JTalkJna {
      * オールパス値(Alpha)を取得する
      * @return オールパス値(Alpha)（浮動小数点数）
      */
-    double getAlpha() {
+    public double getAlpha() {
         return API.INSTANCE.openjtalk_getAlpha(handle);
     }
 
@@ -475,7 +477,7 @@ public class JTalkJna {
      * @param f オールパス値（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setA(double f) throws Exception {
+    public void setA(double f) throws Exception {
         setAlpha(f);
     }
 
@@ -483,7 +485,7 @@ public class JTalkJna {
      * オールパス値(Alpha)を取得する
      * @return オールパス値(Alpha)（浮動小数点数）
      */
-    double getA() {
+    public double getA() {
         return getAlpha();
     }
 
@@ -492,7 +494,7 @@ public class JTalkJna {
      * @param f ポストフィルター係数(Beta)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setBeta(double f) throws Exception {
+    public void setBeta(double f) throws Exception {
         checkOpenjtalkObject();
         if (f < 0.0 || f > 1.0) {
             throw new Exception("postfiltering coefficient の範囲は0と1の間の浮動小数点数です。");
@@ -504,7 +506,7 @@ public class JTalkJna {
      * ポストフィルター係数(Beta)を取得する
      * @return ポストフィルター係数(Beta)（浮動小数点数）
      */
-    double getBeta() {
+    public double getBeta() {
         return API.INSTANCE.openjtalk_getBeta(handle);
     }
 
@@ -513,7 +515,7 @@ public class JTalkJna {
      * @param f ポストフィルター係数(Beta)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setB(double f) throws Exception {
+    public void setB(double f) throws Exception {
         setBeta(f);
     }
 
@@ -521,7 +523,7 @@ public class JTalkJna {
      * ポストフィルター係数(Beta)を取得する
      * @return ポストフィルター係数(Beta)（浮動小数点数）
      */
-    double getB() {
+    public double getB() {
         return getBeta();
     }
 
@@ -530,7 +532,7 @@ public class JTalkJna {
      * @param f スピーチ速度(R)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setSpeed(double f) throws Exception {
+    public void setSpeed(double f) throws Exception {
         checkOpenjtalkObject();
         if (f < 0.0) {
             throw new Exception("speech speed rate の範囲は0以上の浮動小数点数です。");
@@ -542,7 +544,7 @@ public class JTalkJna {
      * スピーチ速度(R)を取得する
      * @return スピーチ速度(R)（浮動小数点数）
      */
-    double getSpeed() {
+    public double getSpeed() {
         return API.INSTANCE.openjtalk_getSpeed(handle);
     }
 
@@ -551,7 +553,7 @@ public class JTalkJna {
      * @param f スピーチ速度(R)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setR(double f) throws Exception {
+    public void setR(double f) throws Exception {
         setSpeed(f);
     }
 
@@ -559,7 +561,7 @@ public class JTalkJna {
      * スピーチ速度(R)を取得する
      * @return スピーチ速度(R)（浮動小数点数）
      */
-    double getR() {
+    public double getR() {
         return getSpeed();
     }
 
@@ -568,7 +570,7 @@ public class JTalkJna {
      * @param f 追加ハーフトーン(Fm)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setAdditionalHalfTone(double f) throws Exception {
+    public void setAdditionalHalfTone(double f) throws Exception {
         checkOpenjtalkObject();
         API.INSTANCE.openjtalk_setAdditionalHalfTone(handle, f);
     }
@@ -577,7 +579,7 @@ public class JTalkJna {
      * 追加ハーフトーン(Fm)を取得する
      * @return 追加ハーフトーン(Fm)（浮動小数点数）
      */
-    double getAdditionalHalfTone() {
+    public double getAdditionalHalfTone() {
         return API.INSTANCE.openjtalk_getAdditionalHalfTone(handle);
     }
 
@@ -586,7 +588,7 @@ public class JTalkJna {
      * @param f 追加ハーフトーン(Fm)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setFm(double f) throws Exception {
+    public void setFm(double f) throws Exception {
         setAdditionalHalfTone(f);
     }
 
@@ -594,7 +596,7 @@ public class JTalkJna {
      * 追加ハーフトーン(Fm)を取得する
      * @return 追加ハーフトーン(Fm)（浮動小数点数）
      */
-    double getFm() {
+    public double getFm() {
         return getAdditionalHalfTone();
     }
 
@@ -603,7 +605,7 @@ public class JTalkJna {
      * @param f 有声 / 無声境界値(U)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setMsdThreshold(double f) throws Exception {
+    public void setMsdThreshold(double f) throws Exception {
         checkOpenjtalkObject();
         if (f < 0.0 || f > 1.0) {
             throw new Exception("voiced/unvoiced threshold の範囲は0と1の間の浮動小数点数です。");
@@ -615,7 +617,7 @@ public class JTalkJna {
      * 有声 / 無声境界値(U)を取得する
      * @return 有声 / 無声境界値(U)（浮動小数点数）
      */
-    double getMsdThreshold() {
+    public double getMsdThreshold() {
         return API.INSTANCE.openjtalk_getMsdThreshold(handle);
     }
 
@@ -624,7 +626,7 @@ public class JTalkJna {
      * @param f 有声 / 無声境界値(U)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setU(double f) throws Exception {
+    public void setU(double f) throws Exception {
         setMsdThreshold(f);
     }
 
@@ -632,7 +634,7 @@ public class JTalkJna {
      * 有声 / 無声境界値(U)を取得する
      * @return 有声 / 無声境界値(U)（浮動小数点数）
      */
-    double getU() {
+    public double getU() {
         return getMsdThreshold();
     }
 
@@ -641,7 +643,7 @@ public class JTalkJna {
      * @param f スペクトラム系列内変動の重み(Jm)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setGvWeightForSpectrum(double f) throws Exception {
+    public void setGvWeightForSpectrum(double f) throws Exception {
         checkOpenjtalkObject();
         API.INSTANCE.openjtalk_setGvWeightForSpectrum(handle, f);
     }
@@ -650,7 +652,7 @@ public class JTalkJna {
      * スペクトラム系列内変動の重み(Jm)を取得する
      * @return スペクトラム系列内変動の重み(Jm)（浮動小数点数）
      */
-    double getGvWeightForSpectrum() {
+    public double getGvWeightForSpectrum() {
         return API.INSTANCE.openjtalk_getGvWeightForSpectrum(handle);
     }
 
@@ -659,7 +661,7 @@ public class JTalkJna {
      * @param f スペクトラム系列内変動の重み(Jm)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setJm(double f) throws Exception {
+    public void setJm(double f) throws Exception {
         setGvWeightForSpectrum(f);
     }
 
@@ -667,7 +669,7 @@ public class JTalkJna {
      * スペクトラム系列内変動の重み(Jm)を取得する
      * @return スペクトラム系列内変動の重み(Jm)（浮動小数点数）
      */
-    double getJm() {
+    public double getJm() {
         return getGvWeightForSpectrum();
     }
 
@@ -676,7 +678,7 @@ public class JTalkJna {
      * @param f F0系列内変動重み(Jf)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setGvWeightForLogF0(double f) throws Exception {
+    public void setGvWeightForLogF0(double f) throws Exception {
         checkOpenjtalkObject();
         if (f < 0.0) {
             throw new Exception("weight of GV for spectrum の範囲は0以上の浮動小数点数です。");
@@ -689,7 +691,7 @@ public class JTalkJna {
      * @return F0系列内変動重み(Jf)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    double getGvWeightForLogF0() throws Exception {
+    public double getGvWeightForLogF0() throws Exception {
         return API.INSTANCE.openjtalk_getGvWeightForLogF0(handle);
     }
 
@@ -698,7 +700,7 @@ public class JTalkJna {
      * @param f F0系列内変動重み(Jf)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setJf(double f) throws Exception {
+    public void setJf(double f) throws Exception {
         setGvWeightForLogF0(f);
     }
 
@@ -707,7 +709,7 @@ public class JTalkJna {
      * @return F0系列内変動重み(Jf)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    double getJf() throws Exception {
+    public double getJf() throws Exception {
         return getGvWeightForLogF0();
     }
 
@@ -716,7 +718,7 @@ public class JTalkJna {
      * @param f ボリューム(G)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setVolume(double f) throws Exception {
+    public void setVolume(double f) throws Exception {
         checkOpenjtalkObject();
         API.INSTANCE.openjtalk_setVolume(handle, f);
     }
@@ -725,7 +727,7 @@ public class JTalkJna {
      * ボリューム(G)を取得する
      * @return ボリューム(G)（浮動小数点数）
      */
-    double getVolume() {
+    public double getVolume() {
         return API.INSTANCE.openjtalk_getVolume(handle);
     }
 
@@ -734,7 +736,7 @@ public class JTalkJna {
      * @param f ボリューム(G)（浮動小数点数）
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setG(double f) throws Exception {
+    public void setG(double f) throws Exception {
         setVolume(f);
     }
 
@@ -742,7 +744,7 @@ public class JTalkJna {
      * ボリューム(G)を取得する
      * @return ボリューム(G)（浮動小数点数）
      */
-    double getG() {
+    public double getG() {
         return getVolume();
     }
 
@@ -751,7 +753,7 @@ public class JTalkJna {
      * @param path 辞書ディレクトリのパス
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setDic(String path) throws Exception {
+    public void setDic(String path) throws Exception {
         checkOpenjtalkObject();
         if (path == "") {
             throw new Exception("辞書フォルダを示す文字列が空です。");
@@ -777,7 +779,7 @@ public class JTalkJna {
      * @return 辞書ディレクトリのパス
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    String getDic() throws Exception {
+    public String getDic() throws Exception {
         String path = "";
         byte[] buff = new byte[MAXPATH];
         String res;
@@ -796,7 +798,7 @@ public class JTalkJna {
      * @param path 音響モデルディレクトリ
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setVoiceDir(String path) throws Exception {
+    public void setVoiceDir(String path) throws Exception {
         checkOpenjtalkObject();
         if (path == "") {
             throw new Exception("音響モデルフォルダを示す文字列が空です。");
@@ -823,7 +825,7 @@ public class JTalkJna {
      * @return 音響モデルディレクトリのパス
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    String getVoiceDir() throws Exception {
+    public String getVoiceDir() throws Exception {
         String path = "";
         byte[] buff = new byte[MAXPATH];
         String res;
@@ -842,7 +844,7 @@ public class JTalkJna {
      * @param path 音響モデルのパス
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setVoicePath(String path) throws Exception {
+    public void setVoicePath(String path) throws Exception {
         checkOpenjtalkObject();
         if (path == "") {
             throw new Exception("音響モデルを示す文字列が空です。");
@@ -863,7 +865,7 @@ public class JTalkJna {
      * @return 音響モデルのパス
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    String getVoicePath() throws Exception {
+    public String getVoicePath() throws Exception {
         String path = "";
         byte[] buff = new byte[MAXPATH];
         String res = null;
@@ -883,7 +885,7 @@ public class JTalkJna {
      * @param name 音響モデル名
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setVoiceName(String name) throws Exception {
+    public void setVoiceName(String name) throws Exception {
         checkOpenjtalkObject();
         if (name == "") {
             throw new Exception("音響モデルを示す文字列が空です。");
@@ -904,7 +906,7 @@ public class JTalkJna {
      * @return 音響モデル名
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    String getVoiceName() throws Exception {
+    public String getVoiceName() throws Exception {
         String name = "";
         byte[] buff = new byte[MAXPATH];
         String res = null;
@@ -923,7 +925,7 @@ public class JTalkJna {
      * @param path 音響ファイルのパス
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setVoice(String path) throws Exception {
+    public void setVoice(String path) throws Exception {
         checkOpenjtalkObject();
         if (path == "") {
             throw new Exception("音響モデルを示す文字列が空です。");
@@ -944,7 +946,7 @@ public class JTalkJna {
      * @param arg 音響モデル情報
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void setVoice(VoiceFileInfo arg) throws Exception {
+    public void setVoice(VoiceFileInfo arg) throws Exception {
         checkOpenjtalkObject();
         if (arg == null) {
             throw new Exception("音響モデルの指定をNULLです。");
@@ -969,7 +971,7 @@ public class JTalkJna {
      * @return 音響モデル情報オブジェクト
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    VoiceFileInfo getVoice() throws Exception {
+    public VoiceFileInfo getVoice() throws Exception {
         String path = "";
         String name = "";
         byte[] buffPath = new byte[MAXPATH];
@@ -1002,7 +1004,7 @@ public class JTalkJna {
      * @param text 文字列
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void speakSync(String text) throws Exception {
+    public void speakSync(String text) throws Exception {
         checkOpenjtalkObject();
         if (text == "") {
             return;
@@ -1019,7 +1021,7 @@ public class JTalkJna {
      * @param text 文字列
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void speakAsync(String text) throws Exception {
+    public void speakAsync(String text) throws Exception {
         checkOpenjtalkObject();
         if (text == "") {
             return;
@@ -1035,7 +1037,7 @@ public class JTalkJna {
      * 非同期発声を一時停止する
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void pause() throws Exception {
+    public void pause() throws Exception {
         checkOpenjtalkObject();
         API.INSTANCE.openjtalk_pause(handle);
     }
@@ -1044,7 +1046,7 @@ public class JTalkJna {
      * 非同期発声の一時停止を再開する
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void resume() throws Exception {
+    public void resume() throws Exception {
         checkOpenjtalkObject();
         API.INSTANCE.openjtalk_resume(handle);
     }
@@ -1053,7 +1055,7 @@ public class JTalkJna {
      * 非同期発声を強制停止する
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void stop() throws Exception {
+    public void stop() throws Exception {
         checkOpenjtalkObject();
         API.INSTANCE.openjtalk_stop(handle);
     }
@@ -1063,7 +1065,7 @@ public class JTalkJna {
      * @return 発声しているかどうかの真偽値
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    Boolean isSpeaking() throws Exception {
+    public Boolean isSpeaking() throws Exception {
         checkOpenjtalkObject();
         return API.INSTANCE.openjtalk_isSpeaking(handle);
     }
@@ -1073,7 +1075,7 @@ public class JTalkJna {
      * @return 一時停止しているかどうかの真偽値
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    Boolean isPaused() throws Exception {
+    public Boolean isPaused() throws Exception {
         checkOpenjtalkObject();
         return API.INSTANCE.openjtalk_isPaused(handle);
     }
@@ -1083,7 +1085,7 @@ public class JTalkJna {
      * @return 完了したかどうかの真偽値
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    Boolean isFinished() throws Exception {
+    public Boolean isFinished() throws Exception {
         checkOpenjtalkObject();
         return API.INSTANCE.openjtalk_isFinished(handle);
     }
@@ -1092,7 +1094,7 @@ public class JTalkJna {
      * 発声している間待機する
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void waitUntilDone() throws Exception {
+    public void waitUntilDone() throws Exception {
         checkOpenjtalkObject();
         API.INSTANCE.openjtalk_waitUntilDone(handle);
     }
@@ -1102,7 +1104,7 @@ public class JTalkJna {
      * @param duration 待機時間(ms)
      * @throws Exception オブジェクトポインタがNULLなどの例外 
      */
-    void wait(int duration) throws Exception {
+    public void wait(int duration) throws Exception {
         checkOpenjtalkObject();
         if (duration == 0) {
             waitUntilDone();
@@ -1117,7 +1119,7 @@ public class JTalkJna {
      * @param file 保存ファイル名
      * @throws Exception ファイル書き込みエラーなどの例外 
      */
-    void speakToFile(String text, String file) throws Exception {
+    public void speakToFile(String text, String file) throws Exception {
         checkOpenjtalkObject();
         if (text == "") {
             throw new Exception("読み上げ文字列が空です。");
