@@ -733,10 +733,9 @@ say("こんにちは、世界")
 
 ##### Java VM からの利用例
 
-jtalkdllをJavaから使うために、[JNA](https://github.com/java-native-access/jna)を利用しています。
-簡単にJavaから共有ライブラリを使うことができるライブラリです。
+jtalkdllをJavaから使うために、簡単にJavaから共有ライブラリを使うことができる[JNA](https://github.com/java-native-access/jna)ライブラリを利用しています。
 API関数をラップしてJavaおよびJavaVM言語から利用しやすい形にしたのが、[JTalkJna.java](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/luajit/jtalk.lua) です。
-この JTalkJna.java を``build_jtalk_jar``スクリプトで単純なjarファイル jtalk.jar にしてあるのでこれを import して使います。
+この JTalkJna.java を``build_jtalk_jar``スクリプトで単純なjarファイルにした jtalk.jar を import して使います。
 残念ながら、jtalk.jar は JavaSpeechAPI の実装ではありません。
 
 JTalkJnaの内容は、
@@ -744,11 +743,13 @@ JTalkJnaの内容は、
 を見てください。
 
 ここでは、Java ではなく、[Kotlin](http://kotlinlang.org/) で例を示します。
+JTalkJna.java の記述のままでプロパティが使えるかのなどのテストを含めてみます。
 
 ```Kotlin:Hello.kt
 import jtalk.JTalkJna
 fun say(message:String) {
   var tts = JTalkJna()
+  tts.voiceName = "mei_happy"
   tts.speakAsync(message)
   while(tts.isSpeaking);
 }
@@ -758,7 +759,7 @@ fun main(args:Array<String>) {
 ```
 
 なお、OpenJTalk には Java クローンである [Gyutan](https://github.com/icn-lab/Gyutan) があります。
-本格的に Java で OpenJTalk の音声合成を使う場合は、こちらを使った方がいいでしょう。
+本格的に Java で OpenJTalk の音声合成技術を使う場合は、こちらを使った方がいいでしょう。
 
 こんな感じで他の言語も書いていけます。
 ただし言語によってはffiモジュールをインストールする手間が必要になります。
@@ -843,6 +844,7 @@ JTalkComはC++/CLIで書かれたマネージDLLですが、COM相互運用機�
 内部でregasm.exeコマンドを呼び出しています。
 管理者権限での実行は、エクスプローラ上でこのファイルを右クリックして、コンテキストメニューを出し、
 そのメニューの中の「管理者として実行」を選んで行います。
+ビルド版は署名が行われていないので、いろいろメッセージが出るかもしれません。
 これは一度行えば十分です。解除するときは``unregist_jtalkcom.bat``を管理者権限で実行します。
 
 JScriptのファイルの拡張子である``.js``は他のアプリケーションに関連付けされていることが多いので、同等なXML形式の``.wsf``ファイルで記述します。
