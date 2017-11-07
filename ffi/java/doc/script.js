@@ -1,4 +1,4 @@
-function show(type)
+﻿function show(type)
 {
     count = 0;
     for (var key in methods) {

@@ -13,4 +13,7 @@ C:\Windows\Microsoft.NET\Framework\v4.0.30319\regasm.exe JTalkCOMx86.dll /codeba
 C:\Windows\Microsoft.NET\Framework64\v4.0.30319\regasm.exe JTalkCOMx64.dll /unregister
 C:\Windows\Microsoft.NET\Framework64\v4.0.30319\regasm.exe JTalkCOMx64.dll /codebase
 )
-pause
+set /p=ÉLÅ[ÇâüÇ∑Ç∆èIóπÇµÇ‹Ç∑<NUL
+pause >NUL
+echo.
+

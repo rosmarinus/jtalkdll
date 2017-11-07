@@ -531,7 +531,14 @@ target_link_libraries(jtalk
     openjtalk
     mecab
 )
-if(mingw_build)
+if(MSVC AND WIN32)
+    set_target_properties(jtalk PROPERTIES PREFIX "" SUFFIX ".dll")
+    if(CMAKE_CL_64)
+        set_target_properties(jtalk PROPERTIES IMPORT_PREFIX "" IMPORT_SUFFIX "x64.lib")
+    else()
+        set_target_properties(jtalk PROPERTIES IMPORT_PREFIX "" IMPORT_SUFFIX "x86.lib")
+    endif()
+elseif(mingw_build)
     #target_link_libraries(jtalk iconv)
     set_target_properties(jtalk PROPERTIES PREFIX "" SUFFIX ".dll")
     set_target_properties(jtalk PROPERTIES IMPORT_PREFIX "lib")

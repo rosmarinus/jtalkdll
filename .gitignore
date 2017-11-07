@@ -69,6 +69,8 @@ ffi/test+AF8-bcb/Win32/
 # secure name
 JTalkCOMx64.snk
 JTalkCOMx86.snk
+JTalkCOMx64Pub.snk
+JTalkCOMx86Pub.snk
 
 #Java
 *.class

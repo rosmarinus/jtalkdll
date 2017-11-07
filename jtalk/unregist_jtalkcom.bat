@@ -11,4 +11,6 @@ C:\Windows\Microsoft.NET\Framework\v4.0.30319\regasm.exe JTalkCOMx86.dll /unregi
 ) else (
 C:\Windows\Microsoft.NET\Framework64\v4.0.30319\regasm.exe JTalkCOMx64.dll /unregister
 )
-pause
+set /p=ƒL[‚ğ‰Ÿ‚·‚ÆI—¹‚µ‚Ü‚·<NUL
+pause >NUL
+echo.

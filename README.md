@@ -1,12 +1,25 @@
 # jtalkdll
 
-OpenJTalk DLL 
+これは音声合成システムOpen JTalk使って手軽に音声合成プログラミングするためのDLLです。
 
-これは音声合成システムOpen JTalk使って手軽に音声合成プログラミングするためのDLLです。記述言語はC言語です。
+## 目次
+
+この文書は以下の順序で記述します。
+
+* 概要
+* 動作環境
+* ビルド
+* 配置
+* APIの説明
+* 利用方法
+* 現在分かっている不具合
+* ライセンス
+
+## 概要
 
 PortAudioを使って、マルチプラットフォームでの音声出力を行います。
 他のプログラミング言語から使いやすくするために、それぞれの言語のFFI(多言語関数インターフェイス)を利用するコードをいくつか用意しています。
-Windowsでは、WSH（ウィンドウズスクリプトホスト）やC#言語等で利用しやすいようにC++/CLIでラップしたマネージDLLもオプションで生成します。
+WindowsではC#言語等の.NET Frameworkの言語や、WSH（ウィンドウズスクリプトホスト）で利用しやすいようにC++/CLIでラップしたマネージDLLもオプションで生成します。
 
 このプロジェクトでは、オリジナルのファイル以外に、他のプロジェクトのファイルを含んでいます。
 
@@ -19,14 +32,26 @@ Windowsでは、WSH（ウィンドウズスクリプトホスト）やC#言語�
 * [PortAudio](http://www.portaudio.com/)
 * [jna](https://github.com/java-native-access/jna) サンプルプログラムにおいて
 
-これらはそれぞれのライセンスに従います。
+これらの外部プロジェクトはそれぞれのライセンスに従います。
 なお、open_jtalk, hts_engine_APIはスタティックライブラリとして利用しています。
 PortAudio はプラットフォームによって、スタティックライブラリまたは共有ライブラリとして利用しています。
 
+### 仕組み
+
+OpenJTalk の open_jtalk.c 
+ファイルは、エクスポートしないライブラリの定義にmain関数をくっつけたような構成になっています。
+これを利用して、それにwavファイルに含まれる音声データをmallocして返す関数を追加したものを
+openjtalk.c とします。
+それをラップしてインターフェイス(API)を定義したのが、jtalk.c です。
+jtalk.c は内部で portaudio を呼び出すことでマルチプラットフォームでの同期再生、非同期再生を実現しています。
+さらに、WindowsではマネージDLLにするために、C++/CLI でラップしたのが jtalkcom.cpp です。 
+
 ## 動作環境
 
+以下のプラットフォームで動作確認しています。
+
 * Windows 10
-* macOS Sierra
+* macOS High Sierra
 * Ubuntu 17.10 (他のLinuxディストリビューションは未確認)
 
 ## ビルド
@@ -36,7 +61,7 @@ CMakeは、ソフトウェアのビルドを自動化するツールです。
 一つの設定ファイルで、LinuxやmacOSだけでなく、WindowsのVC++のビルドも記述できるので、
 マルチプラットフォームで共有ライブラリを作る今回のプロジェクトに適しています。
 
-## CMakeLists.txtの設定
+### CMakeLists.txtの設定
 
 このプロジェクトのCMakeLists.txtはコマンドラインでの利用を前提として作られています。
 コマンドラインでキャッシュ変数を指定して実行することもできますが、buildスクリプトから呼び出しているので、直接CMakeLists.txtの冒頭を編集する方が分かりやすいことがあります。
@@ -57,7 +82,7 @@ CMakeは、ソフトウェアのビルドを自動化するツールです。
 このjtalkdllを使うときには、open_jtalkそのものは必要ありませんが、動作の確認などに必要ならば、これを有効にしてください。
 open_jtalk 用の mecab 辞書をコンパイルするときは、この mecab-dict-index が必要になるので、そのときもこの行をアンコメントしてください。
 
-### Windows
+### Windows でのビルド
 
 [マイクロソフト Visual Studio C++](https://www.visualstudio.com/ja/vs/cplusplus/) (以下MSVC)によるビルド方法と、
 [Cygwin](https://www.cygwin.com/)および
@@ -79,7 +104,7 @@ open_jtalk 用の mecab 辞書をコンパイルするときは、この mecab-d
 このリポジトリのコンパイルはGUIを必要としない単純な作業なのでこのビルドツールでも十分です。
 
 * Build Tools for Visual Studio 2017 のダウンロードボタンの場所が分かりにくいのですが、ページの最後の方の「その他ツール及びフレームワーク」のところにあります。
-* COM相互運用のクラスライブラリjtalkCOMx86.dll または jtalkCOMx64.dllを作成するときは、Visual Studio のインストーラを使って C++/Cli サポートをインストールしておきます。
+* COM相互運用のクラスライブラリjtalkCOMx86.dll または jtalkCOMx64.dllを作成するときは、Visual Studio のインストーラを使って C++/CLI サポートをインストールしておきます。
 * 将来のバージョンのVisual Studioでもビルド可能か分かりませんが、そのときは後述のコマンドプロンプトを使った方法で試してください。
 
 [CMake](https://cmake.org/)がまだインストールされていない場合は、
@@ -101,8 +126,8 @@ ZIPの場合は適当な場所で展開します。
 64ビット版のjtalk.dllを作るときはbuildx64.batを、32ビット版はbuildx64.batを実行します。
 ビルドが終わると、続けてインストールが行われます。
 
-このビルドでは、C++/Cli サポートしているかを自動的に判断して、可能ならば、クラスライブラリjtalkCOMx86.dll または jtalkCOMx64.dllを生成します。
-ただし生成されるのは公開鍵のみで遅延署名されたアセンブリになります。
+このビルドでは、C++/CLI サポートしているかを自動的に判断して、可能ならば、クラスライブラリjtalkCOMx86.dll または jtalkCOMx64.dllを生成します。
+ただし生成されるのは署名されていないアセンブリになります。
 
 ##### コマンドプロンプトを使う方法
 
@@ -129,8 +154,8 @@ nmake install
 Windowsで今後jtalk.dllを利用する場合は、システムの詳細設定で環境変数PATHにc:\open_jtalk\binを追加してください。
 
 cmake の行に ``-Dbuild_jtalkcom=true`` を追加すると、クラスライブラリjtalkCOMx86.dll または jtalkCOMx64.dllを生成します。
-ただし生成されるのは、公開鍵のみで遅延署名されたアセンブリになります。
-このクラスライブラリをビルドするためには、Visual Studio のインストーラを使って C++/Cli サポートをインストールしておく必要があります。
+ただし生成されるのは、署名されていないアセンブリになります。
+このクラスライブラリをビルドするためには、Visual Studio のインストーラを使って C++/CLI サポートをインストールしておく必要があります。
 
 cmake の行に ``-Dinstall_open_jtalk=true`` を追加すると open_jtalk.exe, hts_engine.exe, mecab-dict-index.exe をインストールします。
 
@@ -239,7 +264,7 @@ jtalk.dllや、実行ファイルのサンプル、ヘッダファイルは、Cy
 Cygwinの外で、jtalk.dllを使ったプログラムを動かすためには、そのプログラムと同じフォルダにjtalk.dllを配置するか、
 jtalk.dllを手作業でc:\open_jtalk\binにコピーして、そこにPATHを通すかしてください。
 
-### macOS
+### macOS でのビルド
 
 #### 準備
 
@@ -259,7 +284,7 @@ macOS用のパッケージマネージャーHomebrewもインストールして�
 
 （インストールすべきコマンドのリストアップ 記述予定）
 
-#### macOSでのビルド
+#### macOSでのビルド方法
 
 ```bash:
 git clone https://github.com/rosmarinus/jtalkdll.git
@@ -267,7 +292,7 @@ cd jtalkdll
 bash build
 ```
 
-### Ubuntu
+### Ubuntu でのビルド
 
 以下に、Ubuntuでのビルド方法を示します。
 
@@ -294,6 +319,8 @@ cd jtalkdll
 bash build
 ```
 
+## 配置
+
 ### インストールされるファイル
 
 このプロジェクトをビルドし、インストールすると以下の成果物が配置されます。
@@ -304,7 +331,8 @@ bash build
 
 #### COM 相互運用クラスライブラリ
 
-MSVCのみ。遅延署名。通常コマンドラインからのビルドではビルド無効。
+MSVCのみ。署名なし。通常コマンドラインからのビルドではビルド無効。
+完全署名されたアセンブリが必要な場合は、別途配布版をダウンロードしてください。
 
 * jtalkCOMx86.exe, jtalkCOMx64.exe
 * COMを登録・解除するためのバッチファイル regist_jtalkcom.bat, unregist_jtalkcom.bat
@@ -372,37 +400,7 @@ MSVCのみ
 * MeCab辞書ファイル ... /usr/local/OpenJTalk/dic_utf_8
 * 音響モデルファイル ... /usr/local/OpenJTalk/voice
 
-## 動作確認
-
-対象のプラットフォームにおいて上記の方法でビルドが成功したら、以下の方法で動作確認ができます。
-
-次のコマンドをタイプしエンターしてください。うまくビルドできていれば、一緒にインストールしてあるhtsvoiceファイルをランダムに選んで言葉をしゃべってくれます。
-
-```bash:
-jtd_c
-```
-
-MSVCの場合コマンドプロンプトで``c:\open_jtalk\bin``をカレントディレクトリにして実行するか、c:\open_jtalk\binフォルダ開いてマウスで対象をダブルクリックで実行します。
-Cygwin上でビルドして出来たコマンドは、Cygwinのコンソールからではパスが通っていないの実行できません。
-Windowsのエクスプローラでインストールされたフォルダを開き、ダブルクリックすることで実行できるか確認できます。
-
-このコマンドのソースはjtalkフォルダにあるjtd_c.cで、C言語で書いたこの共有ライブラリのサンプルです。
-
-次はもう一つのサンプルのjsayです。下のコマンドラインのように パラメータに日本語を入力して、エンターしてください。うまくいけば、その言葉をしゃべります。
-
-```bash:
-jsay -v mei_normal こんにちは
-```
-
-Windowsの場合は、UTF-8エンコードで書かれたテキストを、jsay.exe のアイコンにマウスでドロップしても確認できます。
-
-jsayはmacOSのsayコマンドに動作を似せたサンプルで、このソースもjtalkフォルダにあります。
--v?オプションで利用できる音声のリストが出ますので、それを参考にして音声を指定してください。
--oファイル名 オプションでファイルへの書き出しもできます。
-文字列が指定されていないと、標準入力からの入力を待ちます。
-エンターを連続して入力するまで続きます。
-
-## 音響モデルの追加
+### 音響モデルの追加
 
 ソースファイルと一緒に配布している音響モデルの他に、新しく入手した日本語音響モデルファイル(htsvoice)を利用することもできます。
 
@@ -424,14 +422,34 @@ Windows以外の場合
 プログラムと同じフォルダにvoiceで始まるフォルダを作り、その中に複数の音響モデルファイルを配置する方法や、
 htsvoiceファイルのあるフォルダを 関数openjtalk_initializeの第三引数や、関数openjtalk_setVoiceDirで登録する方法もあります。
 
-## jtalk共有ライブラリの簡単な仕組み
+## 動作確認
 
-本来の open_jtalk.c ファイルは、エクスポートしないライブラリの定義にmain関数をくっつけたような構成になっています。
-これをほとんどそのまま利用して、それにwavファイルに含まれる音声データをmallocして返す関数を追加したものを openjtalk.c とします。
-それをラップしてインターフェイス(API)を定義したのが、jtalk.cです。
-jtalk.cは内部で portaudio を呼び出すことでマルチプラットフォームでの同期再生、非同期再生を実現しています。
+対象のプラットフォームにおいて上記の方法でビルドが成功したら、以下の方法で動作確認ができます。
 
-## APIの簡単な説明
+次のコマンドをタイプしエンターしてください。うまくビルドできていれば、一緒にインストールしてあるhtsvoiceファイルをランダムに選んで言葉をしゃべってくれます。
+Windowsの場合は、Cygwin、MinGWを含め、インストール先をWindowsのコマンドプロンプトでカレントディレクトリにするか、エクスプローラで開いてマウスでダブルクリックするかして、実行してください。
+
+```bash:
+jtd_c
+```
+
+このコマンドのソースはjtalkフォルダにある[jtd_c.c](https://github.com/rosmarinus/jtalkdll/blob/master/jtalk/jtd_c.c)で、C言語で書いたこの共有ライブラリのサンプルコードです。
+
+次はもう一つのサンプルの[jsay](https://github.com/rosmarinus/jtalkdll/blob/master/jtalk/jsay.c))です。下のコマンドラインのように パラメータに日本語を入力して、エンターしてください。うまくいけば、その言葉をしゃべります。
+
+```bash:
+jsay -v mei_normal こんにちは
+```
+
+Windowsの場合（Cygwin、MinGWでビルドしても）は、UTF-8エンコードで書かれたテキストを、jsay.exe のアイコンにマウスでドロップしても確認できます。
+
+jsayはmacOSのsayコマンドに動作を似せたサンプルで、このソースもjtalkフォルダにあります。
+-v?オプションで利用できる音声のリストが出ますので、それを参考にして音声を指定してください。
+-oファイル名 オプションでファイルへの書き出しもできます。
+文字列が指定されていないと、標準入力からの入力を待ちます。
+エンターを連続して入力するまで続きます。
+
+## APIの説明
 
 jtalk.cではopen_jtalkを利用するのに便利な関数をAPI関数としていくつか定義しています。
 ここで定義されているAPI関数には接頭語'openjtalk_'をつけています。
@@ -534,14 +552,16 @@ int main()
 }
 ```
 
-## jtalk共有ライブラリ の C言語からの利用
+## 利用方法
+
+### jtalk共有ライブラリ の C言語からの利用
 
 jtalk共有ライブラリを使ったC言語でプログラミングの仕方を説明します。
 一般的な共有ライブラリを使ったプログラミングの仕方が分かれば、問題ありません。
 C言語でライブラリを使ったプログラミングをするには、ライブラリとそのライブラリで定義されている関数を記述したインクルードファイルが必要になります。
 正常にビルドが完了していれば、ライブラリとインクルードファイルは所定の場所に配置されているはずです。
 
-### gcc による利用
+#### gcc による利用
 
 gccやclangの場合は共有ライブラリ名をコマンドラインに-lオプションで指定します。
 例えば、ubuntuのgccの場合は次のようになります。
@@ -550,7 +570,7 @@ gccやclangの場合は共有ライブラリ名をコマンドラインに-lオ�
 gcc hello.c -ljtalk -ohello
 ```
 
-### Windows Cygwin/Cygwin64 MinGW-w64 gcc.exe による利用
+#### Windows Cygwin/Cygwin64 MinGW-w64 gcc.exe による利用
 
 同じgccでもWindowsでCygwin/Cygwin64の MinGW-w64 gccを使う場合は、少し工夫が必要になります。
 x86_64-w64-mingw32-gccでコンパイルするか、i686-w64-mingw32-gccでコンパイルするかで、リンクするライブラリが違ってくるためです。
@@ -566,7 +586,7 @@ $MINGW_ARCH-gcc hello.c -L/usr/$MINGW_ARCH/bin -ljtalk -ohello
 Cygwinのコンソール上から実行するには、hello.exeのすぐそばに、同じアーキテクチャでコンパイルしたjtalk.dllを配置します。
 通常のWindowsアプリケーションと同じように実行するには、同じアーキテクチャでビルドしたjtalk.dllが、同じフォルダかパスが通ったところに存在する必要があります。
 
-### Windows MSYS2 MinGW-w64 gcc.exe による利用
+#### Windows MSYS2 MinGW-w64 gcc.exe による利用
 
 MSYS2上のMinGW-w64は、MSYS2 MinGW 32-bitとMSYS2 MinGW 64-bitの、どちらのコンソールを開くかによって環境を区別できるので、Cygwinより少し楽にできます。
 
@@ -578,7 +598,7 @@ gcc hello.c -L$MINGW_PREFIX/bin -ljtalk -ohello
 同じMSYS2 MinGWコンソール内では jtalk.dll にパスが通っているので、そのまま実行できます。
 通常のWindowsアプリケーションと同じように実行するには、同じアーキテクチャでビルドしたjtalk.dllが、同じフォルダかパスが通ったところに存在する必要があります。
 
-### Windows cl.exe による利用
+#### Windows cl.exe による利用
 
 Windowsのcl.exeの場合は、共有ライブラリそのものではなく、インポートライブラリをコマンドラインに指定します。
 このインポートライブラリはc:\open_jtalk\libにあります。
@@ -596,18 +616,22 @@ cl /I %JTALKDIR%\include hello.c jtalkx64.lib /link /LIBPATH:%JTALKDIR%\lib
 
 もちろん、できあがった hello.exe を実行するときは、同じアーキテクチャでビルドしたjtalk.dllが、同じフォルダかパスが通ったところに存在する必要があります。
 
-## 他のプログラミング言語からの利用
+### 他のプログラミング言語からの利用
 
 この共有ライブラリを他のプログラミング言語から利用するためのサンプルプログラムをffiフォルダの中に集めています。
 これらの名前には'jtd_'の接頭辞を付けています。
 
 サンプルでは、各言語のFFI(Foreign function interface)機能を利用しています。
-各言語との仲介をするファイルの名前は、``jtalk.<言語の拡張子>`` という形式になっています。
+各言語との仲介をするファイルの名前は、
+
+``jtalk.<言語の拡張子>``
+
+という形式になっています。例えば、luajit用は``jtalk.lua``です。
 
 現在(2017.11.1)対応している言語は、
 [C++Builder](https://www.embarcadero.com/jp/products/cbuilder/starter)、
 C++、
-C++/Cli、
+C++/CLI、
 C#、
 [D](https://dlang.org/)、
 [Delphi](https://www.embarcadero.com/jp/products/delphi/starter)、
@@ -636,17 +660,17 @@ Objective-CとSwiftはmacOS限定の言語ではありませんが、現在macOS
 それぞれの言語には、上記のjtd_cと同等のコンソールプログラムを用意しています。
 
 それ以外にいくつかウィンドウを表示するGUIのサンプルもあります。
-ffi/cbuilder/jtd_cb.cbproj, 
-ffi/cpp/jtd_cppqt.cpp, 
-ffi/cppcli/jtd_cli.cpp, 
-ffi/cppcli/jtd_clim.cpp, 
-ffi/csharp/jtd_cs.cs, 
-ffi/csharp/jtd_csm.cs, 
-ffi/delphi/jtd_delphi.dproj, 
-ffi/java/JtdJnaJavaSwing.java, 
-ffi/python/jtd_qt5.py, 
-ffi/vb/jtd_vb.vb, 
-ffi/vb/jtd_vbm.vb
+[ffi/cbuilder/jtd_cb.cbproj](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/cbuilder/jtd_cb.cbproj), 
+[ffi/cpp/jtd_cppqt.cpp](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/cpp/jtd_cppqt.cpp), 
+[ffi/cppcli/jtd_cli.cpp](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/cppcli/jtd_cli.cpp), 
+[ffi/cppcli/jtd_clim.cpp](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/cppcli/jtd_clim.cpp), 
+[ffi/csharp/jtd_cs.cs](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/csharp/jtd_cs.cs), 
+[ffi/csharp/jtd_csm.cs](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/csharp/jtd_csm.cs), 
+[ffi/delphi/jtd_delphi.dproj](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/delphi/jtd_delphi.dproj), 
+[ffi/java/JtdJnaJavaSwing.java](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/java/JtdJnaJavaSwing.java), 
+[ffi/python/jtd_qt5.py](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/python/jtd_qt5.py), 
+[ffi/vb/jtd_vb.vb](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/vb/jtd_vb.vb), 
+[ffi/vb/jtd_vbm.vb](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/vb/jtd_vbm.vb)
 はGUIプログラムです。
 
 またサンプルの名前には次のような規則で区別しています。
@@ -654,16 +678,18 @@ CUIとGUIかどうかで対立するサンプルがあるときは、CUIの方�
 アンマネージDLLかマネージDLLを使うかで対立するサンプルがあるときは、マネージDLLを使う方に接尾辞'm'を付けています。
 
 それぞれの言語は、できるだけ最新の言語環境を構築して実行してください。
-例えば Ubuntu の aptでインストールされる juliaではffi/julia/jtd_jl.jlは実行できません(2017/11/1時点)。
+例えば Ubuntu の aptでインストールされる julia では is_unix や unsafe_string などが使えない古いものなので(2017/11/1時点)、
+julia で使うには、ホームページから v0.60以降をダウンロードして利用してください。
 それから、ffi/cpp/jtd_cppqt.cpp, ffi/python/jtd_qt5.pyは[QT5](https://www.qt.io/)を用いたサンプルです。
 ビルド・実行には言語環境の他に、[Qt](https://www1.qt.io/download-open-source/)が必要になります。
 また、JavaではC言語のDLLを利用するために[jna](https://github.com/java-native-access/jna)を利用しています。
 
 ビルドする手順が複雑なものには、接頭辞'build_'を付けたスクリプトを用意しています。
 実行する手順が複雑なものには、接頭辞'run_'を付けたスクリプトを用意しています。
+これらのスクリプト内のフォルダ名やバージョン番号は環境に合わせて適宜書き換えてください。
 単にコンパイラやインタプリタの引数にすればいいものには実行スクリプトは用意していません。
 
-### 他の言語からの利用例
+#### 他の言語からの利用例
 
 ここではLuaJITでの例を紹介します。
 
@@ -691,12 +717,12 @@ say("こんにちは、世界")
 
 その都度C言語での定義を書いてもいいですが、
 C言語の関数をluaの関数でラップして、モジュールとしてまとめたものを用意しています。
-これはffi/luajit/jtalk.luaに置いてあります。
+これは [ffi/luajit/jtalk.lua](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/luajit/jtalk.lua) に置いてあります。
 jtalk.luaを使うと、このようになります。
 
 ```lua:hello.lua
-tts = require("jtalk").new()
 function say(message)
+  local tts = require("jtalk").new()
   tts:speakSync(message)
   tts:destroy()
 end
@@ -707,14 +733,18 @@ say("こんにちは、世界")
 ただし言語によってはffiモジュールをインストールする手間が必要になります。
 各言語における共有ライブラリの参照の仕方さえ分かれば、ここで用意していないプログラミング言語でも利用できるはずです。
 
-## JTalkCOM を使ったプログラミング
+### JTalkCOM の利用
 
 JTalkCOMx86.dll と JTalkCOMx64.dll を使った Windowsでのプログラミングの方法を示します。
 
-### マネージDLL としての利用
+#### マネージDLL としての利用
 
-JTalkCOMは、Windows の C++/CLIのcl.exe, C#のcsc.exe, VisualBASICのvb.exe で利用できます。
-サンプルは ffi/cppcli, ffi/csharp, ffi/vb の中の名前の末尾が``m``もしくは``mc``のものです。
+JTalkCOMは、Windows の C++/CLIのcl.exe, C#のcsc.exe, VisualBASICのvb.exe などで利用できます。
+サンプルは 
+[ffi/clicpp](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/clicpp)、
+[ffi/csharp](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/csharp)、
+[ffi/vb](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/vb) 
+ の中の名前の末尾が``m``もしくは``mc``のものです。
 
 C#での例を示します。
 
@@ -741,29 +771,41 @@ namespace JTalkSample
         }
     }
 }
-
 ```
 
 ビルドするためのコマンドラインは次のようになります。
 jtalkdllのインストール時に示したVSコマンドプロンプトを使用します。
 
+変数を使わないで64ビット向けを書くと：
+
 ```DOS:
-rem 変数を使って汎用性をもたせると
+rem csc /platform:x64 /target:exe /reference:C:\open_jtalk\bin\JTalkCOMx64.dll hello.cs
+```
+
+変数を使って汎用性をもたせると:
+
+```DOS:
 set JTALKDIR=c:\open_jtalk
 set jtalkcom=JTalkCOM%VSCMD_ARG_HOST_ARCH%.dll
 copy %JTALKDIR%\bin\%jtalkcom% .
 csc /platform:%VSCMD_ARG_HOST_ARCH% /target:exe /reference:%jtalkcom% hello.cs
-rem 変数を使わないで64ビット向けを書くと：
-rem csc /platform:x64 /target:exe /reference:C:\open_jtalk\bin\JTalkCOMx64.dll hello.cs
 ```
 
-clやvbで使う場合は、対応する記述に書き換えます。ffi/clicpp, ffi/csharp, ffi/vbの例を見比べると分かりやすいでしょう。
+clやvbで使う場合は、対応する記述に書き換えます。
+[ffi/clicpp](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/clicpp)、
+[ffi/csharp](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/csharp)、
+[ffi/vb](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/vb) の例を見比べると分かりやすいでしょう。
 同様にコマンドラインでのビルドオプションの違いは、サンプル付属のビルドスクリプトを確認ください。
 VisualStudioのIDEを使う場合は、アセンブリの参照にjtalkCOMx64.dllかjtalkCOMx86.dllを追加します。
 
-### COMオブジェクトとしての利用
+なお、これと同様な処理は共有ライブラリ jtalkdll を P/Invoke（プラットフォーム呼び出し）を使っても実現できます。
+この方法だと、mono を使ってC#のコードを Windows以外でも実行できます。
+[ffi/csharp/jtalk.cs](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/clicpp/jtalk.cs)を使用します。
+jtalk.csを使うときは上記のコード冒頭の``using JTalkCom;``を``using JTalkDLL;``に書き換えます。
 
-JTalkComはC++/CLIで書かれたマネージDLLですが、COM相互運用機能によりCOMとして振る舞います。
+#### COMオブジェクトとしての利用
+
+JTalkComはC++/CLIで書かれたマネージDLLですが、COM相互運用機能によりCOMオブジェクトとして振る舞います。
 このDLLの名前の由来でもあります。
 
 まず、COMへの登録は``regist_jtalkcom.bat``を管理者権限で実行して行います。
@@ -790,6 +832,8 @@ say("こんにちは、世界");
 ```
 
 これをUTF-8エンコードでhello.wsfという名前を付けて保存して、そのファイルのアイコンをダブルクリックすれば、しゃべります。
+サンプルコードとして、[ffi/wsf/jtd_js.wsf](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/wsf/jtd_js.wsf)、
+[ff/wsf/jtd/jtd_vbs.wsf](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/wsf/jtd_vbs.wsf) を用意しています。
 
 ## 現在分かっている不具合
 
@@ -799,14 +843,15 @@ say("こんにちは、世界");
 
 * ubuntu 32bitにおいて、ffi/csharp/jtd_cs.cs と ffi/csharp/jtd_cppqt.cpp では何度か発声させると、portaudioがメモリ不足のエラーを起こし、異常終了はしませんが、声が出なくなります。
 
-* ubuntu 64bitにおいて、ffi/python/jtd_py.py と ffi/ruby/jtd_rb.rbは、実行するとコアダンプを出力してエラー終了します。調べると問題はstrdupで起きています。そこでstrdupを同等のC言語による処理で置き換えるとエラーは起きなくなります。現在そうやってjpcommon_label.c, jpcommon_node.c, njd_node.cにコードを埋め込んで対処しています。
+* ubuntu 64bitにおいて、ffi/python/jtd_py.py と ffi/ruby/jtd_rb.rbは、実行するとコアダンプを出力してエラー終了します。調べると問題はstrdupで起きています。そこでstrdupを同等のC言語による処理で置き換えるとエラーは起きなくなります。現在そうやって jpcommon_label.c、jpcommon_node.c、njd_node.c にコードを埋め込んで対処しています。
 
 総合すると、何らかのメモリーリークが予想されますが特定できていません。
 
 ## ライセンス
 
 このプロジェクトにあるオリジナルのファイルのライセンスは、[MIT ライセンス](https://opensource.org/licenses/MIT)とします。
-それらは、主にjtalkフォルダ、ffiフォルダにあります。
+それらは、主に[jtalkフォルダ](https://github.com/rosmarinus/jtalkdll/tree/master/jtalk)、
+[ffiフォルダ](https://github.com/rosmarinus/jtalkdll/tree/master/ffi)にあります。
 
 このリポジトリのファイルには、オリジナルのファイル以外に、他のプロジェクトのファイルを含んでいます。
 そのまま使っているものもあれば、一部修正を加えているものもあります。
