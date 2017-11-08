@@ -6,11 +6,11 @@ pause
 goto :eof
 )
 cd /d %~dp0
-if "%PROCESSOR_ARCHITECTURE%" == "x86" (
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\regasm.exe JTalkCOMx86.dll /unregister
-) else (
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\regasm.exe JTalkCOMx64.dll /unregister
+if not "%PROCESSOR_ARCHITECTURE%" == "x86" (
+	if exist JTalkCOMx64.dll C:\Windows\Microsoft.NET\Framework64\v4.0.30319\regasm.exe JTalkCOMx64.dll /unregister
 )
+if exist JTalkCOMx86.dll C:\Windows\Microsoft.NET\Framework\v4.0.30319\regasm.exe JTalkCOMx86.dll /unregister
+
 set /p=ÉLÅ[ÇâüÇ∑Ç∆èIóπÇµÇ‹Ç∑<NUL
 pause >NUL
 echo.

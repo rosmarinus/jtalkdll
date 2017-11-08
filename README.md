@@ -8,6 +8,7 @@
 
 * 概要
 * 動作環境
+* ダウンロード
 * ビルド
 * 配置
 * APIの説明
@@ -54,6 +55,11 @@ jtalk.c は内部で portaudio を呼び出すことでマルチプラットフ�
 * macOS High Sierra
 * Ubuntu 17.10 (他のLinuxディストリビューションは未確認)
 
+## ダウンロード
+
+Windows VC++ によるビルド済みファイルと辞書、音響モデルファイルは、[Releaseページ](https://github.com/rosmarinus/jtalkdll/releases) からダウンロードできます。
+これは、展開し C:\open_jtalk として配置させて使うことを前提としています。
+
 ## ビルド
 
 コマンドラインで[CMake](https://cmake.org/)を使ってビルドします。
@@ -76,11 +82,12 @@ CMakeは、ソフトウェアのビルドを自動化するツールです。
 
 上で引用した最初の行は、Cygwin64でビルドするときのアーキテクチャーの指定です。通常はx86_64ですが、この行を有効にすると、i686をターゲットにします。
 
-二行目は、WindowsのコマンドラインでマネージDLLを作成するときに有効にします。
+2行目は、WindowsのコマンドラインでマネージDLLを作成するときに有効にします。
 
-三行目は、open_jtalk, hts_engine, mecab-dict-index コマンドを一緒にbinフォルダにインストールするときに有効にします。
+3行目は、open_jtalk, hts_engine, mecab-dict-index コマンドを一緒にbinフォルダにインストールするときに有効にします。
 このjtalkdllを使うときには、open_jtalkそのものは必要ありませんが、動作の確認などに必要ならば、これを有効にしてください。
 open_jtalk 用の mecab 辞書をコンパイルするときは、この mecab-dict-index が必要になるので、そのときもこの行をアンコメントしてください。
+Windowsでバッチファイルを使ってビルドするときは、変更するのは3行目だけにしてください。
 
 ### Windows でのビルド
 
@@ -121,13 +128,17 @@ gitをインストールする場合は、[Git for Windows](https://git-for-wind
 Gitを使うか、[ZIPファイル](https://github.com/rosmarinus/jtalkdll/archive/master.zip)をダウンロードして、このリポジトリのコピーを取得します。
 ZIPの場合は適当な場所で展開します。
 
-自分のPCにコピーしたら、jtalkdllフォルダを開いて、buildx64.batとbuildx86.batを探します。
-この二つのファイルがビルドするためのバッチファイルです。
-64ビット版のjtalk.dllを作るときはbuildx64.batを、32ビット版はbuildx64.batを実行します。
-ビルドが終わると、続けてインストールが行われます。
+自分のPCにコピーしたら、jtalkdllフォルダを開いて、build.batを探します。
+このバッチファイルをダブルクリックで実行すると、ビルド、そしてインストールします。
+これで完了です。  
+このとき、Windowsのビット数に合わせたjtalkdllなどが生成されます。
+
+システムのビット数とは違うjtalkdllを作るときは、buildx64.bat、buildx86.batを実行します。
+なお、32ビットパソコンでbuildx64.batを実行するとクロスコンパイラで、そのパソコンでは実行できないjtalkdllを生成します。
 
 このビルドでは、C++/CLI サポートしているかを自動的に判断して、可能ならば、クラスライブラリjtalkCOMx86.dll または jtalkCOMx64.dllを生成します。
 ただし生成されるのは署名されていないアセンブリになります。
+完全署名されたものが必要なのときは、[Releaseページ](https://github.com/rosmarinus/jtalkdll/releases) からダウンロードしてください。
 
 ##### コマンドプロンプトを使う方法
 
@@ -154,8 +165,9 @@ nmake install
 Windowsで今後jtalk.dllを利用する場合は、システムの詳細設定で環境変数PATHにc:\open_jtalk\binを追加してください。
 
 cmake の行に ``-Dbuild_jtalkcom=true`` を追加すると、クラスライブラリjtalkCOMx86.dll または jtalkCOMx64.dllを生成します。
-ただし生成されるのは、署名されていないアセンブリになります。
 このクラスライブラリをビルドするためには、Visual Studio のインストーラを使って C++/CLI サポートをインストールしておく必要があります。
+ただし生成されるのは、署名されていないアセンブリになります。
+完全署名されたものが必要なのときは、[Releaseページ](https://github.com/rosmarinus/jtalkdll/releases) からダウンロードしてください。
 
 cmake の行に ``-Dinstall_open_jtalk=true`` を追加すると open_jtalk.exe, hts_engine.exe, mecab-dict-index.exe をインストールします。
 
@@ -331,8 +343,8 @@ bash build
 
 #### COM 相互運用クラスライブラリ
 
-MSVCのみ。署名なし。通常コマンドラインからのビルドではビルド無効。
-完全署名されたアセンブリが必要な場合は、別途配布版をダウンロードしてください。
+MSVCのみ。署名なし。通常コマンドラインからのビルドではビルド無効。  
+完全署名されたものが必要なのときは、[Releaseページ](https://github.com/rosmarinus/jtalkdll/releases) からダウンロードしてください。
 
 * jtalkCOMx86.exe, jtalkCOMx64.exe
 * COMを登録・解除するためのバッチファイル regist_jtalkcom.bat, unregist_jtalkcom.bat
