@@ -206,7 +206,7 @@ SpeakData g_speakData, *g_psd = &g_speakData;
 // 最近のエラー（OpenJTalkオブジェクトが利用できないときのため）
 OpenjtalkErrors g_lastError = OPENJTALKERROR_NO_ERROR;
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+#if defined(_WIN32)
 // このdll自身の場所
 char g_dll_path[MAX_PATH];
 #endif
@@ -2367,9 +2367,9 @@ bool set_config_voice(OpenJTalk *oj, const char *path)
 	{
 		return false;
 	}
+	char full[MAX_PATH];
 
 return_true:
-	char full[MAX_PATH];
 	clear_path_string(full, MAX_PATH);
 	get_fullpath(temp,full);
 
@@ -4496,7 +4496,6 @@ OPENJTALK_DLL_API HtsVoiceFilelist *OPENJTALK_CONVENTION openjtalk_getHTSVoiceLi
 		return NULL;
 	}
 
-	int d=0;
 	counter_reset_file_or_directory_list();
 	HtsVoiceFilelist *result = (HtsVoiceFilelist *)get_file_or_directory_list(oj->dn_voice_dir_path, G_VOICE_WILDCARD, false, OPENJTALKCHARSET_SHIFT_JIS);
 	for (HtsVoiceFilelist *list = result; list != NULL; list = list->succ)
@@ -6929,7 +6928,7 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_setOnFinishedCallback(Open
 	g_psd->onFinished = callback;
 }
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+#if defined(_WIN32)
 #ifndef DISABLE_JTALK_DLLMAIN
 // DLLMAIN
 // Windowsでdll自身の位置を取得する処理を行う

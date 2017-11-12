@@ -138,7 +138,7 @@ typedef enum {
 /******************************************************************/
 // 外部から dll の現在地をjtalk.dllに反映させる
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+#if defined(_WIN32)
 #ifdef DISABLE_JTALK_DLLMAIN
 extern void set_current_dll_path(const char *path);
 #endif
