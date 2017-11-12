@@ -129,7 +129,7 @@ class JTalk
 	std::u16string getVoiceDirU16();
 
 	// 音響モデルファイル指定
-	//  絶対パス...直接、相対パス...音響モデルファイルディレクトリ基準、名前のみ...探索
+	//  絶対パス...直接、相対パス...実行ファイルの位置基準での相対指定、名前のみ...探索
 	void setVoice(const std::string &path);
 	void setVoice(const char *path);
 	void setVoiceU16(const std::u16string &path);

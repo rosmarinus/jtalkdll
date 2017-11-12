@@ -1,7 +1,7 @@
 ﻿// jtalk.h
 #ifndef JTALK_H
 #define JTALK_H
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	#ifdef NODEFFILE
 		#define OPENJTALK_DLL_API __declspec(dllexport)
 	#else
@@ -27,7 +27,7 @@ JTALK_H_START
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	#include <uchar.h>
 #else
 	#if !defined(__cplusplus)
@@ -39,7 +39,7 @@ JTALK_H_START
 
 typedef struct Open_JTalk_tag Open_JTalk;
 #ifdef __cplusplus
-	#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW)
+	#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 		struct OpenJTalk{};
 	#else
 		struct OpenJTalk;
@@ -55,26 +55,6 @@ typedef struct Open_JTalk_tag Open_JTalk;
 //タイトル
 #define DLL_NAME "jtalkdll"
 
-// メジャーバージョン
-#if !defined(VER_MAJOR)
-#define VER_MAJOR 1
-#endif
-
-// マイナーバージョン
-#if !defined(VER_MINOR)
-#define VER_MINOR 2
-#endif
-
-// ビルドバージョン
-#if !defined(VER_BUILD)
-#define VER_BUILD 20
-#endif
-
-// GIT リビジョン
-#if !defined(GIT_REV)
-#define GIT_REV ""
-#endif
-
 // OpenJTalk の内部バッファのバイト数
 #define MAXBUFLEN 1024
 
@@ -83,6 +63,41 @@ typedef struct Open_JTalk_tag Open_JTalk;
 
 // 探索全ファイルの最大数
 #define VOICESEARCHMAX 200
+
+
+/*****************************************************************
+** コマンドラインマクロ
+*/
+
+// データのインストールフォルダパス
+#if !defined(INSTALL_PATH)
+#if defined(_WIN32)
+#define INSTALL_PATH "C:\\open_jtalk"
+#else
+#define INSTALL_PATH "/usr/local/OpenJTalk"
+#endif
+#endif
+
+// メジャーバージョン
+#if !defined(VER_MAJOR)
+#define VER_MAJOR 0
+#endif
+
+// マイナーバージョン
+#if !defined(VER_MINOR)
+#define VER_MINOR 0
+#endif
+
+// ビルドバージョン
+#if !defined(VER_BUILD)
+#define VER_BUILD 0
+#endif
+
+// GIT リビジョン
+#if !defined(GIT_REV)
+#define GIT_REV ""
+#endif
+
 
 /******************************************************************/
 // エラーコード
@@ -120,6 +135,14 @@ typedef enum {
 	OPENJTALK_ARCH_ARM,
 } OPENJTALK_ARCH;
 
+/******************************************************************/
+// 外部から dll の現在地をjtalk.dllに反映させる
+
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+#ifdef DISABLE_JTALK_DLLMAIN
+extern void set_current_dll_path(const char *path);
+#endif
+#endif
 
 /******************************************************************/
 
@@ -256,7 +279,7 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceDirSjis(OpenJTalk
 OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoiceDirU16(OpenJTalk *oj, char16_t *path);
 
 // 音響モデルファイル
-//  絶対パス...直接、相対パス...音響モデルファイルディレクトリ基準、名前のみ...探索
+//  絶対パス...直接、相対パス...実行ファイルの位置基準での相対指定、名前のみ...探索
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoice(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceSjis(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceU16(OpenJTalk *oj, const char16_t *path);
@@ -350,7 +373,7 @@ OPENJTALK_DLL_API OPENJTALK_OS OPENJTALK_CONVENTION openjtalk_getOS(OpenJTalk *o
 OPENJTALK_DLL_API OPENJTALK_ARCH OPENJTALK_CONVENTION openjtalk_getArch(OpenJTalk *oj);
 
 // エラー出力に情報を詳しく出力するかどうか
-OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_setVerbose(OpenJTalk *oj, bool sw);
+OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_setVerbose(bool sw);
 
 // 発声テスト
 // textがNULLのときは「聞こえますか？」のみ発声

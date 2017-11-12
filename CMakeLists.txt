@@ -13,13 +13,19 @@ set(CMAKE_BUILD_TYPE Release)
 #set(build_jtalkcom TRUE)
 #set(install_open_jtalk TRUE)
 
-
 ### source directory
 set(HTS_ENGINE_API_PATH "${CMAKE_SOURCE_DIR}/hts_engine_API-1.10")
 set(OPEN_JTALK_PATH "${CMAKE_SOURCE_DIR}/open_jtalk-1.10")
 set(OPEN_JTALK_DIC_PATH "${CMAKE_SOURCE_DIR}/open_jtalk_dic_utf_8-1.10")
 set(HTS_VOICE_PATH "${CMAKE_SOURCE_DIR}/voice")
 set(JTALK_PATH "${CMAKE_SOURCE_DIR}/jtalk")
+
+
+### sub folder name install
+set(FOLDER_INSTALL_BIN   bin)
+set(FOLDER_INSTALL_LIB   lib)
+set(FOLDER_INSTALL_DIC   dic_utf_8)
+set(FOLDER_INSTALL_VOICE voice)
 
 
 ### set mingw compiler
@@ -70,21 +76,42 @@ endif()
 
 
 ### set install directory
+if(WIN32)
+    set(PROJECT_FOLDER open_jtalk)
+    set(INSTALL_BASE_PATH C:\\\\)
+else()
+    set(PROJECT_FOLDER OpenJTalk)
+    set(INSTALL_BASE_PATH /usr/local/)
+endif()
+
+
+### set install base path
 if(MSVC AND WIN32)
-    set(DATAFILE_INSTALL_PREFIX c:/open_jtalk)
-    set(CMAKE_INSTALL_PREFIX c:/open_jtalk)
+    set(BASE_PATH c:/)
 elseif(MINGW)
-    set(DATAFILE_INSTALL_PREFIX /c/open_jtalk)
-    #set(CMAKE_INSTALL_PREFIX /c/open_jtalk)
+    set(BASE_PATH /c/)
+elseif(CYGWIN)
+    set(BASE_PATH /cygdrive/c/)
+else()
+    set(BASE_PATH /usr/local/)
+endif()
+
+
+### set install prefix
+if(MSVC AND WIN32)
+    set(CMAKE_INSTALL_PREFIX ${INSTALL_BASE_PATH}${PROJECT_FOLDER})
+elseif(MINGW)
     set(CMAKE_INSTALL_PREFIX "${mingw_prefix}")
 elseif(CYGWIN)
-    set(DATAFILE_INSTALL_PREFIX /cygdrive/c/open_jtalk)
-    #set(CMAKE_INSTALL_PREFIX /cygdrive/c/open_jtalk)
     set(CMAKE_INSTALL_PREFIX "/usr/${target_arch}")
 else()
-    set(DATAFILE_INSTALL_PREFIX /usr/local/OpenJTalk)
     set(CMAKE_INSTALL_PREFIX /usr/local)
 endif()
+
+
+### data install prefix
+set(MACRO_DATA_INSTALL_PREFIX ${INSTALL_BASE_PATH}${PROJECT_FOLDER})
+set(DATA_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
 
 
 ### mecab const
@@ -183,6 +210,7 @@ if(MSVC AND WIN32)
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} /DVER_MINOR=${JTALK_MINOR_NUM}")
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} /DVER_BUILD=${JTALK_BUILD_NUM}")
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} /DGIT_REV=\"\\\"${GIT_REVISION}\\\"\"")
+    set(jtalk_c_compile_flags "${jtalk_c_compile_flags} /DINSTALL_PATH=\"\\\"${MACRO_DATA_INSTALL_PREFIX}\\\"\"")
 
     ### jtalkcom c++/cli flgas
     if(build_jtalkcom)
@@ -200,15 +228,15 @@ if(MSVC AND WIN32)
     
     ### mecab cpp flgas
     set(cxx_compile_flags "/TP")
-    set(cxx_compile_flags "${cxx_compile_flags} /D HAVE_WINDOWS_H")
-    set(cxx_compile_flags "${cxx_compile_flags} /D ASCII_HEADER")
-    set(cxx_compile_flags "${cxx_compile_flags} /D DIC_VERSION=${DIC_VERSION}")
-    set(cxx_compile_flags "${cxx_compile_flags} /D MECAB_USE_UTF8_ONLY")
-    set(cxx_compile_flags "${cxx_compile_flags} /D CHARSET_UTF_8")
-    set(cxx_compile_flags "${cxx_compile_flags} /D MECAB_WITHOUT_MUTEX_LOCK")
-    set(cxx_compile_flags "${cxx_compile_flags} /D MECAB_DEFAULT_RC=\"dummy\"")
-    set(cxx_compile_flags "${cxx_compile_flags} /D PACKAGE=\"\\\"${PACKAGE}\\\"\"")
-    set(cxx_compile_flags "${cxx_compile_flags} /D VERSION=\"\\\"${VERSION}\\\"\"")
+    set(cxx_compile_flags "${cxx_compile_flags} /DHAVE_WINDOWS_H")
+    set(cxx_compile_flags "${cxx_compile_flags} /DASCII_HEADER")
+    set(cxx_compile_flags "${cxx_compile_flags} /DDIC_VERSION=${DIC_VERSION}")
+    set(cxx_compile_flags "${cxx_compile_flags} /DMECAB_USE_UTF8_ONLY")
+    set(cxx_compile_flags "${cxx_compile_flags} /DCHARSET_UTF_8")
+    set(cxx_compile_flags "${cxx_compile_flags} /DMECAB_WITHOUT_MUTEX_LOCK")
+    set(cxx_compile_flags "${cxx_compile_flags} /DMECAB_DEFAULT_RC=\"dummy\"")
+    set(cxx_compile_flags "${cxx_compile_flags} /DPACKAGE=\"\\\"${PACKAGE}\\\"\"")
+    set(cxx_compile_flags "${cxx_compile_flags} /DVERSION=\"\\\"${VERSION}\\\"\"")
     set(mecab_cxx_compile_flags_with_EHa "/EHa ${cxx_compile_flags}")
     set(mecab_cxx_compile_flags "/EHsc ${cxx_compile_flags}")
 
@@ -227,6 +255,7 @@ else()
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DVER_MINOR=${JTALK_MINOR_NUM}")
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DVER_BUILD=${JTALK_BUILD_NUM}")
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DGIT_REV=\"\\\"${GIT_REVISION}\\\"\"")
+    set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DINSTALL_PATH=\"\\\"${MACRO_DATA_INSTALL_PREFIX}\\\"\"")
 
     ### mecab cpp flgas
     set(mecab_cxx_compile_flags "")
@@ -418,7 +447,7 @@ if(mingw_build)
     set_target_properties(hts_engine PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
 if(install_open_jtalk)
-    install(TARGETS hts_engine RUNTIME DESTINATION bin)
+    install(TARGETS hts_engine RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
 endif()
 
 ### mecab-dict-index
@@ -438,7 +467,7 @@ if(mingw_build)
     set_target_properties(mecab-dict-index PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
 if(install_open_jtalk)
-    install(TARGETS mecab-dict-index RUNTIME DESTINATION bin)
+    install(TARGETS mecab-dict-index RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
 endif()
 
 ### open_jtalk
@@ -477,7 +506,7 @@ if(mingw_build)
     set_target_properties(open_jtalk PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
 if(install_open_jtalk)
-    install(TARGETS open_jtalk RUNTIME DESTINATION bin)
+    install(TARGETS open_jtalk RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
 endif()
 
 ### openjtalk
@@ -565,14 +594,14 @@ endif()
 install(FILES ${JTALK_PATH}/jtalk.h DESTINATION include)
 if(mingw_build)
     install(TARGETS jtalk
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION ${FOLDER_INSTALL_LIB}
+        RUNTIME DESTINATION ${FOLDER_INSTALL_BIN}
     )
 else()
     install(TARGETS jtalk
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin
+        ARCHIVE DESTINATION ${FOLDER_INSTALL_LIB}
+        LIBRARY DESTINATION ${FOLDER_INSTALL_LIB}
+        RUNTIME DESTINATION ${FOLDER_INSTALL_BIN}
     )
 endif()
 
@@ -613,17 +642,17 @@ if(build_jtalkcom AND MSVC AND WIN32)
     ###project(JTalkCOM CXX)
     include_directories(${JTALK_PATH})
     include_directories(portaudio/include)
-    add_library(jtalkcom_static STATIC
+    add_library(jtalk_static STATIC
         ${JTALK_PATH}/jtalk.c
         ${JTALK_PATH}/jtalk.def
     )
-    set_target_properties(jtalkcom_static PROPERTIES COMPILE_FLAGS ${jtalk_c_compile_flags})
+    set_target_properties(jtalk_static PROPERTIES COMPILE_FLAGS "${jtalk_c_compile_flags} /DDISABLE_JTALK_DLLMAIN")
     add_library(JTalkCOM SHARED
         ${JTALK_PATH}/JTalkCOM.cpp
     )
     set_target_properties(JTalkCOM PROPERTIES COMPILE_FLAGS "${jtalkcom_cli_compile_flags}")
     set_target_properties(JTalkCOM PROPERTIES LINK_FLAGS "${jtalkcom_cli_link_flags}")
-    target_link_libraries(JTalkCOM jtalkcom_static openjtalk mecab_eha)
+    target_link_libraries(JTalkCOM jtalk_static openjtalk mecab_eha)
     if(CMAKE_CL_64)
         set_target_properties(JTalkCOM PROPERTIES OUTPUT_NAME JTalkCOMx64)
     else()
@@ -631,12 +660,12 @@ if(build_jtalkcom AND MSVC AND WIN32)
     endif()
     set_target_properties(JTalkCOM PROPERTIES VERSION ${JTALK_SERIAL} SOVERSION ${JTALK_SOSERIAL})
     install(TARGETS JTalkCOM
-        RUNTIME DESTINATION bin
-        #ARCHIVE DESTINATION lib
-        #LIBRARY DESTINATION lib
+        RUNTIME DESTINATION ${FOLDER_INSTALL_BIN}
+        #ARCHIVE DESTINATION ${FOLDER_INSTALL_LIB}
+        #LIBRARY DESTINATION ${FOLDER_INSTALL_LIB}
     )
-    install(FILES ${JTALK_PATH}/regist_jtalkcom.bat DESTINATION bin)
-    install(FILES ${JTALK_PATH}/unregist_jtalkcom.bat DESTINATION bin)
+    install(FILES ${JTALK_PATH}/regist_jtalkcom.bat   DESTINATION ${FOLDER_INSTALL_BIN})
+    install(FILES ${JTALK_PATH}/unregist_jtalkcom.bat DESTINATION ${FOLDER_INSTALL_BIN})
 endif()
 
 
@@ -655,7 +684,7 @@ endif()
 if(mingw_build)
     set_target_properties(jsay PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
-install(TARGETS jsay RUNTIME DESTINATION bin)
+install(TARGETS jsay RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
 
 
 ### c sample
@@ -673,13 +702,13 @@ endif()
 if(mingw_build)
     set_target_properties(jtd_c PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
-install(TARGETS jtd_c RUNTIME DESTINATION bin)
+install(TARGETS jtd_c RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
 
 
 ### install dictionary
 file(GLOB dicfiles ${OPEN_JTALK_DIC_PATH}/*)
-install(FILES ${dicfiles} DESTINATION ${DATAFILE_INSTALL_PREFIX}/dic_utf_8)
+install(FILES ${dicfiles} DESTINATION ${DATA_INSTALL_PREFIX}/${FOLDER_INSTALL_DIC})
 
 
 ### install voices
-install(DIRECTORY ${HTS_VOICE_PATH} DESTINATION ${DATAFILE_INSTALL_PREFIX})
+install(DIRECTORY ${HTS_VOICE_PATH} DESTINATION ${DATA_INSTALL_PREFIX})

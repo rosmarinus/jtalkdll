@@ -68,7 +68,7 @@ void openjtalk_setGvWeightForSpectrum(void *oj, double f);
 void openjtalk_setMsdThreshold(void *oj, double f);
 void openjtalk_setSamplingFrequency(void *oj, unsigned int i);
 void openjtalk_setSpeed(void *oj, double f);
-void openjtalk_setVerbose(void *oj, bool sw);
+void openjtalk_setVerbose(bool sw);
 void openjtalk_setVolume(void *oj, double f);
 void openjtalk_speakAsync(void *oj, const char *text);
 void openjtalk_speakSync(void *oj, const char *text);
@@ -127,6 +127,11 @@ function Jtalk.new(...)
     Jtalk.generateVoicelist(handle)
     local obj = {handle = handle}
     return setmetatable(obj, {__index = Jtalk})
+end
+
+-- verbose console message
+function Jtalk.verbose(sw)
+    jt.openjtalk_setVerbose(sw)
 end
 
 -- voices

@@ -1,4 +1,6 @@
-tts = require("jtalk").new()
+jtalk = require("jtalk")
+-- jtalk.verbose(true)
+tts = jtalk.new()
 print("available voices:")
 voices = tts:getVoices()
 for index, item in ipairs(voices) do

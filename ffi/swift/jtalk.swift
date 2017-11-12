@@ -567,7 +567,7 @@ class Jtalk {
 
 
     // 音響モデルファイル指定
-    //  絶対パス...直接、相対パス...音響モデルファイルディレクトリ基準、名前のみ...探索
+    //  絶対パス...直接、相対パス...実行ファイルの位置基準での相対指定、名前のみ...探索
     func setVoice(_ input: Voice?) throws {
         if input == nil {
             throw JtalkError.NullPointer("音響モデルを表すオブジェクトがNULLです")

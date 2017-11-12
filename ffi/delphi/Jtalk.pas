@@ -422,7 +422,7 @@ implementation
 
   // 音響モデルファイル指定(UTF-16)
   // 絶対パス...直接、
-  // 相対パス...音響モデルファイルディレクトリ基準、
+  // 相対パス...実行ファイルの位置基準での相対指定、
   // 名前のみ...探索
   procedure JTalkTTS.SetVoice(path: String);
   begin

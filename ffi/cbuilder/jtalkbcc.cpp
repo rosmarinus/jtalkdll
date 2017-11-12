@@ -235,7 +235,7 @@ String JTalk::getVoiceDir() {
 }
 
 // 音響モデル指定(UTF-16)
-// 絶対パス...直接、相対パス...音響モデルディレクトリ基準、名前のみ...探索
+// 絶対パス...直接、相対パス....実行ファイルの位置基準での相対指定、名前のみ...探索
 void JTalk::setVoiceName(String name) {
 	checkopenjtalkObject();
 	if (name == "") {

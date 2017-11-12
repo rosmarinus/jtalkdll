@@ -5,12 +5,13 @@
 
 int main()
 {
+	//openjtalk_setVerbose(true);
 	OpenJTalk *oj = openjtalk_initialize(NULL, NULL, NULL);
 	if (oj == NULL)
 	{
 		return -1;
 	}
-
+	
 #if defined(_WIN32)
 	HtsVoiceFilelist *list = openjtalk_getHTSVoiceListSjis(oj);
 #else
@@ -25,7 +26,7 @@ int main()
 	}
 	srand((unsigned)time(NULL));
 	int num = rand() % count;
-
+	
 	count = 0;
 	for (HtsVoiceFilelist *ptr = list; ptr != NULL; ptr = ptr->succ)
 	{
@@ -42,7 +43,7 @@ int main()
 		count++;
 	}
 	openjtalk_clearHTSVoiceList(oj, list);
-
+	
 	char dic[MAX_PATH];
 #if defined(_WIN32)
 	printf("dic: %s\n", openjtalk_getDicSjis(oj, dic));

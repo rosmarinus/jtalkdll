@@ -169,17 +169,11 @@ const char *G_VOICE_EXT = ".htsvoice";
 const char *G_VOICE_WILDCARD = "*.htsvoice";
 const char *G_INI_NAME = "config.ini";
 const char *G_SECTION_NAME = u8"open_jtalk_config";
-const char *G_DEFAULT_DIC_DIR_NAMES[] = {"open_jtalk_dic_utf_8-*", "dic_utf_8*", "dic*", NULL};
+const char *G_DEFAULT_DIC_DIR_NAMES[] = {"dic_utf_8*", "dic*", "open_jtalk_dic_utf_8-*", NULL};
 const char *G_DEFAULT_VOICE_DIR_NAMES[] = {"voice", "voice*", "hts_voice*", NULL};
 
-// 絶対指定の省略値
-#if (defined(_WIN32) && !defined(__CYGWIN__))
-const char *G_DN_DIC_PATH_DEFAULT = "C:\\open_jtalk";
-const char *G_DN_VOICE_DIR_PATH_DEFAULT = "C:\\open_jtalk";
-#else
-const char *G_DN_DIC_PATH_DEFAULT = "/usr/local/OpenJTalk";
-const char *G_DN_VOICE_DIR_PATH_DEFAULT = "/usr/local/OpenJTalk";
-#endif
+// データのインストール先
+const char *G_DN_INSTALL_PATH = INSTALL_PATH;
 
 /*****************************************************************
 ** 大域変数
@@ -194,14 +188,17 @@ char g_current_path[MAX_PATH];
 // 設定ファイルのパス
 char g_ini_path[MAX_PATH];
 
+// 設定ファイルの存在するディレクトリ
+char g_ini_dir[MAX_PATH];
+
 // 初期値もしくは設定ファイルによる音響モデルファイル名
-char g_voice_ini[MAX_PATH];
+//char g_voice_ini[MAX_PATH];
 
 // 初期値もしくは設定ファイルによる音響モデルファイルディレクトリ名
-char g_voice_dir_ini[MAX_PATH];
+//char g_voice_dir_ini[MAX_PATH];
 
 // 初期値もしくは設定ファイルによる辞書ディレクトリ名
-char g_dic_dir_ini[MAX_PATH];
+//char g_dic_dir_ini[MAX_PATH];
 
 // 音声データ
 SpeakData g_speakData, *g_psd = &g_speakData;
@@ -210,7 +207,7 @@ SpeakData g_speakData, *g_psd = &g_speakData;
 OpenjtalkErrors g_lastError = OPENJTALKERROR_NO_ERROR;
 
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-// このdll自身の場所（DllMain内で代入）
+// このdll自身の場所
 char g_dll_path[MAX_PATH];
 #endif
 
@@ -218,7 +215,7 @@ char g_dll_path[MAX_PATH];
 ** 前方宣言
 */
 
-bool set_ini_path(OpenJTalk *oj);
+bool set_ini_path(OpenJTalk *oj, const char *dir);
 bool get_ini_data(OpenJTalk *oj);
 bool set_dic_path(OpenJTalk *oj, const char *path);
 bool set_voice(OpenJTalk *oj, const char *path);
@@ -228,6 +225,10 @@ bool set_voice_dir_path(OpenJTalk *oj, const char *path);
 bool set_default_dic_path(OpenJTalk *oj);
 bool set_default_voice(OpenJTalk *oj);
 bool set_default_voice_dir_path(OpenJTalk *oj);
+bool check_dic_utf_8(const char *path);
+bool set_nearby_dic_path(OpenJTalk *oj, const char *path);
+bool set_nearby_voice_dir_path(OpenJTalk *oj, const char *path);
+
 
 /*****************************************************************
 ** 単純補助関数
@@ -330,6 +331,7 @@ size_t GetUTF8Length(char firstbyte)
 ** オブジェクト管理関数
 */
 
+// 初期化本体
 bool JTalkData_initialize(OpenJTalk *oj)
 {
 	if (!oj)
@@ -342,38 +344,27 @@ bool JTalkData_initialize(OpenJTalk *oj)
 	clear_path_string(oj->dn_dic_path, MAX_PATH);
 	clear_path_string(oj->dn_voice_dir_path, MAX_PATH);
 
-	//  標準の辞書ディレクトリを設定する
+	//  引数の辞書ディレクトリを設定する
 	if (strlen(oj->dn_dic_path_init) > 0)
 	{
 		set_dic_path(oj, oj->dn_dic_path_init);
 	}
-	if (strlen(oj->dn_dic_path) == 0)
-	{
-		set_default_dic_path(oj);
-	}
 
-	// 標準の音響モデルディレクトリを設定する
+	// 引数の音響モデルディレクトリを設定する
 	if (strlen(oj->dn_voice_dir_path_init) > 0)
 	{
 		set_voice_dir_path(oj, oj->dn_voice_dir_path_init);
 	}
-	if (strlen(oj->dn_voice_dir_path) == 0)
-	{
-		set_default_voice_dir_path(oj);
-	}
 
-	//  標準の音響モデルファイルを設定する
+	//  引数の音響モデルファイルを設定する
 	if (strlen(oj->fn_voice_path_init) > 0)
 	{
 		set_voice(oj, oj->fn_voice_path_init);
 	}
-	if (strlen(oj->fn_voice_path) == 0)
-	{
-		set_default_voice(oj);
-	}
 
-	// 設定ファイルがあれば、設定を反映する
-	if (set_ini_path(oj))
+	// カレントフォルダに設定ファイルがあれば、設定を解釈する
+	bool current_ini = set_ini_path(oj, g_current_path);
+	if (current_ini)
 	{
 		get_ini_data(oj);
 	}
@@ -381,11 +372,90 @@ bool JTalkData_initialize(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "設定ファイルはありません。\n");
+			fprintf(stderr, "カレントフォルダに設定ファイルはありません。\n");
 		}
 	}
 
-	// 辞書ディレクトリの指定がどこにもないとき
+	// 未確定ならば、カレントディレクトリの周囲の辞書を探す
+	if (strlen(oj->dn_dic_path) == 0)
+	{
+		set_nearby_dic_path(oj, g_current_path);
+	}
+	
+	// 未確定ならば、カレントディレクトリの周囲の音響モデルフォルダを探す
+	if (strlen(oj->dn_voice_dir_path) == 0)
+	{
+		set_nearby_voice_dir_path(oj, g_current_path);
+	}
+
+	//  未確定ならば、改めて引数の音響モデルファイルで設定する
+	if (strlen(oj->fn_voice_path) == 0)
+	{
+		if (strlen(oj->fn_voice_path_init) > 0)
+		{
+			set_voice(oj, oj->fn_voice_path_init);
+		}
+	}
+
+#if defined(_WIN32)
+	// カレントフォルダに設定ファイルがなかったときだけ解釈する
+	if (!current_ini)
+	{
+		// 共有ライブラリのあるフォルダに設定ファイルがあれば、設定を解釈する
+		if (set_ini_path(oj, g_dll_path))
+		{
+			get_ini_data(oj);
+		}
+		else
+		{
+			if (g_verbose)
+			{
+				fprintf(stderr, "共有ライブラリのあるフォルダに設定ファイルはありません。\n");
+			}
+		}
+
+		// 未確定ならば、カレントディレクトリの周囲の辞書を探す
+		if (strlen(oj->dn_dic_path) == 0)
+		{
+			set_nearby_dic_path(oj, g_dll_path);
+		}
+		
+		// 未確定ならば、カレントディレクトリの周囲の音響モデルフォルダを探す
+		if (strlen(oj->dn_voice_dir_path) == 0)
+		{
+			set_nearby_voice_dir_path(oj, g_dll_path);
+		}
+
+		//  未確定ならば、改めて引数の音響モデルファイルで設定する
+		if (strlen(oj->fn_voice_path) == 0)
+		{
+			if (strlen(oj->fn_voice_path_init) > 0)
+			{
+				set_voice(oj, oj->fn_voice_path_init);
+			}
+		}
+	}
+#endif
+
+	// まだ未確定ならば、省略値にする
+	if (strlen(oj->dn_dic_path) == 0)
+	{
+		set_default_dic_path(oj);
+	}
+	
+	// まだ未確定ならば、省略値にする
+	if (strlen(oj->dn_voice_dir_path) == 0)
+	{
+		set_default_voice_dir_path(oj);
+	}
+
+	// まだ未確定ならば、省略値にする
+	if (strlen(oj->fn_voice_path) == 0)
+	{
+		set_default_voice(oj);
+	}
+
+	// 最終的に、辞書ディレクトリが確定しなかったら
 	if (strlen(oj->dn_dic_path) == 0)
 	{
 		if (g_verbose)
@@ -395,7 +465,7 @@ bool JTalkData_initialize(OpenJTalk *oj)
 		return false;
 	}
 
-	// 音響モデルファイルの指定がどこにもないとき
+	// 最終的に、音響モデルファイルが確定しなかったら
 	if (strlen(oj->fn_voice_path) == 0)
 	{
 		if (g_verbose)
@@ -1697,6 +1767,13 @@ unsigned int count_filelist(HtsVoiceFilelist *list)
 	return result;
 }
 
+unsigned int counter_of_file_or_directory_list;
+
+void counter_reset_file_or_directory_list()
+{
+	counter_of_file_or_directory_list = 0;
+}
+
 HtsVoiceFilelist *get_file_or_directory_list(const char *path, const char *wildcard, bool isDirectory, OpenjtalkCharsets charset)
 {
 	HtsVoiceFilelist *top = NULL;
@@ -1706,6 +1783,7 @@ HtsVoiceFilelist *get_file_or_directory_list(const char *path, const char *wildc
 		return top;
 	}
 	DIR *dir;
+
 	if ((dir = opendir(path)) == NULL)
 	{
 		return top;
@@ -1718,6 +1796,13 @@ HtsVoiceFilelist *get_file_or_directory_list(const char *path, const char *wildc
 		{
 			continue;
 		}
+
+		if (counter_of_file_or_directory_list > VOICESEARCHMAX)
+		{
+			continue;
+		}
+		counter_of_file_or_directory_list ++;
+	
 		if (strlen(path) + 1 + strlen(entry->d_name) + 2 > MAX_PATH)
 		{
 			continue;
@@ -2071,6 +2156,11 @@ char *make_voice_path(OpenJTalk *oj, const char *path)
 		{
 			if (oj->dn_voice_dir_path != NULL && strlen(oj->dn_voice_dir_path) != 0)
 			{
+				if (strlen(oj->dn_voice_dir_path) + 1 + strlen(path) + 1 > MAX_PATH)
+				{
+					return false;
+				}
+
 				strcpy(temp, oj->dn_voice_dir_path);
 				strcat(temp, G_SLASH_CHAR);
 				strcat(temp, path);
@@ -2108,6 +2198,284 @@ return_true:
 	return r;
 }
 
+
+// 設定ファイルの情報から辞書ディレクトリを決定
+bool set_config_dic_dir(OpenJTalk *oj, const char *path)
+{
+	if (!oj)
+	{
+		return false;
+	}
+
+	if (path != NULL && strlen(path) == 0)
+	{
+		return false;
+	}
+
+	char temp[MAX_PATH];
+	clear_path_string(temp, MAX_PATH);
+
+	if (is_relative(path))
+	{
+		if (g_ini_dir == NULL || strlen(g_ini_dir) == 0)
+		{
+			return false;
+		}
+
+		if (strlen(g_ini_dir) + 1 + strlen(path) + 1 > MAX_PATH)
+		{
+			return false;
+		}
+
+		strcpy(temp, g_ini_dir);
+		strcat(temp, G_SLASH_CHAR);
+		strcat(temp, path);
+	}
+	else
+	{
+		strcpy(temp, path);
+	}
+
+	if (!exists_dir(temp))
+	{
+		return false;
+	}
+
+	char full[MAX_PATH];
+	clear_path_string(full, MAX_PATH);
+
+	get_fullpath(temp,full);
+
+	if (!check_dic_utf_8(full))
+	{
+		return false;
+	}
+
+	strcpy(oj->dn_dic_path, full);
+	Open_JTalk_load_dic(oj->open_jtalk, full);
+
+	return true;
+}
+
+// 設定ファイルの情報から音響モデルディレクトリを決定
+bool set_config_voice_dir(OpenJTalk *oj, const char *path)
+{
+	if (!oj)
+	{
+		return false;
+	}
+
+	if (path != NULL && strlen(path) == 0)
+	{
+		return false;
+	}
+
+	char temp[MAX_PATH];
+	clear_path_string(temp, MAX_PATH);
+
+	if (is_relative(path))
+	{
+		if (g_ini_dir == NULL || strlen(g_ini_dir) == 0)
+		{
+			return false;
+		}
+
+		if (strlen(g_ini_dir) + 1 + strlen(path) + 1 > MAX_PATH)
+		{
+			return false;
+		}
+
+		strcpy(temp, g_ini_dir);
+		strcat(temp, G_SLASH_CHAR);
+		strcat(temp, path);
+	}
+	else
+	{
+		strcpy(temp, path);
+	}
+
+	if (!exists_dir(temp))
+	{
+		return false;
+	}
+
+	char full[MAX_PATH];
+	clear_path_string(full, MAX_PATH);
+
+	get_fullpath(temp,full);
+
+	strcpy(oj->dn_voice_dir_path, full);
+	return true;
+}
+
+
+// 設定ファイルからの音響モデルファイル設定
+bool set_config_voice(OpenJTalk *oj, const char *path)
+{
+	if (!oj)
+	{
+		return false;
+	}
+
+	if (path == NULL || strlen(path) == 0)
+	{
+		return false;
+	}
+
+	char temp[MAX_PATH];
+	clear_path_string(temp, MAX_PATH);
+
+	if (is_name_only(path))
+	{
+		if (strlen(path) + strlen(G_VOICE_EXT) + 1 > MAX_PATH)
+		{
+			return false;
+		}
+
+		char name_extended[MAX_PATH];
+		strcat(strcpy(name_extended, path), G_VOICE_EXT);
+		unsigned int c = 0;
+		if (search_file_recursive(oj->dn_voice_dir_path, name_extended, temp, &c, VOICESEARCHMAX))
+		{
+			goto return_true;
+		}
+		return false;
+	}
+
+	if (is_relative(path))
+	{
+		if (g_ini_dir == NULL || strlen(g_ini_dir) == 0)
+		{
+			return false;
+		}
+
+		if (strlen(g_ini_dir) + 1 + strlen(path) + 1 > MAX_PATH)
+		{
+			return false;
+		}
+
+		strcpy(temp, g_ini_dir);
+		strcat(temp, G_SLASH_CHAR);
+		strcat(temp, path);
+	}
+	else
+	{
+		strcpy(temp, path);
+	}
+
+	if (!exists_file(temp))
+	{
+		return false;
+	}
+
+return_true:
+	char full[MAX_PATH];
+	clear_path_string(full, MAX_PATH);
+	get_fullpath(temp,full);
+
+	strcpy(oj->fn_voice_path, full);
+	Open_JTalk_load_voice(oj->open_jtalk, full);
+	return true;
+}
+
+
+// 指定位置の近くの辞書ディレクトリを決定
+bool set_nearby_dic_path(OpenJTalk *oj, const char *path)
+{
+	if (!oj)
+	{
+		return false;
+	}
+
+	if (path == NULL || strlen(path) == 0)
+	{
+		return false;
+	}
+
+	char temp[MAX_PATH];
+	clear_path_string(temp, MAX_PATH);
+
+	// 指定位置から可能性のある名前を探す
+	for (const char **d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
+	{
+		if (search_directory(path, *d, temp))
+		{
+			goto check_charset;
+		}
+	}
+
+	// その親ディレクトリから可能性のあるフォルダを探す
+	char parent[MAX_PATH];
+	get_dir_path(path,parent);
+	if (parent != NULL && strlen(parent) != 0)
+	{
+		for (const char **d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
+		{
+			if (search_directory(parent, *d, temp))
+			{
+				goto check_charset;
+			}
+		}
+	}
+	return false;
+
+check_charset:
+	if (!check_dic_utf_8(temp))
+	{
+		return false;
+	}
+	strcpy(oj->dn_dic_path, temp);
+	Open_JTalk_load_dic(oj->open_jtalk, temp);
+	return true;
+}
+
+// 指定位置の近くの音響モデルディレクトリを決定
+bool set_nearby_voice_dir_path(OpenJTalk *oj, const char *path)
+{
+	if (!oj)
+	{
+		return false;
+	}
+
+	if (path == NULL || strlen(path) == 0)
+	{
+		return false;
+	}
+
+	char temp[MAX_PATH];
+	clear_path_string(temp, MAX_PATH);
+
+	// 指定位置から可能性のあるフォルダを探す
+	for (const char **d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
+	{
+		if (search_directory(path, *d, temp))
+		{
+			goto return_true;
+		}
+	}
+
+	// その親ディレクトリから可能性のあるフォルダを探す
+	char parent[MAX_PATH];
+	get_dir_path(path,parent);
+	if (parent != NULL && strlen(parent) != 0)
+	{
+		for (const char **d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
+		{
+			if (search_directory(parent, *d, temp))
+			{
+				goto return_true;
+			}
+		}
+	}
+	return false;
+
+return_true:
+	strcpy(oj->dn_voice_dir_path, temp);
+	return true;
+}
+
+
+// 音響モデルファイル設定
 bool set_voice(OpenJTalk *oj, const char *path)
 {
 	if (!oj)
@@ -2153,6 +2521,7 @@ bool set_voice(OpenJTalk *oj, const char *path)
 				return false;
 			}
 
+			// dirが確定していれば
 			char name_extended[MAX_PATH];
 			strcat(strcpy(name_extended, path), G_VOICE_EXT);
 			unsigned int c = 0;
@@ -2166,11 +2535,17 @@ bool set_voice(OpenJTalk *oj, const char *path)
 		// 相対指定の場合、
 		if (is_relative(path))
 		{
-			if (oj->dn_voice_dir_path != NULL && strlen(oj->dn_voice_dir_path) != 0)
+			if (g_current_path != NULL && strlen(g_current_path) != 0)
 			{
-				strcpy(temp, oj->dn_voice_dir_path);
+				if (strlen(g_current_path) + 1 + strlen(path) + 1 > MAX_PATH)
+				{
+					return false;
+				}
+
+				strcpy(temp, g_current_path);
 				strcat(temp, G_SLASH_CHAR);
 				strcat(temp, path);
+
 				if (exists_file(temp))
 				{
 					goto return_true;
@@ -2195,7 +2570,7 @@ return_true:
 	return true;
 }
 
-// 師弟の名前の音響モデルを登録する
+// 指定の名前の音響モデルを登録する
 bool set_voice_name(OpenJTalk *oj, const char *name)
 {
 	if (!oj)
@@ -2255,9 +2630,15 @@ bool set_voice_path(OpenJTalk *oj, const char *path)
 	{
 		if (oj->dn_voice_dir_path != NULL && strlen(oj->dn_voice_dir_path) != 0)
 		{
+			if (strlen(oj->dn_voice_dir_path) + 1 + strlen(path) + 1 > MAX_PATH)
+			{
+				return false;
+			}
+
 			strcpy(temp, oj->dn_voice_dir_path);
 			strcat(temp, G_SLASH_CHAR);
 			strcat(temp, path);
+
 			if (exists_file(temp))
 			{
 				goto return_true;
@@ -2283,6 +2664,7 @@ return_true:
 	return true;
 }
 
+
 bool set_voice_dir_path(OpenJTalk *oj, const char *path)
 {
 	if (!oj)
@@ -2292,7 +2674,6 @@ bool set_voice_dir_path(OpenJTalk *oj, const char *path)
 
 	char temp[MAX_PATH];
 	clear_path_string(temp, MAX_PATH);
-	// g_voice_dir_ini = path
 	if (path != NULL && strlen(path) != 0)
 	{
 		// 絶対パスならば
@@ -2311,31 +2692,26 @@ bool set_voice_dir_path(OpenJTalk *oj, const char *path)
 		// 相対パスならば
 		else
 		{
-			// まずカレントパスを基準にして探す
+			// カレントパスを基準にして探す
 			if (g_current_path != NULL && strlen(g_current_path) != 0)
 			{
-				strcpy(temp, g_current_path);
-				strcpy(temp, G_SLASH_CHAR);
-				strcat(temp, path);
-				if (exists_dir(temp))
+				if (strlen(g_current_path) + 1 + strlen(path) + 1 > MAX_PATH)
 				{
-					goto return_true;
+					return false;
 				}
-			}
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-			// 次に、Windows のときは dllのあるフォルダを基準にして探す
-			if (g_dll_path != NULL && strlen(g_dll_path) != 0)
-			{
-				strcpy(temp, g_dll_path);
-				strcpy(temp, G_SLASH_CHAR);
-				strcat(temp, path);
-				if (exists_dir(temp))
+				char temp2[MAX_PATH];
+				strcpy(temp2, g_current_path);
+				strcat(temp2, G_SLASH_CHAR);
+				strcat(temp2, path);
+
+				if (exists_dir(temp2))
 				{
+					get_fullpath(temp2,temp);
 					goto return_true;
 				}
+
 			}
-#endif
 		}
 	}
 
@@ -2356,7 +2732,7 @@ bool set_default_voice_dir_path(OpenJTalk *oj)
 	char temp[MAX_PATH];
 	clear_path_string(temp, MAX_PATH);
 
-	// カレントパスから、可能性のあるフォルダを探す
+	// カレントパスから可能性のあるフォルダを探す
 	if (g_current_path != NULL && strlen(g_current_path) != 0)
 	{
 		for (const char **d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
@@ -2368,26 +2744,26 @@ bool set_default_voice_dir_path(OpenJTalk *oj)
 		}
 	}
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	// Windows のときは dllのあるフォルダからも探す
-	if (g_dll_path != NULL && strlen(g_dll_path) != 0)
+	// その親ディレクトリから可能性のあるフォルダを探す
+	char parent[MAX_PATH];
+	get_dir_path(g_current_path,parent);
+	if (parent != NULL && strlen(parent) != 0)
 	{
 		for (const char **d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
 		{
-			if (search_directory(g_dll_path, *d, temp))
+			if (search_directory(parent, *d, temp))
 			{
 				goto return_true;
 			}
 		}
 	}
-#endif
 
-	// 省略時の音響モデルファイルフォルダのあるフォルダから、可能性のある名前を探す
-	if (G_DN_VOICE_DIR_PATH_DEFAULT != NULL && strlen(G_DN_VOICE_DIR_PATH_DEFAULT) != 0)
+	// 標準のインストールフォルダから可能性のある名前を探す
+	if (G_DN_INSTALL_PATH != NULL && strlen(G_DN_INSTALL_PATH) != 0)
 	{
 		for (const char **d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
 		{
-			if (search_directory(G_DN_VOICE_DIR_PATH_DEFAULT, *d, temp))
+			if (search_directory(G_DN_INSTALL_PATH, *d, temp))
 			{
 				goto return_true;
 			}
@@ -2414,7 +2790,7 @@ bool set_default_voice(OpenJTalk *oj)
 	clear_path_string(temp, MAX_PATH);
 	unsigned int c = 0;
 
-	// 音響モデルファイルフォルダが確定していれば、
+	// 音響モデルフォルダが確定していれば、
 	if (oj->dn_voice_dir_path != NULL && strlen(oj->dn_voice_dir_path) != 0)
 	{
 		// 標準の音響モデルファイルを探す。
@@ -2453,8 +2829,7 @@ bool set_voice_dir_and_voice(OpenJTalk *oj, const char *path)
 
 	if (!oj->fn_voice_path || strlen(oj->fn_voice_path) == 0)
 	{
-		oj->errorCode = OPENJTALKERROR_PATH_STRING_IS_NULL_OR_EMPTY;
-		return false;
+		return set_default_voice(oj);
 	}
 
 	if (get_fname(oj->fn_voice_path, temp) == NULL)
@@ -2467,7 +2842,7 @@ bool set_voice_dir_and_voice(OpenJTalk *oj, const char *path)
 	{
 		return true;
 	}
-
+	
 	return set_default_voice(oj);
 }
 
@@ -2485,6 +2860,12 @@ bool check_dic_utf_8(const char *path)
 	}
 	char file[MAX_PATH];
 	clear_path_string(file, MAX_PATH);
+
+	if (7 + 1 + strlen(path) + 1 > MAX_PATH)
+	{
+		return false;
+	}
+
 	strcpy(file, path);
 	strcat(file, G_SLASH_CHAR);
 	strcat(file, "unk.dic");
@@ -2526,6 +2907,7 @@ exit_false:
 	return false;
 }
 
+
 bool set_dic_path(OpenJTalk *oj, const char *path)
 {
 	if (!oj)
@@ -2553,28 +2935,23 @@ bool set_dic_path(OpenJTalk *oj, const char *path)
 			// カレントフォルダを探す
 			if (g_current_path != NULL && strlen(g_current_path) != 0)
 			{
-				strcpy(temp, g_current_path);
-				strcpy(temp, G_SLASH_CHAR);
-				strcat(temp, path);
-				if (exists_dir(temp))
-				{
-					goto check_charset;
-				}
-			}
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-			// 次に、DLLのあるフォルダを探す
-			if (g_dll_path != NULL && strlen(g_dll_path) != 0)
-			{
-				strcpy(temp, g_dll_path);
-				strcpy(temp, G_SLASH_CHAR);
-				strcat(temp, path);
-				if (exists_dir(temp))
+				if (strlen(g_current_path) + 1 + strlen(path) + 1 > MAX_PATH)
 				{
+					return false;
+				}
+
+				char temp2[MAX_PATH];
+				strcpy(temp2, g_current_path);
+				strcat(temp2, G_SLASH_CHAR);
+				strcat(temp2, path);
+
+				if (exists_dir(temp2))
+				{
+					get_fullpath(temp2,temp);
 					goto check_charset;
 				}
 			}
-#endif
 		}
 	}
 	return false;
@@ -2616,26 +2993,26 @@ bool set_default_dic_path(OpenJTalk *oj)
 		}
 	}
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	//Windowsの場合は、 DLL のあるフォルダから可能性のある名前を探す
-	if (g_dll_path != NULL && strlen(g_dll_path) != 0)
+	// 親ディレクトリから可能性のあるフォルダを探す
+	char parent[MAX_PATH];
+	get_dir_path(g_current_path,parent);
+	if (parent != NULL && strlen(parent) != 0)
 	{
 		for (const char **d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
 		{
-			if (search_directory(g_dll_path, *d, temp))
+			if (search_directory(parent, *d, temp))
 			{
 				goto check_charset;
 			}
 		}
 	}
-#endif
 
-	// 省略時の辞書フォルダのあるべきフォルダで可能性のある名前を探す。
-	if (G_DN_DIC_PATH_DEFAULT != NULL && strlen(G_DN_DIC_PATH_DEFAULT) != 0)
+	// 標準のインストールフォルダから可能性のある名前を探す。
+	if (G_DN_INSTALL_PATH != NULL && strlen(G_DN_INSTALL_PATH) != 0)
 	{
 		for (const char **d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
 		{
-			if (search_directory(G_DN_DIC_PATH_DEFAULT, *d, temp))
+			if (search_directory(G_DN_INSTALL_PATH, *d, temp))
 			{
 				goto check_charset;
 			}
@@ -3831,11 +4208,13 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		return false;
 	}
+
 	ConfigScanner *sc = config_load(g_ini_path);
 	if (sc == NULL)
 	{
 		return false;
 	}
+
 	if (g_verbose)
 	{
 		fprintf(stderr, "***** 設定ファイル解釈　開始 *****\n");
@@ -3844,27 +4223,59 @@ bool get_ini_data(OpenJTalk *oj)
 	char *temp;
 	if (config_find_string(sc, G_SECTION_NAME, u8"voice_dir", &temp))
 	{
-		if (g_verbose)
+		if (strlen(oj->dn_voice_dir_path) == 0)
 		{
-			fprintf(stderr, "config voice_dir: %s\n", temp);
+			if (g_verbose)
+			{
+				fprintf(stderr, "config voice_dir: %s\n", temp);
+			}
+			set_config_voice_dir(oj, temp);
 		}
-		openjtalk_setVoiceDir(oj, temp);
+		else
+		{
+			if (g_verbose)
+			{
+				fprintf(stderr, "config voice_dir: 無視\n");
+			}
+		}
 	}
+
 	if (config_find_string(sc, G_SECTION_NAME, u8"dic_dir", &temp))
 	{
-		if (g_verbose)
+		if (strlen(oj->dn_dic_path) == 0)
 		{
-			printf("config dic_dir: %s\n", temp);
+			if (g_verbose)
+			{
+				printf("config dic_dir: %s\n", temp);
+			}
+			set_config_dic_dir(oj, temp);
 		}
-		openjtalk_setDic(oj, temp);
+		else
+		{
+			if (g_verbose)
+			{
+				printf("config dic_dir: 無視\n");
+			}
+		}
 	}
+
 	if (config_find_string(sc, G_SECTION_NAME, u8"voice", &temp))
 	{
-		if (g_verbose)
+		if (strlen(oj->fn_voice_path) == 0)
 		{
-			fprintf(stderr, "config voice: %s\n", temp);
+			if (g_verbose)
+			{
+				fprintf(stderr, "config voice: %s\n", temp);
+			}
+			set_config_voice(oj, temp);
 		}
-		openjtalk_setVoice(oj, temp);
+		else
+		{
+			if (g_verbose)
+			{
+				printf("config voice: 無視\n");
+			}
+		}
 	}
 
 	int temp_int;
@@ -4038,13 +4449,33 @@ bool get_ini_data(OpenJTalk *oj)
 	return true;
 }
 
-bool set_ini_path(OpenJTalk *oj)
+
+// 指定フォルダに設定ファイルがあるか調べ、その位置を記録する。
+bool set_ini_path(OpenJTalk *oj, const char *dir)
 {
-	if (!exists_file(G_INI_NAME))
+	if (dir == NULL || strlen(dir) == 0)
 	{
 		return false;
 	}
-	get_fullpath(G_INI_NAME, g_ini_path);
+
+	if (strlen(dir) + 1 + strlen(G_INI_NAME) + 1 > MAX_PATH)
+	{
+		return false;
+	}
+
+	char temp[MAX_PATH];
+	clear_path_string(temp,MAX_PATH);
+	strcpy(temp,dir);
+	strcat(temp,G_SLASH_CHAR);
+	strcat(temp,G_INI_NAME);
+
+	if (!exists_file(temp))
+	{
+		return false;
+	}
+
+	strcpy(g_ini_path, temp);
+	strcpy(g_ini_dir, dir);
 
 	if (g_verbose)
 	{
@@ -4064,6 +4495,9 @@ OPENJTALK_DLL_API HtsVoiceFilelist *OPENJTALK_CONVENTION openjtalk_getHTSVoiceLi
 		g_lastError = OPENJTALKERROR_OBJECT_POINTER_IS_NULL;
 		return NULL;
 	}
+
+	int d=0;
+	counter_reset_file_or_directory_list();
 	HtsVoiceFilelist *result = (HtsVoiceFilelist *)get_file_or_directory_list(oj->dn_voice_dir_path, G_VOICE_WILDCARD, false, OPENJTALKCHARSET_SHIFT_JIS);
 	for (HtsVoiceFilelist *list = result; list != NULL; list = list->succ)
 	{
@@ -4082,6 +4516,7 @@ OPENJTALK_DLL_API HtsVoiceFilelist *OPENJTALK_CONVENTION openjtalk_getHTSVoiceLi
 		g_lastError = OPENJTALKERROR_OBJECT_POINTER_IS_NULL;
 		return NULL;
 	}
+	counter_reset_file_or_directory_list();
 	HtsVoiceFilelist *result = (HtsVoiceFilelist *)get_file_or_directory_list(oj->dn_voice_dir_path, G_VOICE_WILDCARD, false, OPENJTALKCHARSET_UTF_8);
 	for (HtsVoiceFilelist *list = result; list != NULL; list = list->succ)
 	{
@@ -4100,6 +4535,7 @@ OPENJTALK_DLL_API HtsVoiceFilelist *OPENJTALK_CONVENTION openjtalk_getHTSVoiceLi
 		g_lastError = OPENJTALKERROR_OBJECT_POINTER_IS_NULL;
 		return NULL;
 	}
+	counter_reset_file_or_directory_list();
 	HtsVoiceFilelist *result = (HtsVoiceFilelist *)get_file_or_directory_list(oj->dn_voice_dir_path, G_VOICE_WILDCARD, false, OPENJTALKCHARSET_UTF_16);
 	for (HtsVoiceFilelist *list = result; list != NULL; list = list->succ)
 	{
@@ -4370,7 +4806,6 @@ OpenJTalk *openjtalk_initialize_sub(const char *voice, const char *dic, const ch
 		}
 		return NULL;
 	}
-#else
 #endif
 
 	OpenJTalk *oj = (OpenJTalk *)malloc(sizeof(OpenJTalk));
@@ -6215,15 +6650,8 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_test(OpenJTalk *oj, void *
 	g_verbose = temp;
 }
 
-OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_setVerbose(OpenJTalk *oj, bool sw)
+OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_setVerbose(bool sw)
 {
-	if (!oj)
-	{
-		g_lastError = OPENJTALKERROR_OBJECT_POINTER_IS_NULL;
-		return;
-	}
-
-	oj->errorCode = OPENJTALKERROR_NO_ERROR;
 	g_verbose = sw;
 }
 
@@ -6501,10 +6929,10 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_setOnFinishedCallback(Open
 	g_psd->onFinished = callback;
 }
 
-// DLLMAIN
-// Windowsでdll自身の位置を取得する処理を行うため
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-#ifdef DISABLE_JTALK_DLLMAIN
+#ifndef DISABLE_JTALK_DLLMAIN
+// DLLMAIN
+// Windowsでdll自身の位置を取得する処理を行う
 BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, LPVOID lpReserved)
 {
 	char path[MAX_PATH];
@@ -6513,9 +6941,26 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, LPVOID lpReserved)
 	case DLL_PROCESS_ATTACH:
 		GetModuleFileName(hInstDLL, path, MAX_PATH);
 		get_dir_path(path, g_dll_path);
+		if (g_verbose)
+		{
+			fprintf(stderr, "dll path: %s\n", path);
+		}
 		break;
 	}
 	return TRUE;
+}
+#else
+// WindowsでラップしたC++/CLIのコードからdll自身の位置を設定する
+void set_current_dll_path(const char *path)
+{
+	if (path!=NULL && strlen(path)<=MAX_PATH)
+	{
+		if (g_verbose)
+		{
+			fprintf(stderr, "dll path: %s\n", path);
+		}
+		strcpy(g_dll_path, path);
+	}
 }
 #endif
 #endif

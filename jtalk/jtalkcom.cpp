@@ -25,8 +25,7 @@ namespace JTalkCom
 //	[assembly:AssemblyKeyFileAttribute("JTalkCOMx86.snk")];
 #endif
 
-
-	/// <summary>
+/// <summary>
 	/// 音響モデルファイルデータのインターフェイス
 	/// </summary>
 	[Guid("75CDB8C8-BF88-47AA-97FA-D88EF80EFEB8")]
@@ -87,8 +86,7 @@ namespace JTalkCom
 		/// <summary>
 		/// 音響モデルファイルの名前（拡張子を除いた部分）
 		/// </summary>
-		property System::String ^
-			Name {
+		property System::String ^Name {
 			/// <summary>
 			/// 音響モデルファイルの名前を取得する
 			/// </summary>
@@ -597,9 +595,6 @@ namespace JTalkCom
 		/// </summary>
 		OpenJTalk *m_openjtalk = NULL;
 
-
-		System::String ^dll_path = nullptr;
-
 		/// <summary>
 		/// <para>音響モデルファイルデータのコレクション</para>
 		/// <para>VBScriptで For Each のグループに指定可能</para>
@@ -656,17 +651,32 @@ namespace JTalkCom
 			m_voiceCollection->Clear();
 		}
 
+		/// <summary>
+		/// <para>自分自身のパスを伝える</para>
+		/// </summary>
+		void set_own_path()
+		{
+			String^ dll_path = Assembly::GetExecutingAssembly()->Location;
+			String^ dll_dir  = IO::Path::GetDirectoryName(dll_path);
+			const char *path = "";
+			marshal_context ctx;
+			if (dll_path != nullptr)
+			{
+				path = (const char *)ctx.marshal_as<const char *>(dll_dir);
+				set_current_dll_path(path);
+			}
+		}
+
 	public:
 		/// <summary>
 		/// <para>コンストラクタ</para>
 		/// </summary>
 		JTalkTTS(System::String ^voicePath, System::String ^dicPath, System::String ^voiceDirPath)
 		{
+			set_own_path();
 			const char16_t *voicePathPtr = NULL;
 			const char16_t *dicPathPtr = NULL;
 			const char16_t *voiceDirPathPtr = NULL;
-
-			this->dll_path = Assembly::GetExecutingAssembly()->Location;
 
 			marshal_context ctx;
 			if (voicePath != nullptr)
@@ -685,8 +695,10 @@ namespace JTalkCom
 			check_openjtalk_object();
 			generate_voice_list();
 		}
+
 		JTalkTTS(System::String ^voicePath, System::String ^dicPath)
 		{
+			set_own_path();
 			const char16_t *voicePathPtr = NULL;
 			const char16_t *dicPathPtr = NULL;
 			marshal_context ctx;
@@ -702,8 +714,10 @@ namespace JTalkCom
 			check_openjtalk_object();
 			generate_voice_list();
 		}
+
 		JTalkTTS(System::String ^voicePath)
 		{
+			set_own_path();
 			const char16_t *voicePathPtr = NULL;
 			marshal_context ctx;
 			if (voicePath != nullptr)
@@ -714,8 +728,10 @@ namespace JTalkCom
 			check_openjtalk_object();
 			generate_voice_list();
 		}
+
 		JTalkTTS()
 		{
+			set_own_path();
 			m_openjtalk = openjtalk_initializeU16(NULL, NULL, NULL);
 			check_openjtalk_object();
 			generate_voice_list();
@@ -816,7 +832,7 @@ namespace JTalkCom
 		/// <para>以降の発声で使用する音響モデルファイルの設定</para>
 		/// <para>三通りの指定方法</para>
 		/// <para>・絶対パス...ファイルの直接指定</para>
-		/// <para>・相対パス（拡張子有り）...音響モデルファイルフォルダ内での相対指定</para>
+		/// <para>・相対パス（拡張子有り）...実行ファイルの位置基準での相対指定</para>
 		/// <para>・名前のみ（拡張子無し）...音響モデルファイルフォルダ内を探索</para>
 		/// <para>探索について：</para>
 		/// <para>探索範囲に複数適合するものがあっても、最初に見つけたものとする。</para>
