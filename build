@@ -29,6 +29,6 @@ make
 if [[ $(uname) =~ $re ]]; then
     make install/strip
 else
-    sudo make install
+    sudo make install/strip
 fi
 cd ..

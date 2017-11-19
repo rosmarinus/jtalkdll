@@ -10,7 +10,8 @@
 * 動作環境
 * ダウンロード
 * ビルド
-* インストール
+* インストール内容
+* 動作確認
 * APIの説明
 * 利用方法
 * 音響モデルデータ、辞書データの指定
@@ -201,6 +202,8 @@ cmake .. -G "Visual Studio 15 2017"
 msbuild ALL_BUILD.vcxproj /p:Configuration=Release;Platform=win32
 ```
 
+インストールが完了したら、[動作確認](#validation)を参考に、動作するかどうか確認してみてください。 
+
 #### MSYS2 の MinGW-W64 を使ったビルド
 
 ##### MSYS2の準備
@@ -244,6 +247,8 @@ jtalk.dllを手作業でc:\open_jtalk\binにコピーして、ここにPATHを�
 
 buildスクリプト中のcmake の行に ``-Dinstall_open_jtalk=true`` を追加すると open_jtalk、hts_engine、mecab-dict-index をインストールします。
 
+インストールが完了したら、[動作確認](#validation)を参考に、動作するかどうか確認してみてください。 
+
 ##### PortAudio でスタティックライブラリを作る改変
 
 今回、MingGWではCMake中でスタティックライブラリをリンクできず、またportaudioのconfigureを使ったビルドでもスタティックライブラリそのものが作れませんでした。
@@ -286,25 +291,30 @@ jtalk.dllや、実行ファイルのサンプル、ヘッダファイルは、Cy
 Cygwinの外で、jtalk.dllを使ったプログラムを動かすためには、そのプログラムと同じフォルダにjtalk.dllを配置するか、
 jtalk.dllを手作業でc:\open_jtalk\binにコピーして、そこにPATHを通すかしてください。
 
+インストールが完了したら、[動作確認](#validation)を参考に、動作するかどうか確認してみてください。 
+
 ### macOS でのビルド
 
 #### 準備
 
-* Xcodeのインストール
-* Homebrewのインストール
+cmake が必要です。
 
-##### Xcodeのインストール
+そのために、まずコマンドライン・デベロッパ・ツールをインストールします。
+これは cmake をインストールするために使うHomebrewに必要だからです。
 
-macOSでプログラムの開発をするには、Xcodeがインストールされていなくてはいけません。
-統合環境としてのXcodeを利用しないこのプロジェクトでも必要です。
-Xcodeのインストール方法は割愛します。
+```bash:
+xcode-select --install
+```
 
-##### Homebrewのインストール
-
-macOS用のパッケージマネージャーHomebrewもインストールしておくとパッケージを追加するのに便利です。
+次に、macOS用のパッケージマネージャーHomebrewをインストールします。
+これを使わないcmakeをインストール方法もありますが、今回はこれを使います。
 インストールの仕方と、使い方は、[Homebrew](https://brew.sh/index_ja.html)にあります。
 
-（インストールすべきコマンドのリストアップ 記述予定）
+ようやく、cmakeのインストールです。
+
+```bash:
+brew install cmake
+```
 
 #### macOSでのビルド方法
 
@@ -317,11 +327,13 @@ cd jtalkdll
 bash build
 ```
 
+インストールが完了したら、[動作確認](#validation)を参考に、動作するかどうか確認してみてください。 
+
 ### Ubuntu でのビルド
 
 以下に、Ubuntuでのビルド方法を示します。
 
-他のlinuxディストリビューションでも同様の処理を行えば、生成できるでしょうが、Ubuntuだけを例として示します。
+他のlinuxディストリビューションでも同様の処理を行えば、生成できるでしょうが、Ubuntuを例として示します。
 libconvに関しては簡単な存在判定ルーチンを入れて自動処理しています。
 万が一これがうなく働かないときは、CMakeFile.txtに手を加えて対処してください。
 
@@ -345,7 +357,9 @@ cd jtalkdll
 bash build
 ```
 
-## インストール
+インストールが完了したら、[動作確認](#validation)を参考に、動作するかどうか確認してみてください。 
+
+## インストール内容
 
 ここでは上記のビルドによって、インストールされるファイルについて述べます。
 
@@ -428,7 +442,7 @@ MSVCのみ
 * MeCab辞書ファイル ... /usr/local/OpenJTalk/dic_utf_8
 * 音響モデルファイル ... /usr/local/OpenJTalk/voice
 
-## 動作確認
+## <a name="validation"> 動作確認
 
 対象のプラットフォームにおいて上記の方法でビルドが成功したら、以下の方法で動作確認ができます。
 

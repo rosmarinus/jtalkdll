@@ -2732,32 +2732,6 @@ bool set_default_voice_dir_path(OpenJTalk *oj)
 	char temp[MAX_PATH];
 	clear_path_string(temp, MAX_PATH);
 
-	// カレントパスから可能性のあるフォルダを探す
-	if (g_current_path != NULL && strlen(g_current_path) != 0)
-	{
-		for (const char **d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
-		{
-			if (search_directory(g_current_path, *d, temp))
-			{
-				goto return_true;
-			}
-		}
-	}
-
-	// その親ディレクトリから可能性のあるフォルダを探す
-	char parent[MAX_PATH];
-	get_dir_path(g_current_path,parent);
-	if (parent != NULL && strlen(parent) != 0)
-	{
-		for (const char **d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
-		{
-			if (search_directory(parent, *d, temp))
-			{
-				goto return_true;
-			}
-		}
-	}
-
 	// 標準のインストールフォルダから可能性のある名前を探す
 	if (G_DN_INSTALL_PATH != NULL && strlen(G_DN_INSTALL_PATH) != 0)
 	{
@@ -2980,32 +2954,6 @@ bool set_default_dic_path(OpenJTalk *oj)
 
 	char temp[MAX_PATH];
 	clear_path_string(temp, MAX_PATH);
-
-	// カレントフォルダから可能性のある名前を探す
-	if (g_current_path != NULL && strlen(g_current_path) != 0)
-	{
-		for (const char **d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
-		{
-			if (search_directory(g_current_path, *d, temp))
-			{
-				goto check_charset;
-			}
-		}
-	}
-
-	// 親ディレクトリから可能性のあるフォルダを探す
-	char parent[MAX_PATH];
-	get_dir_path(g_current_path,parent);
-	if (parent != NULL && strlen(parent) != 0)
-	{
-		for (const char **d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
-		{
-			if (search_directory(parent, *d, temp))
-			{
-				goto check_charset;
-			}
-		}
-	}
 
 	// 標準のインストールフォルダから可能性のある名前を探す。
 	if (G_DN_INSTALL_PATH != NULL && strlen(G_DN_INSTALL_PATH) != 0)
