@@ -1,5 +1,5 @@
 include("./jtalk.jl")
-#tts = Jtalk.JTalk(voicePath="mei_normal")
+tts = Jtalk.JTalk(voicePath="mei_normal")
 
 tts = Jtalk.JTalk()
 println("available voices:")

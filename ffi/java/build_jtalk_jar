@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-javac -encoding UTF-8 -classpath jna-4.4.0.jar:jna-platform-4.4.0.jar:. -Xlint:unchecked -Xdiags:verbose JTalkJna.java
-if [ ! -e jtalk ]; then
-	mkdir jtalk
-fi
-mv JTalkJna*.class jtalk
-jar vcf jtalk.jar jtalk

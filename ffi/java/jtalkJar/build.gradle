@@ -1,0 +1,32 @@
+plugins {
+    id "java"
+    id "application"
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+javadoc {
+    options.encoding = "UTF-8"
+    destinationDir = file("../javadoc")
+}
+
+jar {
+    baseName = "${jarBaseName}"
+    version =  "${jarVersion}"
+}
+
+dependencies {
+    implementation "net.java.dev.jna:jna:5.5.0"
+    implementation "net.java.dev.jna:jna-platform:5.5.0"
+}
+
+application {
+    mainClassName = "com.github.rosmarinus.jtalk.JtalkJna"
+}
+
+task copyjar(type: Copy) {
+    from "build/libs/${jarBaseName}-${jarVersion}.jar"
+    into "../"
+}

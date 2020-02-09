@@ -7,7 +7,7 @@ var tts = new Jtalk();
 //var tts = new Jtalk({ Voice:'mei_normal', Alpha:0.54 });
 
 console.log("available voices:");
-tts.Voices.forEach(function(v){console.log(v.path)});
+tts.Voices.forEach(v=>console.log(v.path));
 tts.Voice = tts.Voices[Math.floor(Math.random() * tts.Voices.length)];
 console.log(`current voice: ${tts.Voice.name}`);
 console.log(`dic: ${tts.Dic}`);

@@ -1,0 +1,17 @@
+{
+  "name": "jtalkjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "jtalk.js",
+  "dependencies": {
+    "ffi-napi": "^2.4.6",
+    "node-gyp": "^6.1.0",
+    "ref-struct-napi": "^1.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "takayan",
+  "license": "MIT"
+}

@@ -1,0 +1,31 @@
+plugins {
+    id "scala"
+    id "application"
+}
+
+import org.gradle.internal.os.OperatingSystem
+task copydll(type: Copy) {
+    if (OperatingSystem.current().isWindows()) {
+        from "../jtalk.dll"
+        into "build/classes/scala/main/"
+    }
+}
+
+compileScala {
+    options.encoding = "UTF-8"
+}
+
+dependencies {
+    compile project(":jtalkJar")
+    compile files("../jtalkjar/build/libs/${jarBaseName}-${jarVersion}.jar")
+    compile group: "org.scala-lang", name: "scala-library", version: "2.13.1"
+    implementation "net.java.dev.jna:jna:5.5.0"
+    implementation "net.java.dev.jna:jna-platform:5.5.0"
+}
+
+application {
+    mainClassName = "JtdJnaScala"
+}
+
+run {
+}

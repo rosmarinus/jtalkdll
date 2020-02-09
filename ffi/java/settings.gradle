@@ -1,0 +1,2 @@
+rootProject.name = 'jtalk'
+include 'jtalkJar','javaSample','kotlinSample','scalaSample','groovySample'
