@@ -15,8 +15,8 @@ set(CMAKE_BUILD_TYPE Release)
 
 ### source directory
 set(HTS_ENGINE_API_PATH "${CMAKE_SOURCE_DIR}/hts_engine_API-1.10")
-set(OPEN_JTALK_PATH "${CMAKE_SOURCE_DIR}/open_jtalk-1.10")
-set(OPEN_JTALK_DIC_PATH "${CMAKE_SOURCE_DIR}/open_jtalk_dic_utf_8-1.10")
+set(OPEN_JTALK_PATH "${CMAKE_SOURCE_DIR}/open_jtalk-1.11")
+set(OPEN_JTALK_DIC_PATH "${CMAKE_SOURCE_DIR}/open_jtalk_dic_utf_8-1.11")
 set(HTS_VOICE_PATH "${CMAKE_SOURCE_DIR}/voice")
 set(JTALK_PATH "${CMAKE_SOURCE_DIR}/jtalk")
 
@@ -118,7 +118,7 @@ set(DATA_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
 ### mecab const
 set(DIC_VERSION 102)
 set(PACKAGE "open_jtalk")
-set(VERSION "1.10")
+set(VERSION "1.11")
 
 
 ### get git revision

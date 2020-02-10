@@ -67,7 +67,12 @@ if "%errorlevel%" == "0" (
     set param=-Dbuild_jtalkcom=true
 )
 del/q %name%.*
-
+rem ****************************************
+rem untar dic
+rem ****************************************
+set DIC=open_jtalk_dic_utf_8
+set DIC_VER=1.11
+if exist %DIC%-%DIC_VER%.tar.gz tar -zxvf %DIC%-%DIC_VER%.tar.gz
 rem ****************************************
 rem build
 rem ****************************************

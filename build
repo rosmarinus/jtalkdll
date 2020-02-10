@@ -21,6 +21,11 @@ elif [[ $(uname) =~ "CYGWIN" ]]; then
 	fi
 	arch=$arch-w64-mingw32
 fi
+dic=open_jtalk_dic_utf_8
+dic_ver=1.11
+if [ -f ${dic}-${dic_ver}.tar.gz ]; then
+    tar -zxvf ${dic}-${dic_ver}.tar.gz
+fi
 build_dir=build$arch.dir
 mkdir -p ${build_dir}
 cd ${build_dir}
