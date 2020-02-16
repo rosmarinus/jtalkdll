@@ -1,64 +1,100 @@
 # CMakeLists.txt for open_jtalk
-cmake_minimum_required(VERSION 2.8.6)
+cmake_minimum_required(VERSION 3.10)
 
 # command line option
 # -Dtarget_arch=(i686|x86_64) : cygwin
 #    default value = uname -m
+# -Dcharset=(utf_8|shift_jis|euc_jp)
+#    default value = utf_8
 
 project(OpenJTalk)
 set(CMAKE_BUILD_TYPE Release)
 #set(CMAKE_VERBOSE_MAKEFILE TRUE)
 #set(target_arch x86_64)
+#set(charset utf_8)
+
+
+### charset
+if(charset MATCHES "shift_jis")
+    set(CHARSET "cp932")
+    set(CHARSETSTR "CHARSET_SHIFT_JIS")
+elseif(charset MATCHES "euc_jp")
+    set(CHARSET "EUC-JP")
+    set(CHARSETSTR "CHARSET_EUC_JP")
+else()
+    set(CHARSET "UTF-8")
+    set(CHARSETSTR "CHARSET_UTF_8")
+endif()
+message("CHARSET=${CHARSET}")
+
+
+### archive file version
+set(HTS_ENGINE_API_VERSION "1.10")
+set(OPEN_JTALK_VERSION "1.11")
+set(OPEN_JTALK_DIC_VERSION "1.11")
+
+
+### archive file name
+set(HTS_ENGINE_API_NAME "hts_engine_API-${HTS_ENGINE_API_VERSION}")
+set(OPEN_JTALK_NAME "open_jtalk-${OPEN_JTALK_VERSION}")
+set(OPEN_JTALK_DIC_NAME "open_jtalk_dic_utf_8-${OPEN_JTALK_DIC_VERSION}")
+set(HTS_VOICE "voice")
+
 
 ### source directory
-set(HTS_ENGINE_API_PATH "${CMAKE_SOURCE_DIR}/hts_engine_API-1.10")
-set(OPEN_JTALK_PATH "${CMAKE_SOURCE_DIR}/open_jtalk-1.10")
-set(OPEN_JTALK_DIC_PATH "${CMAKE_SOURCE_DIR}/open_jtalk_dic_utf_8-1.10")
-set(HTS_VOICE_PATH "${CMAKE_SOURCE_DIR}/hts_voice_nitech_jp_atr503_m001-1.05")
+set(HTS_ENGINE_API_PATH "${CMAKE_SOURCE_DIR}/${HTS_ENGINE_API_NAME}")
+set(OPEN_JTALK_PATH "${CMAKE_SOURCE_DIR}/${OPEN_JTALK_NAME}")
+set(OPEN_JTALK_DIC_PATH "${CMAKE_SOURCE_DIR}/${OPEN_JTALK_DIC_NAME}")
+set(HTS_VOICE_PATH "${CMAKE_SOURCE_DIR}/${HTS_VOICE}")
+
+
+### directory name
+set(DICDATADIR "${OPEN_JTALK_PATH}/mecab-naist-jdic")
+set(DICBINDIR ${CMAKE_CURRENT_BINARY_DIR}/dic)
 
 
 ### sub folder name install
-set(FOLDER_INSTALL_BIN   bin)
-set(FOLDER_INSTALL_LIB   lib)
-set(FOLDER_INSTALL_DIC   dic_utf_8)
+set(FOLDER_INSTALL_BIN bin)
+set(FOLDER_INSTALL_LIB lib)
+set(FOLDER_INSTALL_DIC dic_utf_8)
 set(FOLDER_INSTALL_VOICE voice)
 
 
 ### set mingw compiler
 if(MINGW)
-	set(target_arch          "$ENV{MINGW_CHOST}")
-    set(mingw_prefix         "$ENV{MINGW_PREFIX}")
+    set(target_arch "$ENV{MINGW_CHOST}")
+    set(mingw_prefix "$ENV{MINGW_PREFIX}")
     set(CMAKE_FIND_ROOT_PATH "${mingw_prefix}")
-    set(CMAKE_C_COMPILER     gcc)
-    set(CMAKE_CXX_COMPILER   g++)
-    set(CMAKE_RANLIB         ranlib)
-    set(CMAKE_AS             as)
-    set(CMAKE_AR             ar)
-    set(CMAKE_STRIP          strip)
+    set(CMAKE_C_COMPILER gcc)
+    set(CMAKE_CXX_COMPILER g++)
+    set(CMAKE_RANLIB ranlib)
+    set(CMAKE_AS as)
+    set(CMAKE_AR ar)
+    set(CMAKE_STRIP strip)
     set(mingw_build 1)
 elseif(CYGWIN)
     if(NOT target_arch)
-		if(CMAKE_UNAME)
-			exec_program(uname ARGS -m OUTPUT_VARIABLE target_arch)
-		endif()
-	endif()
+        if(CMAKE_UNAME)
+            exec_program(uname ARGS -m OUTPUT_VARIABLE target_arch)
+        endif()
+    endif()
     if(target_arch)
-	   	set(target_arch          "${target_arch}-w64-mingw32")
-	    set(CMAKE_FIND_ROOT_PATH "/usr/${target_arch}")
-        set(CMAKE_C_COMPILER     ${target_arch}-gcc)
-        set(CMAKE_CXX_COMPILER   ${target_arch}-g++)
-        set(CMAKE_RANLIB         ${target_arch}-ranlib)
-        set(CMAKE_AS             ${target_arch}-as)
-        set(CMAKE_AR             ${target_arch}-ar)
-        set(CMAKE_STRIP          ${target_arch}-strip)
-	    set(mingw_build 1)
-	endif()
+        set(target_arch "${target_arch}-w64-mingw32")
+        set(CMAKE_FIND_ROOT_PATH "/usr/${target_arch}")
+        set(CMAKE_C_COMPILER ${target_arch}-gcc)
+        set(CMAKE_CXX_COMPILER ${target_arch}-g++)
+        set(CMAKE_RANLIB ${target_arch}-ranlib)
+        set(CMAKE_AS ${target_arch}-as)
+        set(CMAKE_AR ${target_arch}-ar)
+        set(CMAKE_STRIP ${target_arch}-strip)
+        set(mingw_build 1)
+    endif()
 endif()
 if(mingw_build)
-	set(CMAKE_SYSTEM_NAME Windows)
-	set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-	set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-	set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+    set(CMAKE_SYSTEM_NAME Windows)
+    set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 endif()
 
 
@@ -97,11 +133,90 @@ endif()
 ### data install prefix
 set(DATA_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
 
-
 ### mecab const
+set(PACKAGE,"open_jtalk")
+set(VERSION "1.11")
 set(DIC_VERSION 102)
-set(PACKAGE "open_jtalk")
-set(VERSION "1.10")
+set(PACKAGE_NAME,"${PACKAGE}")
+set(PACKAGE_VERSION,"${VERSION}")
+set(PACKAGE_STRING,$"{PACKAGE_NAME} ${PACKAGE_VERSION}")
+set(PACKAGE_TARNAME,"${PACKAGE_NAME}")
+set(PACKAGE_URL,"")
+set(PACKAGE_BUGREPORT,"")
+
+### mecab definition flags
+include(CheckFunctionExists)
+include(CheckIncludeFiles)
+include(TestBigEndian)
+
+set(def_flags "")
+check_function_exists(getenv HAVE_GETENV)
+if(${HAVE_GETENV})
+    set(def_flags "${def_flags} -DHAVE_GETENV")
+endif()
+
+check_function_exists(mmap HAVE_MMAP)
+if(${HAVE_MMAP})
+    set(def_flags "${def_flags} -DHAVE_MMAP")
+endif()
+
+check_include_files (dirent.h HAVE_DIRENT_H)
+if(${HAVE_DIRENT_H})
+    set(def_flags "${def_flags} -DHAVE_DIRENT_H")
+endif()
+
+check_include_files (fcntl.h HAVE_FCNTL_H)
+if(${HAVE_FCNTL_H})
+    set(def_flags "${def_flags} -DHAVE_FCNTL_H")
+endif()
+
+check_include_files(stdint.h HAVE_STDINT_H)
+if(${HAVE_STDINT_H})
+    set(def_flags "${def_flags} -DHAVE_STDINT_H")
+endif()
+
+check_include_files(string.h HAVE_STRING_H)
+if(${HAVE_STRING_H})
+    set(def_flags "${def_flags} -DHAVE_STRING_H")
+endif()
+
+check_include_files(sys/mman.h HAVE_SYS_MMAN_H)
+if(${HAVE_SYS_MMAN_H})
+    set(def_flags "${def_flags} -DHAVE_SYS_MMAN_H")
+endif()
+
+check_include_files(sys/stat.h HAVE_SYS_STAT_H)
+if(${HAVE_SYS_STAT_H})
+    set(def_flags "${def_flags} -DHAVE_SYS_STAT_H")
+endif()
+
+check_include_files(sys/types.h HAVE_SYS_TYPES_H)
+if(${HAVE_SYS_TYPES_H})
+    set(def_flags "${def_flags} -DHAVE_SYS_TYPES_H")
+endif()
+
+check_include_files(unistd.h HAVE_UNISTD_H)
+if(${HAVE_UNISTD_H})
+    set(def_flags "${def_flags} -DHAVE_UNISTD_H")
+endif()
+
+check_include_files(windows.h HAVE_WINDOWS_H)
+if(${HAVE_WINDOWS_H})
+    set(def_flags "${def_flags} -DHAVE_WINDOWS_H")
+endif()
+
+test_big_endian(WORDS_BIGENDIAN)
+if(${WORDS_BIGENDIAN})
+    set(def_flags "${def_flags} -DWORDS_BIGENDIAN")
+endif()
+
+set(def_flags "${def_flags} -DDIC_VERSION=${DIC_VERSION}")
+if(CHARSET MATCHES "UTF-8")
+    set(def_flags "${def_flags} -DMECAB_USE_UTF8_ONLY")
+endif()
+set(def_flags "${def_flags} -DMECAB_DEFAULT_RC=\"dummy\"")
+set(def_flags "${def_flags} -DPACKAGE=\"\\\"${PACKAGE}\\\"\"")
+set(def_flags "${def_flags} -DVERSION=\"\\\"${VERSION}\\\"\"")
 
 
 ### look for libiconv
@@ -123,52 +238,46 @@ endif()
 
 ### c/cxx flags
 if(MSVC AND WIN32)
-    set(CMAKE_C_FLAGS   "/MD /O2 /Ob2 /Oi /Ot /Oy /GT")
-    set(CMAKE_CXX_FLAGS "/MD /O2 /Ob2 /Oi /Ot /Oy /GT")
+    set(CMAKE_C_FLAGS  "-MD -O2 -Ob2 -Oi -Ot -Oy -GT")
+    set(CMAKE_CXX_FLAGS "-MD -O2 -Ob2 -Oi -Ot -Oy -GT")
     set(CMAKE_C_FLAGS_RELEASE "")
     set(CMAKE_CXX_FLAGS_RELEASE "")
     set(CMAKE_C_FLAGS_DEBUG "")
     set(CMAKE_CXX_FLAGS_DEBUG "")
 
     ### openjtalk c flags
-    set(openjtalk_compile_flags "/TC /D CHARSET_UTF_8 /D ASCII_HEADER")
+    set(openjtalk_compile_flags "-TC -D${CHARSETSTR} -DASCII_HEADER")
 
     ### hts_engine_API c flgas
-    set(hts_c_compile_flags "/TC /D CHARSET_UTF_8 /D ASCII_HEADER")
+    set(hts_c_compile_flags "-TC -DC${CHARSETSTR} -DASCII_HEADER")
 
     ### mecab cpp flgas
-    set(cxx_compile_flags "/TP")
-    set(cxx_compile_flags "${cxx_compile_flags} /DHAVE_WINDOWS_H")
-    set(cxx_compile_flags "${cxx_compile_flags} /DASCII_HEADER")
-    set(cxx_compile_flags "${cxx_compile_flags} /DDIC_VERSION=${DIC_VERSION}")
-    set(cxx_compile_flags "${cxx_compile_flags} /DMECAB_USE_UTF8_ONLY")
-    set(cxx_compile_flags "${cxx_compile_flags} /DCHARSET_UTF_8")
-    set(cxx_compile_flags "${cxx_compile_flags} /DMECAB_WITHOUT_MUTEX_LOCK")
-    set(cxx_compile_flags "${cxx_compile_flags} /DMECAB_DEFAULT_RC=\"dummy\"")
-    set(cxx_compile_flags "${cxx_compile_flags} /DPACKAGE=\"\\\"${PACKAGE}\\\"\"")
-    set(cxx_compile_flags "${cxx_compile_flags} /DVERSION=\"\\\"${VERSION}\\\"\"")
-    set(mecab_cxx_compile_flags_with_EHa "/EHa ${cxx_compile_flags}")
-    set(mecab_cxx_compile_flags "/EHsc ${cxx_compile_flags}")
+    set(def_flags "${def_flags} -DHAVE_WINDOWS_H")
+    set(def_flags "${def_flags} -DASCII_HEADER")
+    set(def_flags "${def_flags} -D${CHARSETSTR}")
+    set(def_flags "${def_flags} -DMECAB_WITHOUT_MUTEX_LOCK")
+
+    set(cxx_compile_flags "-TP")
+    set(cxx_compile_flags "${cxx_compile_flags} ${def_flags}")
+    set(mecab_cxx_compile_flags_with_EHa "-EHa ${cxx_compile_flags}")
+    set(mecab_cxx_compile_flags "-EHsc ${cxx_compile_flags}")
 
     set(CMAKE_L_FLAGS "/LTCG")
 
 else()
     ### openjtalk c flags
-    set(openjtalk_compile_flags "-O2 -Wall -g -finput-charset=UTF-8 -fexec-charset=UTF-8 -D CHARSET_UTF_8 -D ASCII_HEADER")
+    set(openjtalk_compile_flags "-O2 -Wall -g -finput-charset=${CHARSET} -fexec-charset=${CHARSET} -D${CHARSETSTR} -DASCII_HEADER")
 
     ### hts_engine_API c flgas
-    set(hts_c_compile_flags "-O2 -Wall -g -finput-charset=UTF-8 -fexec-charset=UTF-8 -D CHARSET_UTF_8 -D ASCII_HEADER")
+    set(hts_c_compile_flags "-O2 -Wall -g -finput-charset=${CHARSET} -fexec-charset=${CHARSET} -D${CHARSETSTR} -DASCII_HEADER")
 
     ### mecab cpp flgas
+    set(def_flags "${def_flags} -DHAVE_CONFIG_H  -DHAVE_UNISTD_H")
+
     set(mecab_cxx_compile_flags "")
     set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -O3 -Wall -Wno-deprecated")
-    set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -finput-charset=UTF-8 -fexec-charset=UTF-8")
-    set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -D HAVE_CONFIG_H  -D HAVE_UNISTD_H")
-    set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -D DIC_VERSION=${DIC_VERSION}")
-    set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -D MECAB_USE_UTF8_ONLY")
-    set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -D MECAB_DEFAULT_RC=\"$dummt\"")
-    set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -D PACKAGE=\"\\\"${PACKAGE}\\\"\"")
-    set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -D VERSION=\"\\\"${VERSION}\\\"\"")
+    set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -finput-charset=${CHARSET} -fexec-charset=${CHARSET}")
+    set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} ${def_flags}")
 
     ### mingw
     if(mingw_build)
@@ -402,10 +511,45 @@ endif()
 install(TARGETS open_jtalk RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
 
 
-### install dictionary
-file(GLOB dicfiles ${OPEN_JTALK_DIC_PATH}/*)
-install(FILES ${dicfiles} DESTINATION ${DATA_INSTALL_PREFIX}/${FOLDER_INSTALL_DIC})
+### list of dictionary files
+set(copy_list char.bin;matrix.bin;sys.dic;unk.dic;left-id.def;right-id.def;rewrite.def;pos-id.def;COPYING)
+set(dic_files "")
+foreach(path IN LISTS copy_list)
+    list(APPEND dic_files ${DICBINDIR}/${path})
+endforeach()
+
+# copy and rename
+add_custom_command(
+    OUTPUT ${DICBINDIR}/left-id.def;${DICBINDIR}/right-id.def;${DICBINDIR}/rewrite.def;${DICBINDIR}/pos-id.def;${DICBINDIR}/COPYING
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/COPYING ${DICBINDIR}/COPYING
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/naist-jdic.csv ${DICBINDIR}/naist-jdic.csv
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/unidic-csj.csv ${DICBINDIR}/unidic-csj.csv
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/char.def ${DICBINDIR}/char.def
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/feature.def ${DICBINDIR}/feature.def
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/matrix.def ${DICBINDIR}/matrix.def
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/unk.def ${DICBINDIR}/unk.def
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/_left-id.def ${DICBINDIR}/left-id.def
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/_right-id.def ${DICBINDIR}/right-id.def
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/_rewrite.def ${DICBINDIR}/rewrite.def
+    COMMAND ${CMAKE_COMMAND} -E copy ${DICDATADIR}/_pos-id.def ${DICBINDIR}/pos-id.def
+)
+
+# do mecab-dict-index
+add_custom_command(
+    OUTPUT ${DICBINDIR}/char.bin ${DICBINDIR}/matrix.bin ${DICBINDIR}/sys.dic ${DICBINDIR}/unk.dic
+    DEPENDS mecab-dict-index ${DICBINDIR}/left-id.def ${DICBINDIR}/right-id.def ${DICBINDIR}/rewrite.def ${DICBINDIR}/pos-id.def
+    COMMAND "mecab-dict-index" "-d" "${DICBINDIR}" "-o" "${DICBINDIR}" "-f" "UTF-8" "-t" "${CHARSET}"
+)
+
+### target dictionary
+add_custom_target (dictionary
+    DEPENDS mecab-dict-index
+    SOURCES ${DICBINDIR}/char.bin ${DICBINDIR}/matrix.bin ${DICBINDIR}/sys.dic ${DICBINDIR}/unk.dic
+    COMMENT "Compiling MeCab dictionary"
+)
+add_dependencies(open_jtalk dictionary)
+install(FILES ${dic_files} DESTINATION ${DATA_INSTALL_PREFIX}/${FOLDER_INSTALL_DIC})
 
 
 ### install voices
-install(DIRECTORY ${HTS_VOICE_PATH} DESTINATION ${DATA_INSTALL_PREFIX}/${FOLDER_INSTALL_VOICE})
+install(DIRECTORY ${HTS_VOICE_PATH} DESTINATION ${DATA_INSTALL_PREFIX})

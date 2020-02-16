@@ -1,6 +1,7 @@
 @echo off
 setlocal
-set VER=2017
+set VER=2019
+:arch_top
 if "%1"=="x86" (
 	set ARCH=x86
 	set BATNAME=vcvars32
@@ -39,7 +40,8 @@ set BAT="%ProgramFiles(x86)%\Microsoft Visual Studio\%VER%\%INSTANCENAME%\VC\Aux
 if not exist %BAT% goto :error_batch
 goto :call_batch
 :error_batch
-echo "Visual Studio Community %VER% もしくは Build Tools for Visual Studio %VER% をインストールしてから実行してください。"
+echo Visual Studio Community %VER% または Build Tools for Visual Studio %VER% をインストールしてから実行してください。
+echo もしくは、build.batの三行目のset VER=%VER%の値を書き換えて下さい。
 goto :exit
 :call_batch
 call %BAT%
@@ -67,12 +69,6 @@ if "%errorlevel%" == "0" (
     set param=-Dbuild_jtalkcom=true
 )
 del/q %name%.*
-rem ****************************************
-rem untar dic
-rem ****************************************
-set DIC=open_jtalk_dic_utf_8
-set DIC_VER=1.11
-if exist %DIC%-%DIC_VER%.tar.gz tar -zxvf %DIC%-%DIC_VER%.tar.gz
 rem ****************************************
 rem build
 rem ****************************************
