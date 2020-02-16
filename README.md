@@ -27,14 +27,14 @@ WindowsではC#言語等の.NET Frameworkの言語や、WSH（ウィンドウズ
 
 このプロジェクトでは、オリジナルのファイル以外に、次に示す他のプロジェクトのファイルを含んでいます。
 
-* [open_jtalk-1.10](http://open-jtalk.sourceforge.net/)
-* [open_jtalk_dic_utf_8-1.10](http://open-jtalk.sourceforge.net/)
+* [open_jtalk-1.11](http://open-jtalk.sourceforge.net/)
+* [open_jtalk_dic_utf_8-1.11](http://open-jtalk.sourceforge.net/)
 * [hts_voice_nitech_jp_atr503_m001-1.05](http://open-jtalk.sourceforge.net/)
 * [hts_engine_API-1.10](http://hts-engine.sourceforge.net/)
 * [htsvoice-tohoku-f01](https://github.com/icn-lab/htsvoice-tohoku-f01)
 * [mei (MMDAgent)](http://www.mmdagent.jp/)
 * [PortAudio](http://www.portaudio.com/)
-* [jna](https://github.com/java-native-access/jna) サンプルプログラムにおいて
+* [gradle](https://github.com/gradle/gradle) javaサンプルプログラムにおいて
 
 これらの外部プロジェクトはそれぞれのライセンスに従います。
 なお、open_jtalk, hts_engine_APIはスタティックライブラリとして利用しています。
@@ -54,8 +54,8 @@ jtalk.c は内部で portaudio を呼び出すことでマルチプラットフ�
 以下のプラットフォームで動作確認しています。
 
 * Windows 10
-* macOS High Sierra
-* Ubuntu 17.10 (他のLinuxディストリビューションは未確認)
+* macOS Catalina
+* Ubuntu 18.10 (他のLinuxディストリビューションは未確認)
 
 ## ダウンロード
 
@@ -103,11 +103,11 @@ Windowsでバッチファイルを使ってビルドするときは、変更す�
 
 必要なもの：
 
-* Visual Studio 2017
+* Visual Studio 2019
 * CMake
 * git （必須ではないけど）
 
-まだ、Visual Studio 2017 がインストールされていない場合は、無償の Visual Studio 2017 Comunity　Edition もしくは Build Tools for Visual Studio 2017 をインストールしてください。
+まだ、Visual Studio 2019 がインストールされていない場合は、無償の Visual Studio 2019 Comunity　Edition もしくは Build Tools for Visual Studio 2019 をインストールしてください。
 どちらも[マイクロソフトのVisual Studioダウンロードサイト](https://www.visualstudio.com/ja/downloads/)からダウンロードができます。
 また[Chocolatey](https://chocolatey.org/)を使ってインストールすることもできます。
 
@@ -116,14 +116,14 @@ Windowsでバッチファイルを使ってビルドするときは、変更す�
 
 インストールが完了したら、``Visual Studio Installer``をスタートメニューから起動して、変更ボタンを押します。
 出現したワークロード画面で、このプロジェクトに必要な構成にチェックして、右下の「変更」ボタンを押し、必要なコンポーネントをインストールします。
-このとき必要な構成の指定は次の通りです。Visual Studio Community 2017では、ワークロードで「C++によるデスクトップ開発」にチェックします。
-Visual Studio Build Tolls 2017では、ワークロードで「Visual C++ Build Tools」にチェックします。
+このとき必要な構成の指定は次の通りです。Visual Studio Community 2019では、ワークロードで「C++によるデスクトップ開発」にチェックします。
+Visual Studio Build Tolls 2019では、ワークロードで「Visual C++ Build Tools」にチェックします。
 COM相互運用のクラスライブラリ``JTalkCOMdll``までビルドするときは、上記の項目の右側オプションで「C++/CLIサポート」にチェックします。
 
-* Build Tools for Visual Studio 2017 のダウンロードボタンの場所が分かりにくいのですが、ページの最後の方の「その他ツール及びフレームワーク」のところにあります。
+* Build Tools for Visual Studio 2019 のダウンロードボタンの場所が分かりにくいのですが、ページの最後の方の「その他ツール及びフレームワーク」のところにあります。
 * COM相互運用のクラスライブラリjtalkCOMx86.dll または jtalkCOMx64.dllを作成するときは、Visual Studio のインストーラを使って C++/CLI サポートをインストールしておきます。
 * 将来のバージョンのVisual Studioでもビルド可能か分かりませんが、そのときは後述のコマンドプロンプトを使った方法で試してください。
-* [Chocolatey](https://chocolatey.org/)でインストールする場合のパッケージ名は、それぞれ``visualstudio2017community``、``microsoft-build-tools``です。
+* [Chocolatey](https://chocolatey.org/)でインストールする場合のパッケージ名は、それぞれ``visualstudio2019community``、``visualstudio2019buildtools``です。
 
 [CMake](https://cmake.org/)がまだインストールされていない場合は、
 [ホームページ](https://cmake.org/)からダウンロードし、インストールします。なおインストールオプションの画面でPATHを通すラジオボタンを必ずチェックしてください。手作業で後からPATHを通してもかまいません。
@@ -131,6 +131,7 @@ COM相互運用のクラスライブラリ``JTalkCOMdll``までビルドする�
 gitは、このリポジトリからソースをコピーするために使いますが、インストールされていなければ、[ZIPファイル](https://github.com/rosmarinus/jtalkdll/archive/master.zip)をダウンロードし展開すればいいので必須ではありません。
 gitのインストールは、[Git for Windows](https://git-for-windows.github.io/)からダウンロードして行うか、
 [Chocolatey](https://chocolatey.org/)を使ってgitパッケージを``choco inst git``でインストールします。
+
 
 #### インストール手順
 
@@ -153,7 +154,7 @@ ZIPの場合は適当な場所で展開します。
 
 ##### コマンドプロンプトを使う方法
 
-スタートメニューを開き、 Visual Studio 2017 フォルダ内にある 「x64 Native Tools Command Prompt for VS 2017」あるいは「x86 Native Tools Command Prompt for VS 2017」を起動します。どちらを使うかは64版か32版を作るかどうかで決めます。開いたら、適当なフォルダをカレントフォルダに決めます。
+スタートメニューを開き、 Visual Studio 2019 フォルダ内にある 「x64 Native Tools Command Prompt for VS 2019」あるいは「x86 Native Tools Command Prompt for VS 2019」を起動します。どちらを使うかは64版か32版を作るかどうかで決めます。開いたら、適当なフォルダをカレントフォルダに決めます。
 
 gitがインストールされているときは次のコマンドを実行します。
 
@@ -188,17 +189,17 @@ WindowsのCMakeではvcxprojファイルを出力し、MSBuildでビルドする
 
 vcxprojを出力して実行する方法は次の通りです。必要な場合は、展開後に以下のコマンドを実行してください。
 
-vs2017で64ビット版をビルドする
+vs2019で64ビット版をビルドする
 
 ```DOS:
-cmake .. -G "Visual Studio 15 2017 Win64"
+cmake .. -G "Visual Studio 15 2019 Win64"
 msbuild ALL_BUILD.vcxproj /p:Configuration=Release;Platform=x64
 ```
 
-vs2017で32ビット版をビルドする
+vs2019で32ビット版をビルドする
 
 ```DOS:
-cmake .. -G "Visual Studio 15 2017"
+cmake .. -G "Visual Studio 15 2019"
 msbuild ALL_BUILD.vcxproj /p:Configuration=Release;Platform=win32
 ```
 
@@ -448,7 +449,7 @@ MSVCのみ
 * MeCab辞書ファイル ... /usr/local/OpenJTalk/dic_utf_8
 * 音響モデルファイル ... /usr/local/OpenJTalk/voice
 
-## <a name="validation"> 動作確認
+## <a name="validation">動作確認</a>
 
 対象のプラットフォームにおいて上記の方法でビルドが成功したら、以下の方法で動作確認ができます。
 
@@ -654,7 +655,7 @@ cl /I %JTALKDIR%\include hello.c jtalkx64.lib /link /LIBPATH:%JTALKDIR%\lib
 
 という形式になっています。例えば、luajit用は``jtalk.lua``です。
 
-現在(2017.11.1)対応している言語は、
+現在(2020.2.11)対応している言語は、
 [C++Builder](https://www.embarcadero.com/jp/products/cbuilder/starter)、
 C++、
 C++/CLI、
@@ -704,11 +705,12 @@ CUIとGUIかどうかで対立するサンプルがあるときは、CUIの方�
 アンマネージDLLかマネージDLLを使うかで対立するサンプルがあるときは、マネージDLLを使う方に接尾辞'm'を付けています。
 
 それぞれの言語は、できるだけ最新の言語環境を構築して実行してください。
-例えば Ubuntu の aptでインストールされる julia では is_unix や unsafe_string などが使えない古いものなので(2017/11/1時点)、
-julia で使うには、ホームページから v0.60以降をダウンロードして利用してください。
-それから、ffi/cpp/jtd_cppqt.cpp, ffi/python/jtd_qt5.pyは[QT5](https://www.qt.io/)を用いたサンプルです。
-ビルド・実行には言語環境の他に、[Qt](https://www1.qt.io/download-open-source/)が必要になります。
-また、JavaではC言語のDLLを利用するために[jna](https://github.com/java-native-access/jna)を利用しています。
+* 例えば Ubuntu の aptでインストールされる julia では is_unix や unsafe_string などが使えない古いものなので(2017/11/1時点)、
+* julia で使うには、ホームページから v0.60以降をダウンロードして利用してください。
+* それから、ffi/cpp/jtd_cppqt.cpp, ffi/python/jtd_qt5.pyは[QT5](https://www.qt.io/)を用いたサンプルです。
+* ビルド・実行には言語環境の他に、[Qt](https://www1.qt.io/download-open-source/)が必要になります。
+* また、JavaではC言語のDLLを利用するために[jna](https://github.com/java-native-access/jna)を利用しています。
+* node.jsではnode-ffi-napiモジュールを利用しています。しかし、現時点(2020.2.11)でこれ自体が環境によってうまくインストールできません。
 
 ビルドする手順が複雑なものには、接頭辞'build_'を付けたスクリプトを用意しています。
 実行する手順が複雑なものには、接頭辞'run_'を付けたスクリプトを用意しています。
@@ -764,15 +766,17 @@ API関数をラップしてJavaおよびJavaVM言語から利用しやすい形�
 この JTalkJna.java を``build_jtalk_jar``スクリプトで単純なjarファイルにした jtalk.jar を import して使います。
 残念ながら、jtalk.jar は JavaSpeechAPI の実装ではありません。
 
+Java関連のプログラムは、gradleでビルドするようにしています。ローカルに配置した後、ffi/java/に移動して、``./gradlew build``とすると、jarの生成とすべてのサンプルをコンパイルします。もちろんJavaの開発環境が構築しておく必要があります。例えば、Windowsだと前述のchocolateyを使って、``choco install openjdk``などとして。
+サンプルを実行するには、``./gradlew javaSample:run``とします。windowsの場合は、この実行前に 最新のjtalk.dllをffi/java/に置いておき、``./gradlew javaSample:copydll``でコピーしてから実行します。サンプルのプロジェクトは他に、kotlinSample、groovySample、scalaSampleがあります。
+
 JTalkJnaの内容は、
-[JTalkJna-JavaDoc](http://htmlpreview.github.io/?https://github.com/rosmarinus/jtalkdll/blob/master/ffi/java/doc/index.html)
+[JTalkJna-JavaDoc](http://htmlpreview.github.io/?https://github.com/rosmarinus/jtalkdll/blob/master/ffi/java/javadoc/index.html)
 を見てください。
 
 ここでは、Java ではなく、[Kotlin](http://kotlinlang.org/) で例を示します。
-JTalkJna.java の記述のままでプロパティが使えるかのなどのテストを含めてみます。
 
 ```Kotlin:Hello.kt
-import jtalk.JTalkJna
+import com.github.rosmarinus.jtalk.JTalkJna
 fun say(message:String) {
   var tts = JTalkJna()
   tts.voiceName = "mei_happy"
@@ -784,7 +788,7 @@ fun main(args:Array<String>) {
 }
 ```
 
-なお、OpenJTalk には Java クローンである [Gyutan](https://github.com/icn-lab/Gyutan) があります。
+なお、OpenJTalk には Java で書かれたクローンである [Gyutan](https://github.com/icn-lab/Gyutan) があります。
 本格的に Java で OpenJTalk の音声合成技術を使う場合は、こちらを使った方がいいでしょう。
 
 こんな感じで他の言語も書いていけます。
