@@ -1,25 +1,33 @@
 @echo off
 setlocal
+rem download & decompression
+bash prepare>NUL
+if "%errorlevel%"=="-1" ( 
+    if not exist voice\ (
+        echo WSLがインストールされていると、bash parepareで必要なアーカイブのダウンロードと展開を自動で行います。
+        goto :exit
+    )
+)
 set VER=2017
 set param="-Dcharset=utf_8"
 :arch_top
 if "%1"=="x86" (
-	set ARCH=x86
-	set BATNAME=vcvars32
-	goto :arch_skip
+    set ARCH=x86
+    set BATNAME=vcvars32
+    goto :arch_skip
 )
 if "%1"=="x64" (
-	set ARCH=x64
-	set BATNAME=vcvars64
-	if %PROCESSOR_ARCHITECTURE% == x86 set BATNAME=vcvarsx86_amd64
-	goto :arch_skip
+    set ARCH=x64
+    set BATNAME=vcvars64
+    if %PROCESSOR_ARCHITECTURE% == x86 set BATNAME=vcvarsx86_amd64
+    goto :arch_skip
 )
 if %PROCESSOR_ARCHITECTURE% == x86 (
-	set ARCH=x86
-	set BATNAME=vcvars32
+    set ARCH=x86
+    set BATNAME=vcvars32
 ) else (
-	set ARCH=x64
-	set BATNAME=vcvars64
+    set ARCH=x64
+    set BATNAME=vcvars64
 )
 :arch_skip
 
@@ -53,22 +61,10 @@ rem search cmake.exe
 rem ****************************************
 (cmake 2>&1)>NUL
 if errorlevel 9009 (
-	echo エラー：このコンピュータにCMakeが見つかりません。インストールしてください。
-	echo インストールしているのに見つからなければ、PATHを通してください。
-	goto :exit
+    echo エラー：このコンピュータにCMakeが見つかりません。インストールしてください。
+    echo インストールしているのに見つからなければ、PATHを通してください。
+    goto :exit
 )
-
-rem ****************************************
-rem check cli compilablity
-rem ****************************************
-set name=clrtest
-echo using namespace System;void main(){} >%name%.cpp
-cl /clr %name%.cpp >NUL 2>&1
-if "%errorlevel%" == "0" (
-    echo C++/CLIのビルドに対応しているのでJTalkCOM%ARCH%.dllもビルドします。
-    set param=%param% -Dbuild_jtalkcom=true
-)
-del/q %name%.*
 rem ****************************************
 rem build
 rem ****************************************

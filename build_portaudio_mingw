@@ -33,7 +33,7 @@ if [[ $(uname) =~ $re ]]; then
     cd portaudio
     chmod +x configure
     ./configure $host $target --prefix=$prefix
-    make clean
+    #make clean
     make
     make install
     cd ..
@@ -41,7 +41,7 @@ else
     cd portaudio
     chmod +x configure
     ./configure
-    make clean
+    #make clean
     make
     sudo make install
     cd ..

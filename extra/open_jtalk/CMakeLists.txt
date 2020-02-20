@@ -1,4 +1,3 @@
-# CMakeLists.txt for open_jtalk
 cmake_minimum_required(VERSION 3.10)
 
 # command line option
@@ -7,11 +6,11 @@ cmake_minimum_required(VERSION 3.10)
 # -Dcharset=(utf_8|shift_jis|euc_jp)
 #    default value = utf_8
 
+
 project(OpenJTalk)
 set(CMAKE_BUILD_TYPE Release)
 #set(CMAKE_VERBOSE_MAKEFILE TRUE)
 #set(target_arch x86_64)
-#set(charset utf_8)
 
 
 ### charset
@@ -56,8 +55,14 @@ set(DICBINDIR ${CMAKE_CURRENT_BINARY_DIR}/dic)
 ### sub folder name install
 set(FOLDER_INSTALL_BIN bin)
 set(FOLDER_INSTALL_LIB lib)
-set(FOLDER_INSTALL_DIC dic_utf_8)
 set(FOLDER_INSTALL_VOICE voice)
+if(charset MATCHES "shift_jis")
+    set(FOLDER_INSTALL_DIC dic_shift_jis)
+elseif(charset MATCHES "euc_jp")
+    set(FOLDER_INSTALL_DIC dic_euc_jp)
+else()
+    set(FOLDER_INSTALL_DIC dic_utf_8)
+endif()
 
 
 ### set mingw compiler
@@ -95,26 +100,37 @@ if(mingw_build)
     set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
     set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
     set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+    message("-- Target: ${target_arch}")
+    message("-- CC: ${CMAKE_C_COMPILER}")
+    message("-- CXX: ${CMAKE_CXX_COMPILER}")
+    message("-- AS: ${CMAKE_AS}")
+    message("-- AR: ${CMAKE_AR}")
+    message("-- RANLIB: ${CMAKE_RANLIB}")
+    message("-- STRIP:  ${CMAKE_STRIP}")
+    message("-- Find Root Path: ${CMAKE_FIND_ROOT_PATH}")
 endif()
 
 
 ### set install directory
 if(WIN32 OR mingw_build)
-    set(PROJECT_FOLDER open_jtalk)
+    set(PROJECT_FOLDER "open_jtalk")
+    set(INSTALL_BASE_PATH "C:/")
 else()
-    set(PROJECT_FOLDER OpenJTalk)
+    set(PROJECT_FOLDER "OpenJTalk")
+    set(INSTALL_BASE_PATH "/usr/local/")
 endif()
 
 
 ### set install base path
 if(MSVC AND WIN32)
-    set(BASE_PATH c:/)
+    set(BASE_PATH "C:/")
 elseif(MINGW)
-    set(BASE_PATH /c/)
+    set(BASE_PATH "/c/")
 elseif(CYGWIN)
-    set(BASE_PATH /cygdrive/c/)
+    set(BASE_PATH "/cygdrive/c/")
 else()
-    set(BASE_PATH /usr/local/)
+    set(BASE_PATH "/usr/local/")
 endif()
 
 
@@ -123,18 +139,22 @@ if(MSVC AND WIN32)
     set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
 elseif(MINGW)
     set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+    #set(CMAKE_INSTALL_PREFIX "${mingw_prefix}")
 elseif(CYGWIN)
     set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+    #set(CMAKE_INSTALL_PREFIX "/usr/${target_arch}")
 else()
-    set(CMAKE_INSTALL_PREFIX /usr/local)
+    set(CMAKE_INSTALL_PREFIX ${BASE_PATH})
 endif()
 
 
 ### data install prefix
+set(MACRO_DATA_INSTALL_PREFIX ${INSTALL_BASE_PATH}${PROJECT_FOLDER})
 set(DATA_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
 
+
 ### mecab const
-set(PACKAGE,"open_jtalk")
+set(PACKAGE "open_jtalk")
 set(VERSION "1.11")
 set(DIC_VERSION 102)
 set(PACKAGE_NAME,"${PACKAGE}")
@@ -143,6 +163,7 @@ set(PACKAGE_STRING,$"{PACKAGE_NAME} ${PACKAGE_VERSION}")
 set(PACKAGE_TARNAME,"${PACKAGE_NAME}")
 set(PACKAGE_URL,"")
 set(PACKAGE_BUGREPORT,"")
+
 
 ### mecab definition flags
 include(CheckFunctionExists)
@@ -219,6 +240,15 @@ set(def_flags "${def_flags} -DPACKAGE=\"\\\"${PACKAGE}\\\"\"")
 set(def_flags "${def_flags} -DVERSION=\"\\\"${VERSION}\\\"\"")
 
 
+# look for mecab-dict-index.exe
+find_program(MECAB_DICT_INDEX_EXISTS "mecab-dict-index.exe")
+if(MECAB_DICT_INDEX_EXISTS)
+message("MECAB_DICT_INDEX_EXISTS")
+else()
+message("MECAB_DICT_INDEX_NOT_EXISTS")
+endif()
+
+
 ### look for libiconv
 set(ENABLE_LICONV 0)
 if(UNIX)
@@ -236,6 +266,7 @@ else()
 endif()
 
 
+
 ### c/cxx flags
 if(MSVC AND WIN32)
     set(CMAKE_C_FLAGS  "-MD -O2 -Ob2 -Oi -Ot -Oy -GT")
@@ -249,8 +280,8 @@ if(MSVC AND WIN32)
     set(openjtalk_compile_flags "-TC -D${CHARSETSTR} -DASCII_HEADER")
 
     ### hts_engine_API c flgas
-    set(hts_c_compile_flags "-TC -DC${CHARSETSTR} -DASCII_HEADER")
-
+    set(hts_c_compile_flags "-TC -D${CHARSETSTR} -DASCII_HEADER")
+    
     ### mecab cpp flgas
     set(def_flags "${def_flags} -DHAVE_WINDOWS_H")
     set(def_flags "${def_flags} -DASCII_HEADER")
@@ -281,6 +312,8 @@ else()
 
     ### mingw
     if(mingw_build)
+        set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+        set(CMAKE_SHARED_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 
     ### cygwin without mingw compiler
     elseif(CYGWIN)
@@ -290,9 +323,12 @@ else()
 
     ### linux
     else()
-        set(openjtalk_compile_flags "${openjtalk_compile_flags} -std=c11 -fPIC")
-        set(hts_c_compile_flags "${hts_c_compile_flags} -std=c11 -fPIC")
-        set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -std=c++11 -fPIC")
+        #set(openjtalk_compile_flags "${openjtalk_compile_flags} -std=c11")
+        #set(hts_c_compile_flags "${hts_c_compile_flags} -std=c11")
+        #set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -std=c++11")
+        set(openjtalk_compile_flags "${openjtalk_compile_flags} -std=gnu11")
+        set(hts_c_compile_flags "${hts_c_compile_flags} -std=gnu11")
+        set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -std=gnu++11")
     endif()
 
 endif()
@@ -440,11 +476,7 @@ set_target_properties(HTSEngine PROPERTIES COMPILE_FLAGS ${hts_c_compile_flags})
 ### hts_engine
 add_executable(hts_engine ${HTS_ENGINE_API_PATH}/bin/hts_engine.c)
 target_link_libraries(hts_engine HTSEngine)
-if(mingw_build)
-    target_link_libraries(hts_engine winmm)
-elseif(MSVC AND WIN32)
-    target_link_libraries(hts_engine winmm)
-elseif(CYGWIN)
+if(mingw_build OR (MSVC AND WIN32) OR CYGWIN)
     target_link_libraries(hts_engine winmm)
 elseif(UNIX)
     target_link_libraries(hts_engine m)
@@ -454,6 +486,7 @@ if(mingw_build)
     set_target_properties(hts_engine PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
 install(TARGETS hts_engine RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
+
 
 ### mecab-dict-index
 include_directories(${OPEN_JTALK_PATH}/mecab/src)
@@ -472,6 +505,7 @@ if(mingw_build)
     set_target_properties(mecab-dict-index PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
 install(TARGETS mecab-dict-index RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
+
 
 ### open_jtalk
 add_executable(open_jtalk
@@ -509,6 +543,7 @@ if(mingw_build)
     set_target_properties(open_jtalk PROPERTIES PREFIX "" SUFFIX ".exe")
 endif()
 install(TARGETS open_jtalk RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
+
 
 
 ### list of dictionary files

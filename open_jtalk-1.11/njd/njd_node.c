@@ -61,18 +61,6 @@ static const char *nodata = "*";
 
 #define MAXBUFLEN 1024
 
-char *njd_node_strdup(const char *str)
-{
-	if (str == NULL) return NULL;
-	char *r = malloc(strlen(str)+1);
-	if (r==NULL) return NULL;
-	char *s = (char*)str;
-	char *d = r;
-	while ((*d++ = *s++) != '\0')
-		;
-	return r;
-}
-
 static void get_token_from_string(const char *str, int *index, char *buff, char d)
 {
    char c;
@@ -117,7 +105,7 @@ void NJDNode_set_string(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->string = NULL;
    else
-      node->string = njd_node_strdup(str);
+      node->string = strdup(str);
 }
 
 void NJDNode_set_pos(NJDNode * node, const char *str)
@@ -127,7 +115,7 @@ void NJDNode_set_pos(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->pos = NULL;
    else
-      node->pos = njd_node_strdup(str);
+      node->pos = strdup(str);
 }
 
 void NJDNode_set_pos_group1(NJDNode * node, const char *str)
@@ -137,7 +125,7 @@ void NJDNode_set_pos_group1(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->pos_group1 = NULL;
    else
-      node->pos_group1 = njd_node_strdup(str);
+      node->pos_group1 = strdup(str);
 }
 
 void NJDNode_set_pos_group2(NJDNode * node, const char *str)
@@ -147,7 +135,7 @@ void NJDNode_set_pos_group2(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->pos_group2 = NULL;
    else
-      node->pos_group2 = njd_node_strdup(str);
+      node->pos_group2 = strdup(str);
 }
 
 void NJDNode_set_pos_group3(NJDNode * node, const char *str)
@@ -157,7 +145,7 @@ void NJDNode_set_pos_group3(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->pos_group3 = NULL;
    else
-      node->pos_group3 = njd_node_strdup(str);
+      node->pos_group3 = strdup(str);
 }
 
 void NJDNode_set_ctype(NJDNode * node, const char *str)
@@ -167,7 +155,7 @@ void NJDNode_set_ctype(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->ctype = NULL;
    else
-      node->ctype = njd_node_strdup(str);
+      node->ctype = strdup(str);
 }
 
 void NJDNode_set_cform(NJDNode * node, const char *str)
@@ -177,7 +165,7 @@ void NJDNode_set_cform(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->cform = NULL;
    else
-      node->cform = njd_node_strdup(str);
+      node->cform = strdup(str);
 }
 
 void NJDNode_set_orig(NJDNode * node, const char *str)
@@ -187,7 +175,7 @@ void NJDNode_set_orig(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->orig = NULL;
    else
-      node->orig = njd_node_strdup(str);
+      node->orig = strdup(str);
 }
 
 void NJDNode_set_read(NJDNode * node, const char *str)
@@ -197,7 +185,7 @@ void NJDNode_set_read(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->read = NULL;
    else
-      node->read = njd_node_strdup(str);
+      node->read = strdup(str);
 }
 
 void NJDNode_set_pron(NJDNode * node, const char *str)
@@ -207,7 +195,7 @@ void NJDNode_set_pron(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->pron = NULL;
    else
-      node->pron = njd_node_strdup(str);
+      node->pron = strdup(str);
 }
 
 void NJDNode_set_acc(NJDNode * node, int acc)
@@ -236,7 +224,7 @@ void NJDNode_set_chain_rule(NJDNode * node, const char *str)
    if (str == NULL || strlen(str) == 0)
       node->chain_rule = NULL;
    else
-      node->chain_rule = njd_node_strdup(str);
+      node->chain_rule = strdup(str);
 }
 
 void NJDNode_set_chain_flag(NJDNode * node, int flag)
@@ -284,7 +272,7 @@ void NJDNode_add_read(NJDNode * node, const char *str)
 
    if (str != NULL) {
       if (node->read == NULL) {
-         node->read = njd_node_strdup(str);
+         node->read = strdup(str);
       } else {
          c = (char *) calloc(strlen(node->read) + strlen(str) + 1, sizeof(char));
          strcpy(c, node->read);
@@ -301,7 +289,7 @@ void NJDNode_add_pron(NJDNode * node, const char *str)
 
    if (str != NULL) {
       if (node->pron == NULL) {
-         node->pron = njd_node_strdup(str);
+         node->pron = strdup(str);
       } else {
          c = (char *) calloc(strlen(node->pron) + strlen(str) + 1, sizeof(char));
          strcpy(c, node->pron);

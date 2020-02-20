@@ -1,0 +1,2 @@
+echo 'こんにちは' | open_jtalk -x /usr/local/OpenJTalk/dic_utf_8 -m /usr/local/OpenJTalk/voice/mei/mei_normal.htsvoice -ow test.wav
+

@@ -1,22 +1,25 @@
-﻿const ffi = require('ffi-napi');
-const ref = require('ref-napi');
-const Struct = require('ref-struct-napi');
-const path = require('path');
-const os = require('os');
+﻿var ffi = require('ffi');
+var ref = require('ref');
+var path = require('path');
+var Struct = require('ref-struct');
+var os = require('os');
 
-const OpenJTalk = Struct();
-const OpenJTalkPtr = ref.refType(OpenJTalk);
-const HtsVoiceFilelist = Struct();
-const HtsVoiceFilelistPtr = ref.refType(HtsVoiceFilelist);
+var OpenJTalk = Struct();
+var OpenJTalkPtr = ref.refType(OpenJTalk);
+var HtsVoiceFilelist = Struct();
+var HtsVoiceFilelistPtr = ref.refType(HtsVoiceFilelist);
 HtsVoiceFilelist.defineProperty('succ', HtsVoiceFilelistPtr);
 HtsVoiceFilelist.defineProperty('path', 'string');
 HtsVoiceFilelist.defineProperty('name', 'string');
 
 const max_path = 260;
 
-const dll = os.platform() == 'win32' ? 'jtalk' : 'libjtalk';
+var dll = 'libjtalk';
+if (os.platform()=='win32') {
+    dll = 'jtalk';
+}
 
-const jtalk = ffi.Library(dll, {
+var jtalk = ffi.Library(dll, {
     'openjtalk_clearHTSVoiceList': ['void', [OpenJTalkPtr, HtsVoiceFilelistPtr]],
     'openjtalk_getHTSVoiceList': [HtsVoiceFilelistPtr, [OpenJTalkPtr]],
     'openjtalk_initialize': [OpenJTalkPtr, ['string', 'string', 'string']],
@@ -41,11 +44,11 @@ const jtalk = ffi.Library(dll, {
     'openjtalk_setVolume': ['void', [OpenJTalkPtr, 'double']],
     'openjtalk_getVolume': ['double', [OpenJTalkPtr]],
     'openjtalk_setDic': ['bool', [OpenJTalkPtr, 'string']],
-    'openjtalk_getDic': ['string', [OpenJTalkPtr, 'char*']],
+    'openjtalk_getDic': ['string', [OpenJTalkPtr,'char*']],
     'openjtalk_setVoiceDir': ['bool', [OpenJTalkPtr, 'string']],
-    'openjtalk_getVoiceDir': ['string', [OpenJTalkPtr, 'char*']],
+    'openjtalk_getVoiceDir': ['string', [OpenJTalkPtr,'char*']],
     'openjtalk_setVoice': ['bool', [OpenJTalkPtr, 'string']],
-    'openjtalk_getVoice': ['string', [OpenJTalkPtr, 'char*']],
+    'openjtalk_getVoice': ['string', [OpenJTalkPtr,'char*']],
     'openjtalk_speakSync': ['void', [OpenJTalkPtr, 'string']],
     'openjtalk_speakAsync': ['void', [OpenJTalkPtr, 'string']],
     'openjtalk_pause': ['void', [OpenJTalkPtr]],
@@ -60,15 +63,16 @@ const jtalk = ffi.Library(dll, {
 });
 
 
-const setVoiceInfo = (pathstr, namestr = '') => {
-    if (namestr == '') {
-        namestr = path.basename(pathstr, '.htsvoice');
+function setVoiceInfo(pathstr,namestr='') {
+    if(namestr=='') {
+        namestr = path.basename(pathstr,'.htsvoice');
     }
-    const res = [];
+    var res = [];
     res['path'] = pathstr;
     res['name'] = namestr;
     return res;
 }
+
 
 const handle = Symbol();
 const privateMakeList = Symbol();
@@ -77,42 +81,42 @@ class Jtalk {
 
     // if typeof arg == string: this.Voice = arg;
     // if typeof arg == object: this[...] = arg[...]
-    constructor(arg = null) {
-        let voice = null;
-        let dic = null;
-        let voiceDir = null;
+    constructor(arg=null) {
+        var voice = null;
+        var dic = null;
+        var voiceDir = null;
         if (arg) {
             // 引数が連想配列の場合はプロパティの値指定
-            if (arg instanceof Object && !(arg instanceof Array)) {
-                if ('VoiceDir' in arg) {
+            if ( arg instanceof Object && !(arg instanceof Array)) {
+                if ( 'VoiceDir' in arg ) {
                     voiceDir = arg['VoiceDir'];
                     delete arg['VoiceDir'];
                 }
-                let count = 0;
-                if ('Voice' in arg) {
-                    count++;
+                var count = 0;
+                if ( 'Voice' in arg ) {
+                    count ++;
                     voice = arg['Voice'];
                     delete arg['Voice'];
                 }
-                if ('VoiceName' in arg) {
-                    count++;
+                if ( 'VoiceName' in arg ) {
+                    count ++;
                     voice = arg['VoiceName'];
                     delete arg['VoiceName'];
                 }
-                if ('VoicePath' in arg) {
-                    count++;
+                if ( 'VoicePath' in arg ) {
+                    count ++;
                     voice = arg['VoicePath'];
                     delete arg['VoicePath'];
                 }
                 if (count > 1) {
                     throw new Error('音響モデルを指定するプロパティ Voice, VoiceName, VoicePath は同時に指定できません。');
                 }
-                if ('Dic' in arg) {
+                if ( 'Dic' in arg ) {
                     dic = arg['Dic'];
                     delete arg['Dic'];
                 }
-                // 引数が単一の文字列の場合は音響モデルの指定
-            } else if (typeof arg == 'string') {
+            // 引数が単一の文字列の場合は音響モデルの指定
+            } else if (typeof arg =='string') {
                 voice = arg;
             }
         }
@@ -120,21 +124,21 @@ class Jtalk {
         if (this[handle].isNull()) {
             throw new Error('OpenJTalk オブジェクトの初期化に失敗しました。');
         }
-        if (arg != null && arg instanceof Object && !(arg instanceof Array)) {
-            for (const key in arg) {
+        if (arg!=null &&  arg instanceof Object && !(arg instanceof Array)) {
+            for ( var key in arg ) {
                 this[key] = arg[key];
             }
         }
 
         this[privateMakeList] = () => {
-            const list = jtalk.openjtalk_getHTSVoiceList(this[handle]);
-            let ptr = ref.alloc(HtsVoiceFilelist);
+            var list = jtalk.openjtalk_getHTSVoiceList(this[handle]);
+            var ptr = ref.alloc(HtsVoiceFilelist);
             this.Voices = [];
-            for (ptr = list; !ptr.isNull(); ptr = ptr.deref().succ) {
-                this.Voices.push(setVoiceInfo(ptr.deref().path, ptr.deref().name));
+            for(ptr=list; !ptr.isNull(); ptr=ptr.deref().succ) {
+                this.Voices.push(setVoiceInfo(ptr.deref().path,ptr.deref().name));
             }
             jtalk.openjtalk_clearHTSVoiceList(this[handle], list);
-        };
+        }
         this[privateMakeList]();
     }
 
@@ -337,14 +341,14 @@ class Jtalk {
         if (!arg) {
             throw new Error('辞書フォルダを示す文字列へのポインタがnullです。');
         }
-        if (!jtalk.openjtalk_setDic(this[handle], arg)) {
+        if (!jtalk.openjtalk_setDic(this[handle],arg)) {
             throw new Error('辞書フォルダを設定できません。');
         }
     }
 
     get Dic() {
-        const buff = new Buffer.alloc(max_path);
-        return jtalk.openjtalk_getDic(this[handle], buff);
+        var buff = new Buffer(max_path);
+        return jtalk.openjtalk_getDic(this[handle],buff);
     }
 
 
@@ -360,8 +364,8 @@ class Jtalk {
     }
 
     get VoiceDir() {
-        const buff = new Buffer.alloc(max_path);
-        return jtalk.openjtalk_getVoiceDir(this[handle], buff);
+        var buff = new Buffer(max_path);
+        return jtalk.openjtalk_getVoiceDir(this[handle],buff);
     }
 
     // 音響モデルファイル指定
@@ -372,8 +376,11 @@ class Jtalk {
         if (!arg) {
             throw new Error('音響モデルファイルを示す引数がnullです。');
         }
-        const pathstr = (Array.isArray(arg) && 'path' in arg) ? arg['path'] : arg;
-
+        if( Array.isArray(arg) && 'path' in arg ) {
+            var pathstr = arg['path'];
+        } else {
+            var pathstr = arg;
+        }
         if (pathstr.length == 0) {
             throw new Error('音響モデルファイル文字列が空です。');
         }
@@ -384,8 +391,8 @@ class Jtalk {
 
     // 音声取得
     get Voice() {
-        const buff = new Buffer.alloc(max_path);
-        const pathstr = jtalk.openjtalk_getVoice(this[handle], buff);
+        var buff = new Buffer(max_path);
+        var pathstr = jtalk.openjtalk_getVoice(this[handle],buff);
         return setVoiceInfo(pathstr);
     }
 
@@ -403,8 +410,8 @@ class Jtalk {
 
     // 音声ファイルのパスを取得
     get VoicePath() {
-        const buff = new Buffer.alloc(max_path);
-        return jtalk.openjtalk_getVoice(this[handle], buff);
+        var buff = new Buffer(max_path);
+        return jtalk.openjtalk_getVoice(this[handle],buff);
     }
 
     set VoiceName(name) {
@@ -421,25 +428,35 @@ class Jtalk {
 
     // 音声名の取得
     get VoiceName() {
-        const buff = new Buffer.alloc(max_path);
-        const pathstr = jtalk.openjtalk_getVoice(this[handle], buff);
-        return path.basename(pathstr, '.htsvoice');
+        var buff = new Buffer(max_path);
+        var pathstr = jtalk.openjtalk_getVoice(this[handle],buff);
+        return path.basename(pathstr,'.htsvoice');
     }
 
     // 同期発声
-    speakSync = text => jtalk.openjtalk_speakSync(this[handle], text);
+    speakSync(text) {
+        jtalk.openjtalk_speakSync(this[handle], text);
+    }
 
     // 非同期発声
-    speakAsync = text => jtalk.openjtalk_speakAsync(this[handle], text);
+    speakAsync(text) {
+        jtalk.openjtalk_speakAsync(this[handle], text);
+    }
 
     // 発声の一時停止
-    pause = () => jtalk.openjtalk_pause(this[handle]);
+    pause() {
+        jtalk.openjtalk_pause(this[handle]);
+    }
 
     // 発声の再開
-    resume = () => jtalk.openjtalk_resume(this[handle]);
+    resume() {
+        jtalk.openjtalk_resume(this[handle]);
+    }
 
     // 発声の強制停止
-    stop = () => jtalk.openjtalk_stop(this[handle]);
+    stop() {
+        jtalk.openjtalk_stop(this[handle]);
+    }
 
     // 発声中かどうか
     get IsSpeaking() {
@@ -457,19 +474,21 @@ class Jtalk {
     }
 
     // 発声している間待機する
-    waitUntilDone = () => jtalk.openjtalk_waitUntilDone(this[handle]);
+    waitUntilDone() {
+        jtalk.openjtalk_waitUntilDone(this[handle]);
+    }
 
     // 指定時間待機する
-    wait = (duration = 0) => {
-        if (duration == 0) {
+    wait(duration=0) {
+        if (duration==0) {
             this.waitUntilDone();
         } else {
             jtalk.openjtalk_wait(this[handle], duration);
         }
-    };
+    }
 
     // 指定ファイルに音声を記録する
-    speakToFile = (text, file) => {
+    speakToFile(text, file) {
         if (!text) {
             throw new Error('読み上げ文字列がnullです。');
         }
@@ -482,8 +501,8 @@ class Jtalk {
         if (!jtalk.openjtalk_speakToFile(this[handle], text, file)) {
             throw new Error('音声ファイルの作成中にエラーが発生しました。');
         }
-    };
+    }
 
-};
+}
 
 module.exports = Jtalk;

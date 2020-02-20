@@ -57,18 +57,6 @@ JPCOMMON_NODE_C_START;
 
 #include "jpcommon.h"
 
-char *jpcommon_node_strdup(const char *str)
-{
-	if (str == NULL) return NULL;
-	char *r = malloc(strlen(str)+1);
-	if (r==NULL) return NULL;
-	char *s = (char*)str;
-	char *d = r;
-	while ((*d++ = *s++) != '\0')
-		;
-	return r;
-}
-
 void JPCommonNode_initialize(JPCommonNode * node)
 {
    node->pron = NULL;
@@ -85,28 +73,28 @@ void JPCommonNode_set_pron(JPCommonNode * node, const char *str)
 {
    if (node->pron != NULL)
       free(node->pron);
-   node->pron = jpcommon_node_strdup(str);
+   node->pron = strdup(str);
 }
 
 void JPCommonNode_set_pos(JPCommonNode * node, const char *str)
 {
    if (node->pos != NULL)
       free(node->pos);
-   node->pos = jpcommon_node_strdup(str);
+   node->pos = strdup(str);
 }
 
 void JPCommonNode_set_ctype(JPCommonNode * node, const char *str)
 {
    if (node->ctype != NULL)
       free(node->ctype);
-   node->ctype = jpcommon_node_strdup(str);
+   node->ctype = strdup(str);
 }
 
 void JPCommonNode_set_cform(JPCommonNode * node, const char *str)
 {
    if (node->cform != NULL)
       free(node->cform);
-   node->cform = jpcommon_node_strdup(str);
+   node->cform = strdup(str);
 }
 
 void JPCommonNode_set_acc(JPCommonNode * node, int acc)

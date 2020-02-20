@@ -122,7 +122,7 @@ class JTalk(object):
 
 		self.jtalk.openjtalk_wait.argtypes = [c_void_p, c_int]
 		self.jtalk.openjtalk_speakToFile.argtypes = [c_void_p, c_char_p, c_char_p]
-		self.jtalk.openjtalk_setVerbose.argtypes = [c_void_p, c_bool]
+		self.jtalk.openjtalk_setVerbose.argtypes = [c_bool]
 		self.jtalk.openjtalk_test.argtypes = [c_void_p, c_void_p]
 
 		self.h = self.jtalk.openjtalk_initialize(voicePath,dicPath,voiceDirPath)

@@ -25,7 +25,7 @@ void main()
 	writefln("jf = %s", tts.jf);
 	writefln("g  = %s", tts.g );
 
-	tts.speakAsync("こんにちは");
+	tts.speakAsync("聞こえてますか？");
 	tts.waitUntilDone();
 }
 

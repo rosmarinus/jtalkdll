@@ -17,7 +17,7 @@ puts("u  = #{tts.u}")
 puts("jm = #{tts.jm}")
 puts("jf = #{tts.jf}")
 puts("g  = #{tts.g}")
-tts.speakAsync("こんにちは")
+tts.speakAsync("聞こえてますか？")
 tts.waitUntilDone
 
 

@@ -1,10 +1,10 @@
 import Foundation
 
 struct Voice {
-
+    
     let path: String
     let name: String
-
+    
     init(path: String,name: String? = nil) {
         self.path = path
         if name == nil {
@@ -13,7 +13,7 @@ struct Voice {
             self.name = name!
         }
     }
-
+    
     init() {
         self.path = ""
         self.name = ""
@@ -34,13 +34,13 @@ class Jtalk {
     private let maxpathlen = 260
     private var handle:OpaquePointer
     private var innerVoices = [Voice]()
-
+    
     var voices: [Voice] {
         get {
             return innerVoices
         }
     }
-
+    
     init (
         voiceName: String? = nil,
         voicePath: String? = nil,
@@ -66,7 +66,7 @@ class Jtalk {
         gvWeightForSpectrum: Double? = nil,
         gvWeightForLogF0: Double? = nil,
         volume:  Double? = nil
-    )  //throws
+        )  //throws
     {
         var voice = voicePath
         if voicePath == nil {
@@ -74,7 +74,7 @@ class Jtalk {
         }
         self.handle = openjtalk_initialize(voice,dicPath,voiceDirPath)
         generateVoicelist()
-
+        
         do {
             if s != nil {
                 try self.setS(s!)
@@ -139,21 +139,21 @@ class Jtalk {
         } catch {
             //throw error
         }
-
+        
     }
-
+    
     deinit {
         openjtalk_clear(self.handle)
     }
-
-
+    
+    
     // 音響モデルファイルのリストを作成する
     private func generateVoicelist() {
         self.innerVoices = []
         let list = openjtalk_getHTSVoiceList(self.handle)
         var ptr: UnsafeMutablePointer? = list
         while (ptr != nil) {
-            var p = ptr!.pointee
+            let p = ptr!.pointee
             let path = p.path!
             let name = p.name!
             self.innerVoices.append(Voice(path:String(cString:path),name:String(cString:name)))
@@ -161,8 +161,8 @@ class Jtalk {
         }
         openjtalk_clearHTSVoiceList(self.handle, list)
     }
-
-
+    
+    
     // サンプリング周波数
     func setSamplingFrequency(_ i: UInt) throws {
         if i < 1 {
@@ -191,13 +191,13 @@ class Jtalk {
         set(i) {
             self.samplingFrequency = i
         }
-
+        
         get {
             return self.samplingFrequency
         }
     }
-
-
+    
+    
     // フレームピリオド
     func setFperiod(_ i: UInt) throws {
         if i < 1 {
@@ -230,8 +230,8 @@ class Jtalk {
             return self.fperiod
         }
     }
-
-
+    
+    
     // オールパス値
     func setAlpha(_ f: Double) throws {
         if f < 0.0 || f > 1.0 {
@@ -264,8 +264,8 @@ class Jtalk {
             return self.alpha
         }
     }
-
-
+    
+    
     // ポストフィルター係数
     func setBeta(_ f: Double) throws {
         if f < 0.0 || f > 1.0 {
@@ -298,8 +298,8 @@ class Jtalk {
             return self.beta
         }
     }
-
-
+    
+    
     // スピーチ速度
     func setSpeed(_ f: Double) throws {
         if f < 0.0 {
@@ -333,7 +333,7 @@ class Jtalk {
         }
     }
     
-
+    
     // 追加ハーフトーン
     func setAdditionalHalfTone(_ f: Double) {
         openjtalk_setAdditionalHalfTone(self.handle, f)
@@ -363,8 +363,8 @@ class Jtalk {
             return self.additionalHalfTone
         }
     }
-
-
+    
+    
     // 有声 / 無声境界値
     func setMsdThreshold(_ f: Double) throws {
         if f < 0.0 || f > 1.0 {
@@ -390,15 +390,15 @@ class Jtalk {
         }
     }
     var u: Double {
-       set(f) {
+        set(f) {
             self.msdThreshold = f
         }
         get {
             return self.msdThreshold
         }
     }
-
-
+    
+    
     // スペクトラム系列内変動の重み
     func setGvWeightForSpectrum(_ f: Double) throws {
         if f < 0.0 {
@@ -431,8 +431,8 @@ class Jtalk {
             return self.gvWeightForSpectrum
         }
     }
-
-
+    
+    
     // F0系列内変動重み
     func setGvWeightForLogF0(_ f: Double) throws {
         if f < 0.0 {
@@ -465,8 +465,8 @@ class Jtalk {
             return self.gvWeightForLogF0
         }
     }
-
-
+    
+    
     // ボリューム
     func setVolume(_ f: Double) {
         openjtalk_setVolume(self.handle, f)
@@ -496,8 +496,8 @@ class Jtalk {
             return self.volume
         }
     }
-
-
+    
+    
     // 辞書フォルダ指定
     func setDic(_ path: String) throws {
         if path == "" {
@@ -519,7 +519,7 @@ class Jtalk {
             return ""
         }
         let str = String(cString: buff)
-        buff.deallocate(capacity: Int(maxpathlen))
+        buff.deallocate()
         return str
     }
     var dic: String {
@@ -530,8 +530,8 @@ class Jtalk {
             return self.getDic()
         }
     }
-
-
+    
+    
     // 音響モデルファイルディレクトリ指定
     func setVoiceDir(_ path: String) throws {
         self.innerVoices = []
@@ -553,7 +553,7 @@ class Jtalk {
             return ""
         }
         let str = String(cString: buff)
-        buff.deallocate(capacity: Int(maxpathlen))
+        buff.deallocate()
         return str
     }
     var voiceDir: String {
@@ -564,8 +564,8 @@ class Jtalk {
             return self.getVoiceDir()
         }
     }
-
-
+    
+    
     // 音響モデルファイル指定
     //  絶対パス...直接、相対パス...実行ファイルの位置基準での相対指定、名前のみ...探索
     func setVoice(_ input: Voice?) throws {
@@ -573,7 +573,7 @@ class Jtalk {
             throw JtalkError.NullPointer("音響モデルを表すオブジェクトがNULLです")
         }
         let pathstr = input!.path
-        if pathstr.characters.count == 0 {
+        if pathstr.count == 0 {
             throw JtalkError.EmptyString("音響モデルを表す文字列が空です")
         }
         if !openjtalk_setVoice(self.handle, pathstr) {
@@ -586,7 +586,7 @@ class Jtalk {
             return nil
         }
         let str = String(cString: buff)
-        buff.deallocate(capacity: Int(maxpathlen))
+        buff.deallocate()
         return Voice(path:str)
     }
     var voice: Voice? {
@@ -597,12 +597,12 @@ class Jtalk {
             return self.getVoice()
         }
     }
-
-
+    
+    
     // 音響モデルファイルのパスを指定および取得する
     // ただし、指定時は、音声名だけかのチェックはしない
     func setVoicePath(_ path: String) throws {
-        if path.characters.count == 0 {
+        if path.count == 0 {
             throw JtalkError.EmptyString("音響モデルを表す文字列が空です")
         }
         if !openjtalk_setVoice(self.handle, path) {
@@ -615,7 +615,7 @@ class Jtalk {
             return ""
         }
         let str = String(cString: buff)
-        buff.deallocate(capacity: Int(maxpathlen))
+        buff.deallocate()
         return str
     }
     var voicePath: String {
@@ -626,12 +626,12 @@ class Jtalk {
             return self.getVoicePath()
         }
     }
-
-
+    
+    
     // 音響モデルファイルの名前を指定および取得する
     // ただし、指定時は、音声名だけかのチェックはしない
     func setVoiceName(_ name: String) throws {
-        if name.characters.count == 0 {
+        if name.count == 0 {
             throw JtalkError.EmptyString("音響モデルを表す文字列が空です")
         }
         if !openjtalk_setVoice(self.handle, name) {
@@ -644,7 +644,7 @@ class Jtalk {
             return ""
         }
         let str = String(cString: buff)
-        buff.deallocate(capacity: Int(maxpathlen))
+        buff.deallocate()
         return ((str as NSString).lastPathComponent as NSString).deletingPathExtension
     }
     var voiceName: String {
@@ -655,64 +655,64 @@ class Jtalk {
             return self.getVoiceName()
         }
     }
-
-
+    
+    
     // 同期発声
     func speakSync(_ text: String) {
         openjtalk_speakSync(self.handle, text)
     }
-
+    
     // 非同期発声
     func speakAsync(_ text: String) {
         openjtalk_speakAsync(self.handle, text)
     }
-
+    
     // 発声の一時停止
     func pause() {
         openjtalk_pause(self.handle)
     }
-
+    
     // 発声の再開
     func resume() {
         openjtalk_resume(self.handle)
     }
-
+    
     // 発声の強制停止
     func stop() {
         openjtalk_stop(self.handle)
     }
-
+    
     // 発声中かどうか
     var isSpeaking: Bool {
         get {
             return openjtalk_isSpeaking(self.handle)
         }
     }
-
+    
     // 発声が一時停止中かどうか
     var isPaused: Bool {
         get {
             return openjtalk_isPaused(self.handle)
         }
     }
-
+    
     // 発声が完了したかどうか
     var isFinished: Bool {
         get {
             return openjtalk_isFinished(self.handle)
         }
     }
-
+    
     // 発声している間待機する
     func waitUntilDone() {
         openjtalk_waitUntilDone(self.handle)
     }
-
+    
     // 待機する
     func wait() {
         self.waitUntilDone()
     }
-
+    
     // 指定時間待機する
     func wait(_ duration: Int32=0) {
         if duration == 0 {
@@ -721,17 +721,17 @@ class Jtalk {
             openjtalk_wait(self.handle, duration)
         }
     }
-
+    
     // 指定ファイルに音声を記録する
     func speakToFile(_ text: String, _ file: String) throws {
-        if text.characters.count == 0 {
-           throw JtalkError.EmptyString("読み上げ文字列が空です。")
+        if text.count == 0 {
+            throw JtalkError.EmptyString("読み上げ文字列が空です。")
         }
-        if file.characters.count == 0 {
-           throw JtalkError.EmptyString("ファイル名文字列が空です。")
+        if file.count == 0 {
+            throw JtalkError.EmptyString("ファイル名文字列が空です。")
         }
         if !openjtalk_speakToFile(self.handle, text, file) {
-           throw JtalkError.FileCreationError("音声ファイルの作成中にエラーが発生しました。")
+            throw JtalkError.FileCreationError("音声ファイルの作成中にエラーが発生しました。")
         }
     }
 }

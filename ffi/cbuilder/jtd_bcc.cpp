@@ -34,7 +34,7 @@ int main()
 		printf("jm = %f\n", jtalk->Jm);
 		printf("jf = %f\n", jtalk->Jf);
 		printf("g  = %f\n", jtalk->G);
-		jtalk->SpeakAsync("こんにちは");
+		jtalk->SpeakAsync("聞こえてますか？");
 		jtalk->WaitUntilDone();
 		delete jtalk;
 	}

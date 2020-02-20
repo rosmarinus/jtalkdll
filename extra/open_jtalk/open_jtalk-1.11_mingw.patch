@@ -1,6 +1,6 @@
-diff -ru open_jtalk-1.09_original/mecab/src/winmain.h open_jtalk-1.09/mecab/src/winmain.h
---- open_jtalk-1.09_original/mecab/src/winmain.h	2015-12-03 15:11:25.000000000 +0900
-+++ open_jtalk-1.09/mecab/src/winmain.h	2016-04-08 23:59:40.516877100 +0900
+diff -ru open_jtalk-1.11_original/mecab/src/winmain.h open_jtalk-1.11/mecab/src/winmain.h
+--- open_jtalk-1.11_original/mecab/src/winmain.h
++++ open_jtalk-1.11/mecab/src/winmain.h
 @@ -46,7 +46,7 @@
  /* for Open JTalk
  #if defined(_WIN32) || defined(__CYGWIN__)

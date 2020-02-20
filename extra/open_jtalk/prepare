@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-# command line option
-# $1: i686 | x86_64 : target architecture
-#!/usr/bin/env bash
 # charset
-charsets=( "utf_8" "shift_jis"  "euc_jp" )
+charsets=( "utf_8" "shift_jis" "euc_jp" )
 charset=${charsets[0]}
 
 # version
@@ -11,24 +8,13 @@ open_jtalk_ver=1.11
 hts_engine_api_ver=1.10
 mmdagent_example_ver=1.8
 
-re="(MINGW|CYGWIN)"
-if [[ $(uname) =~ $re ]]; then
-	bash build_portaudio_mingw $1
-fi
 
-if [ ! "$1" == "" ] ; then
-    param=-Dtarget_arch=$1 -Dcharset=${charset}
-fi
 if [[ $(uname) =~ "MINGW" ]]; then
     arch=${MSYSTEM_CHOST}
-elif [[ $(uname) =~ "CYGWIN" ]]; then
-	if [ "$1" == "" ] ; then
-		arch=$(uname -m)
-	else
-		arch=$1
-	fi
-	arch=$arch-w64-mingw32
+else
+    arch=$(uname -m)
 fi
+
 
 # dir name
 bin=bin
@@ -88,13 +74,13 @@ if [ ! -e ${file}.zip ]; then
     base_url=http://downloads.sourceforge.net/mmdagent/
     wget ${base_url}${file}.zip
 fi
-persons=(mei takumi)
-for person in ${persons[@]}; do
-    if [ ! -d $dir/$person ]; then
-        mkdir $dir/$person
-        unzip ${file}.zip ${file}/Voice/$person/*.*
-        mv ${file}/Voice/$person/*.* $dir/$person
-        rm -r ${file}
+speakers=(mei takumi)
+for speaker in ${speakers[@]}; do
+    if [ ! -d $dir/$speaker ]; then
+        mkdir $dir/$speaker
+        unzip ${file}.zip ${file}/Voice/$speaker/*.*
+        mv ${file}/Voice/$speaker/*.* $dir/$speaker
+        #rm -r ${file}
     fi
 done
 
@@ -117,14 +103,3 @@ for file in ${files[@]}; do
     fi
 done
 
-build_dir=build$arch.dir
-mkdir -p ${build_dir}
-cd ${build_dir}
-cmake .. $param
-make
-if [[ $(uname) =~ $re ]]; then
-    make install/strip
-else
-    sudo make install/strip
-fi
-cd ..

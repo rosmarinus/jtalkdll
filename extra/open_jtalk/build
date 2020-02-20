@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+source prepare
+# charset
+charsets=( "utf_8" "shift_jis" "euc_jp" )
+charset=${charsets[0]}
+if [[ $(uname) =~ "MINGW" ]]; then
+    arch=${MSYSTEM_CHOST}
+else
+    arch=$(uname -m)
+fi
+param="-Dtarget_arch=${arch} -Dcharset=${charset}"
+build_dir=build$arch.dir
+mkdir -p ${build_dir}
+cd ${build_dir}
+cmake .. $param
+make
+if [[ $(uname) =~ "MINGW" ]]; then
+    make install/strip
+else
+    sudo make install/strip
+fi
+cd ..

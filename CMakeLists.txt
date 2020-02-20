@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 3.10)
 #    default value = uname -m
 # -Dbuild_jtalkcom=true : msvc
 # -Dinstall_open_jtalk=true : install open_jtalk, hts_engine, mecab-dict-index
-# -Djust_dictionary=true : just compile & install dictionary files
 
 
 project(jtalkdll)
@@ -13,7 +12,7 @@ set(CMAKE_BUILD_TYPE Release)
 #set(CMAKE_VERBOSE_MAKEFILE TRUE)
 #set(target_arch x86_64)
 #set(build_jtalkcom TRUE)
-#set(install_open_jtalk TRUE)
+set(install_open_jtalk TRUE)
 
 
 ### archive file version
@@ -120,13 +119,15 @@ endif()
 
 ### set install prefix
 if(MSVC AND WIN32)
-    set(CMAKE_INSTALL_PREFIX "C:/${PROJECT_FOLDER}")
+    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
 elseif(MINGW)
-    set(CMAKE_INSTALL_PREFIX "${mingw_prefix}")
+    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+    #set(CMAKE_INSTALL_PREFIX "${mingw_prefix}")
 elseif(CYGWIN)
-    set(CMAKE_INSTALL_PREFIX "/usr/${target_arch}")
+    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+    #set(CMAKE_INSTALL_PREFIX "/usr/${target_arch}")
 else()
-    set(CMAKE_INSTALL_PREFIX /usr/local)
+    set(CMAKE_INSTALL_PREFIX ${BASE_PATH})
 endif()
 
 
@@ -381,15 +382,15 @@ else()
     elseif(CYGWIN)
         set(openjtalk_compile_flags "${openjtalk_compile_flags} -std=gnu11")
         set(hts_c_compile_flags "${hts_c_compile_flags} -std=gnu11")
-        set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -std=c11")
+        set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -std=gnu11")
         set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -std=gnu++11")
 
     ### linux
     else()
-        set(openjtalk_compile_flags "${openjtalk_compile_flags} -std=c11 -fPIC")
-        set(hts_c_compile_flags "${hts_c_compile_flags} -std=c11 -fPIC")
-        set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -std=c11 -fPIC")
-        set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -std=c++11 -fPIC")
+        set(openjtalk_compile_flags "${openjtalk_compile_flags} -std=gnu11 -fPIC")
+        set(hts_c_compile_flags "${hts_c_compile_flags} -std=gnu11 -fPIC")
+        set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -std=gnu11 -fPIC")
+        set(mecab_cxx_compile_flags "${mecab_cxx_compile_flags} -std=gnu++11 -fPIC")
     endif()
 
 endif()
@@ -694,6 +695,8 @@ if(mingw_build)
         LIBRARY DESTINATION ${FOLDER_INSTALL_LIB}
         RUNTIME DESTINATION ${FOLDER_INSTALL_BIN}
     )
+    #install(FILES ${JTALK_PATH}/jtalk.h DESTINATION ${MINGW_INSTALL_PREFIX}/include)
+    #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/jtalk.dll DESTINATION ${MINGW_INSTALL_PREFIX}/${FOLDER_INSTALL_BIN})
 else()
     install(TARGETS jtalk
         ARCHIVE DESTINATION ${FOLDER_INSTALL_LIB}
