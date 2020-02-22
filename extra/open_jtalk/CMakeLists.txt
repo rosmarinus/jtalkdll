@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
 # command line option
-# -Dtarget_arch=(i686|x86_64) : cygwin
-#    default value = uname -m
 # -Dcharset=(utf_8|shift_jis|euc_jp)
 #    default value = utf_8
 
@@ -135,22 +133,28 @@ endif()
 
 
 ### set install prefix
-if(MSVC AND WIN32)
-    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
-elseif(MINGW)
-    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
-    #set(CMAKE_INSTALL_PREFIX "${mingw_prefix}")
-elseif(CYGWIN)
-    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
-    #set(CMAKE_INSTALL_PREFIX "/usr/${target_arch}")
-else()
-    set(CMAKE_INSTALL_PREFIX ${BASE_PATH})
+if(NOT CMAKE_INSTALL_PREFIX)
+    if(MSVC AND WIN32)
+        set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+    elseif(MINGW)
+        set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+        #set(CMAKE_INSTALL_PREFIX "${mingw_prefix}")
+    elseif(CYGWIN)
+        set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+        #set(CMAKE_INSTALL_PREFIX "/usr/${target_arch}")
+    else()
+        set(CMAKE_INSTALL_PREFIX ${BASE_PATH})
+    endif()
 endif()
+message("CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
 
 ### data install prefix
-set(MACRO_DATA_INSTALL_PREFIX ${INSTALL_BASE_PATH}${PROJECT_FOLDER})
-set(DATA_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+if(NOT DATA_INSTALL_PREFIX)
+    set(MACRO_DATA_INSTALL_PREFIX ${INSTALL_BASE_PATH}${PROJECT_FOLDER})
+    set(DATA_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+endif()
+message("DATA_INSTALL_PREFIX=${DATA_INSTALL_PREFIX}")
 
 
 ### mecab const

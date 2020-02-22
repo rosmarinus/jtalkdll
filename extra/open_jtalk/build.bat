@@ -1,5 +1,7 @@
 @echo off
 setlocal
+set param="-Dcharset=utf_8" "-DCMAKE_INSTALL_PREFIX=c:/open" "-DDATA_INSTALL_PREFIX=c:/open"
+set VER=2019
 rem download & decompression
 bash prepare>NUL
 if "%errorlevel%"=="-1" ( 
@@ -8,8 +10,6 @@ if "%errorlevel%"=="-1" (
         goto :exit
     )
 )
-set VER=2017
-set param="-Dcharset=utf_8"
 :arch_top
 if "%1"=="x86" (
     set ARCH=x86

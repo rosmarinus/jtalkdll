@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
 # command line option
-# -Dtarget_arch=(i686|x86_64) : cygwin
-#    default value = uname -m
 # -Dbuild_jtalkcom=true : msvc
 # -Dinstall_open_jtalk=true : install open_jtalk, hts_engine, mecab-dict-index
 
@@ -18,20 +16,17 @@ set(install_open_jtalk TRUE)
 ### archive file version
 set(HTS_ENGINE_API_VERSION "1.10")
 set(OPEN_JTALK_VERSION "1.11")
-set(OPEN_JTALK_DIC_VERSION "1.11")
 
 
 ### archive file name
 set(HTS_ENGINE_API_NAME "hts_engine_API-${HTS_ENGINE_API_VERSION}")
 set(OPEN_JTALK_NAME "open_jtalk-${OPEN_JTALK_VERSION}")
-set(OPEN_JTALK_DIC_NAME "open_jtalk_dic_utf_8-${OPEN_JTALK_DIC_VERSION}")
 set(HTS_VOICE "voice")
 
 
 ### source directory
 set(HTS_ENGINE_API_PATH "${CMAKE_SOURCE_DIR}/${HTS_ENGINE_API_NAME}")
 set(OPEN_JTALK_PATH "${CMAKE_SOURCE_DIR}/${OPEN_JTALK_NAME}")
-set(OPEN_JTALK_DIC_PATH "${CMAKE_SOURCE_DIR}/${OPEN_JTALK_DIC_NAME}")
 set(HTS_VOICE_PATH "${CMAKE_SOURCE_DIR}/${HTS_VOICE}")
 set(JTALK_PATH "${CMAKE_SOURCE_DIR}/jtalk")
 
@@ -55,7 +50,7 @@ if(MINGW)
     set(CMAKE_FIND_ROOT_PATH "${mingw_prefix}")
     set(CMAKE_C_COMPILER gcc)
     set(CMAKE_CXX_COMPILER g++)
-    set(CMAKE_RANLIB ranlib)
+    set(CMAKE_RANLIB gcc-ranlib)
     set(CMAKE_AS as)
     set(CMAKE_AR ar)
     set(CMAKE_STRIP strip)
@@ -546,6 +541,7 @@ endif()
 set_target_properties(hts_engine PROPERTIES COMPILE_FLAGS ${hts_c_compile_flags})
 if(mingw_build)
     set_target_properties(hts_engine PROPERTIES PREFIX "" SUFFIX ".exe")
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/hts_engine.exe DESTINATION ${mingw_prefix}/${FOLDER_INSTALL_BIN})
 endif()
 if(install_open_jtalk)
     install(TARGETS hts_engine RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
@@ -566,6 +562,7 @@ endif()
 if(mingw_build)
     set_target_properties(mecab-dict-index PROPERTIES LINK_FLAGS -static)
     set_target_properties(mecab-dict-index PROPERTIES PREFIX "" SUFFIX ".exe")
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mecab-dict-index.exe DESTINATION ${mingw_prefix}/${FOLDER_INSTALL_BIN})
 endif()
 if(install_open_jtalk)
     install(TARGETS mecab-dict-index RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
@@ -605,6 +602,7 @@ elseif(UNIX AND ENABLE_LICONV)
 endif()
 if(mingw_build)
     set_target_properties(open_jtalk PROPERTIES PREFIX "" SUFFIX ".exe")
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/open_jtalk.exe DESTINATION ${mingw_prefix}/${FOLDER_INSTALL_BIN})
 endif()
 if(install_open_jtalk)
     install(TARGETS open_jtalk RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
@@ -692,11 +690,12 @@ endif()
 install(FILES ${JTALK_PATH}/jtalk.h DESTINATION include)
 if(mingw_build)
     install(TARGETS jtalk
-        LIBRARY DESTINATION ${FOLDER_INSTALL_LIB}
+        ARCHIVE DESTINATION ${FOLDER_INSTALL_BIN}
+        LIBRARY DESTINATION ${FOLDER_INSTALL_BIN}
         RUNTIME DESTINATION ${FOLDER_INSTALL_BIN}
     )
-    #install(FILES ${JTALK_PATH}/jtalk.h DESTINATION ${MINGW_INSTALL_PREFIX}/include)
-    #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/jtalk.dll DESTINATION ${MINGW_INSTALL_PREFIX}/${FOLDER_INSTALL_BIN})
+    install(FILES ${JTALK_PATH}/jtalk.h DESTINATION ${mingw_prefix}/include)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/jtalk.dll DESTINATION ${mingw_prefix}/${FOLDER_INSTALL_BIN})
 else()
     install(TARGETS jtalk
         ARCHIVE DESTINATION ${FOLDER_INSTALL_LIB}
@@ -783,6 +782,7 @@ if(UNIX AND ENABLE_LICONV)
 endif()
 if(mingw_build)
     set_target_properties(jsay PROPERTIES PREFIX "" SUFFIX ".exe")
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/jsay.exe DESTINATION ${mingw_prefix}/${FOLDER_INSTALL_BIN})
 endif()
 install(TARGETS jsay RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
 
@@ -801,6 +801,7 @@ if(UNIX AND ENABLE_LICONV)
 endif()
 if(mingw_build)
     set_target_properties(jtd_c PROPERTIES PREFIX "" SUFFIX ".exe")
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/jtd_c.exe DESTINATION ${mingw_prefix}/${FOLDER_INSTALL_BIN})
 endif()
 install(TARGETS jtd_c RUNTIME DESTINATION ${FOLDER_INSTALL_BIN})
 

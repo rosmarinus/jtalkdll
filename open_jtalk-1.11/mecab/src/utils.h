@@ -21,7 +21,7 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #else  // HAVE_STDINT_H
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 #if defined(_MSC_VER) && (_MSC_VER <= 1500)
 typedef unsigned char uint8_t;
 typedef unsigned long uint32_t;
@@ -250,7 +250,7 @@ inline char getEscapedChar(const char p) {
 uint64_t fingerprint(const char *str, size_t size);
 uint64_t fingerprint(const std::string &str);
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 std::wstring Utf8ToWide(const std::string &input);
 std::string WideToUtf8(const std::wstring &input);
 #endif

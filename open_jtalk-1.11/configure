@@ -1492,7 +1492,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This configure script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it.
 
-Copyright 2008-2016 Nagoya Institute of Technology
+Copyright 2008-2018 Nagoya Institute of Technology
 _ACEOF
   exit
 fi
@@ -3044,7 +3044,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE='open_jtalk'
- VERSION='1.10'
+ VERSION='1.11'
 
 
 cat >>confdefs.h <<_ACEOF

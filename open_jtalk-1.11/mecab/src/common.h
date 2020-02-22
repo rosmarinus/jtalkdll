@@ -78,7 +78,7 @@
 */
 
 /* for Open JTalk */
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
@@ -122,7 +122,7 @@
 #endif
 
 #ifndef MECAB_DEFAULT_CHARSET
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 #define MECAB_DEFAULT_CHARSET "SHIFT-JIS"
 #else
 #define MECAB_DEFAULT_CHARSET "EUC-JP"

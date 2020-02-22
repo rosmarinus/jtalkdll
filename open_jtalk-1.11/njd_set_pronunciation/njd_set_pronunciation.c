@@ -137,7 +137,6 @@ void njd_set_pronunciation(NJD * njd)
             if (strcmp(NJDNode_get_orig(node), "*") == 0) {
                NJDNode_set_orig(node, str);
             }
-
          }
          /* if known symbol, set the pronunciation */
          if (strcmp(NJDNode_get_pron(node), "*") == 0) {
