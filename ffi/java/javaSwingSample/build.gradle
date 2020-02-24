@@ -1,0 +1,30 @@
+plugins {
+    id "java"
+    id "application"
+}
+
+import org.gradle.internal.os.OperatingSystem
+task copydll(type: Copy) {
+    if (OperatingSystem.current().isWindows()) {
+        from "../jtalk.dll"
+        into "build/classes/java/main/"
+    }
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+dependencies {
+    compile project(":jtalkJar")
+    compile files("../jtalkjar/build/libs/${jarBaseName}-${jarVersion}.jar")
+    implementation "net.java.dev.jna:jna:5.5.0"
+    implementation "net.java.dev.jna:jna-platform:5.5.0"
+}
+
+application {
+    mainClassName = "JtdJnaJavaSwing"
+}
+
+run {
+}

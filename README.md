@@ -16,7 +16,6 @@
 * 利用方法
 * 音響モデルデータ、辞書データの指定
 * 設定ファイル
-* 現在分かっている不具合
 * ライセンス
 
 ## 概要
@@ -77,16 +76,13 @@ CMakeは、ソフトウェアのビルドを自動化するツールです。
 冒頭付近に次のようなコメントアウトしたsetコマンドがあり、これを必要に応じてアンコメントすることで設定を変えられます。
 
 ```CMake:
-#set(target_arch i686)
 #set(build_jtalkcom TRUE)
 #set(install_open_jtalk TRUE)
 ```
 
-上で引用した最初の行は、Cygwin64でビルドするときのアーキテクチャーの指定です。通常はx86_64ですが、この行を有効にすると、i686をターゲットにします。
+1行目は、WindowsのコマンドラインでマネージDLLを作成するときに有効にします。
 
-2行目は、WindowsのコマンドラインでマネージDLLを作成するときに有効にします。
-
-3行目は、open_jtalk, hts_engine, mecab-dict-index コマンドを一緒にbinフォルダにインストールするときに有効にします。
+2行目は、open_jtalk, hts_engine, mecab-dict-index コマンドを一緒にbinフォルダにインストールするときに有効にします。
 このjtalkdllを使うときには、open_jtalkそのものは必要ありませんが、動作の確認などに必要ならば、これを有効にしてください。
 open_jtalk 用の mecab 辞書をコンパイルするときは、この mecab-dict-index が必要になるので、そのときもこの行をアンコメントしてください。
 Windowsでバッチファイルを使ってビルドするときは、変更するのは3行目だけにしてください。
@@ -94,7 +90,6 @@ Windowsでバッチファイルを使ってビルドするときは、変更す�
 ### Windows でのビルド
 
 [マイクロソフト Visual Studio C++](https://www.visualstudio.com/ja/vs/cplusplus/) (以下MSVC)によるビルド方法と、
-[Cygwin](https://www.cygwin.com/)および
 [MSYS2](http://www.msys2.org/)上の
 [MinGW-w64](http://mingw-w64.org/doku.php)のgccコンパイラによるビルド方法を以下に示します。
 どちらで作っていいか分からないときは、MSVCでビルドしてください。
@@ -117,7 +112,7 @@ Windowsでバッチファイルを使ってビルドするときは、変更す�
 インストールが完了したら、``Visual Studio Installer``をスタートメニューから起動して、変更ボタンを押します。
 出現したワークロード画面で、このプロジェクトに必要な構成にチェックして、右下の「変更」ボタンを押し、必要なコンポーネントをインストールします。
 このとき必要な構成の指定は次の通りです。Visual Studio Community 2019では、ワークロードで「C++によるデスクトップ開発」にチェックします。
-Visual Studio Build Tolls 2019では、ワークロードで「Visual C++ Build Tools」にチェックします。
+Visual Studio Build Tools 2019では、ワークロードで「Visual C++ Build Tools」にチェックします。
 COM相互運用のクラスライブラリ``JTalkCOMdll``までビルドするときは、上記の項目の右側オプションで「C++/CLIサポート」にチェックします。
 
 * Build Tools for Visual Studio 2019 のダウンロードボタンの場所が分かりにくいのですが、ページの最後の方の「その他ツール及びフレームワーク」のところにあります。
@@ -154,7 +149,9 @@ ZIPの場合は適当な場所で展開します。
 
 ##### コマンドプロンプトを使う方法
 
-スタートメニューを開き、 Visual Studio 2019 フォルダ内にある 「x64 Native Tools Command Prompt for VS 2019」あるいは「x86 Native Tools Command Prompt for VS 2019」を起動します。どちらを使うかは64版か32版を作るかどうかで決めます。開いたら、適当なフォルダをカレントフォルダに決めます。
+スタートメニューを開き、 Visual Studio 2019 フォルダ内にある 「x64 Native Tools Command Prompt for VS 2019」
+あるいは「x86 Native Tools Command Prompt for VS 2019」を起動します。どちらを使うかは64版か32版を作るかどうかで決めます。
+開いたら、適当なフォルダをカレントフォルダに決めます。
 
 gitがインストールされているときは次のコマンドを実行します。
 
@@ -255,44 +252,6 @@ buildスクリプト中のcmake の行に ``-Dinstall_open_jtalk=true`` を追�
 今回、MingGWではCMake中でスタティックライブラリをリンクできず、またportaudioのconfigureを使ったビルドでもスタティックライブラリそのものが作れませんでした。
 試行錯誤でconfigureの15194行にあるSHARED_FLAGSの -shared オプションが邪魔をしているようなので、これを削除して、スタティックライブラリを作っています。
 
-#### Cygwin の MinGW-W64 を使ったビルド
-
-##### Cygwinの準備
-
-* Cygwin / Cygwin64 のインストール
-* 必要なパッケージのインストール
-
-###### Cygwin / Cygwin64 のインストール
-
-Cygwinがまだないときは、[Cygwin Installation](https://www.cygwin.com/install.html) から、setup-x86_64.exe もしくは setup-x86.exe をダウンロードします。
-32ビットマシンではない限り setup-x86_64.exeの方をインストールした方がいいでしょう。セットアップの方法は割愛します。
-
-###### 必要なパッケージの Cygwin へのインストール
-
-Cygwinのセットアップが完了したら、dllの生成のために次のパッケージを追加でインストールします。
-ファイル名にi686とx86_64が含まれているそれぞれ二つのパッケージは32bit版、64ビット版をコンパイルするための実行ファイル群です。必要なければどちらかを外してください。
-cmake, make, git, gcc-core, gcc-g++, mingw64-i686-gcc-core, mingw64-i686-gcc-g++, mingw64-x86_64-gcc-core, mingw64-x86_64-gcc-g++
-
-#### Cygwinでのビルド方法
-
-環境が整ったら、次の一連のコマンドでリポジトリからソースファイルをコピーし、ビルドを開始します。
-
-```bash:
-git clone https://github.com/rosmarinus/jtalkdll.git
-cd jtalkdll
-bash build
-```
-
-Cygwinだと32bit版、Cygwin64だと64bitのdllが生成されます。64ビットマシンでbuildスクリプトに引数として i686 か x86_64 を渡すと、指定したものを作ります。
-
-なお、音声を再生するために利用しているPortAudioがCMakeではうまくMinGW用のスタティックライブラリを生成できなかったので、congifureでCMmakeに先だってライブラリを生成させています。
-
-辞書ファイル、音響モデルファイルなどのデータファイルはMSVCのときと同じ場所、c:\open_jtalkフォルダにインストールされます。
-jtalk.dllや、実行ファイルのサンプル、ヘッダファイルは、CygwinのMinGWビルド用のフォルダにインストールされます。
-Cygwinの外で、jtalk.dllを使ったプログラムを動かすためには、そのプログラムと同じフォルダにjtalk.dllを配置するか、
-jtalk.dllを手作業でc:\open_jtalk\binにコピーして、そこにPATHを通すかしてください。
-
-インストールが完了したら、[動作確認](#validation)を参考に、動作するかどうか確認してみてください。 
 
 ### macOS でのビルド
 
@@ -421,23 +380,14 @@ MSVCのみ
 * 音響モデルファイル ... c:\open_jtalk\voice
 * バッチファイル regist_jtalkcom.bat, unregist_jtalkcom.bat ... c:\open_jtalk\bin
 
-#### Windows Cygwin での配置先
-
-* 共有ライブラリ jtalk.dll ... /usr/$MINGW_ARCH/bin
-* ヘッダファイル jtalk.h ... /usr/$MINGW_ARCH/include
-* サンプルプログラム jtd_c, jsay ... /usr/$MINGW_ARCH/bin
-* MeCab辞書ファイル ... c:\open_jtalk\dic_utf_8
-* 音響モデルファイル ... c:\open_jtalk\voice
-
-上記の変数 MINGW_ARCH の値は i686-w64-mingw32 または x86_64-w64-mingw32 とする。
 
 #### Windows MSYS2 での配置先
 
 以下に出てくる環境変数 MINGW_PREFIX の値は mingw32 または mingw64 である。
 
-* 共有ライブラリ jtalk.dll ... /$MINGW_PREFIX/bin
-* ヘッダファイル jtalk.h ... /$MINGW_PREFIX/include
-* サンプルプログラム jtd_c, jsay ... /$MINGW_PREFIX/bin
+* 共有ライブラリ jtalk.dll ... C:\open_jtalk\bin, /$MINGW_PREFIX/bin
+* ヘッダファイル jtalk.h ... C:\open_jtalk\bin, /$MINGW_PREFIX/include
+* サンプルプログラム jtd_c, jsay ... C:\open_jtalk\bin, /$MINGW_PREFIX/bin
 * MeCab辞書ファイル ... c:\open_jtalk\dic_utf_8
 * 音響モデルファイル ... c:\open_jtalk\voice
 
@@ -454,7 +404,7 @@ MSVCのみ
 対象のプラットフォームにおいて上記の方法でビルドが成功したら、以下の方法で動作確認ができます。
 
 次のコマンドをタイプしエンターしてください。うまくビルドできていれば、一緒にインストールしてあるhtsvoiceファイルをランダムに選んで言葉をしゃべってくれます。
-Windowsの場合は、Cygwin、MinGWを含め、インストール先をWindowsのコマンドプロンプトでカレントフォルダにするか、エクスプローラで開いてマウスでダブルクリックするかして、実行してください。
+Windowsの場合は、MinGWを含め、インストール先をWindowsのコマンドプロンプトでカレントフォルダにするか、エクスプローラで開いてマウスでダブルクリックするかして、実行してください。
 
 ```bash:
 jtd_c
@@ -462,13 +412,14 @@ jtd_c
 
 このコマンドのソースはjtalkフォルダにある[jtd_c.c](https://github.com/rosmarinus/jtalkdll/blob/master/jtalk/jtd_c.c)で、C言語で書いたこの共有ライブラリのサンプルコードです。
 
-次はもう一つのサンプルの[jsay](https://github.com/rosmarinus/jtalkdll/blob/master/jtalk/jsay.c))です。下のコマンドラインのように パラメータに日本語を入力して、エンターしてください。うまくいけば、その言葉をしゃべります。
+次はもう一つのサンプルの[jsay](https://github.com/rosmarinus/jtalkdll/blob/master/jtalk/jsay.c))です。
+下のコマンドラインのように パラメータに日本語を入力して、エンターしてください。うまくいけば、その言葉をしゃべります。
 
 ```bash:
 jsay -v mei_normal こんにちは
 ```
 
-Windowsの場合（Cygwin、MinGWでビルドしても）は、UTF-8エンコードで書かれたテキストを、jsay.exe のアイコンにマウスでドロップしても確認できます。
+Windowsの場合（MinGWでビルドしても）は、UTF-8エンコードで書かれたテキストを、jsay.exe のアイコンにマウスでドロップしても確認できます。
 
 jsayはmacOSのsayコマンドに動作を似せたサンプルで、このソースもjtalkフォルダにあります。
 -v?オプションで利用できる音声のリストが出ますので、それを参考にして音声を指定してください。
@@ -597,25 +548,9 @@ gccやclangの場合は共有ライブラリ名をコマンドラインに-lオ�
 gcc hello.c -ljtalk -ohello
 ```
 
-#### Windows Cygwin/Cygwin64 MinGW-w64 gcc.exe による利用
-
-同じgccでもWindowsでCygwin/Cygwin64の MinGW-w64 gccを使う場合は、少し工夫が必要になります。
-x86_64-w64-mingw32-gccでコンパイルするか、i686-w64-mingw32-gccでコンパイルするかで、リンクするライブラリが違ってくるためです。
-つまり、-Lオプションによるライブラリの位置の明示的な指定を追加します。
-
-例えば、i686-w64-mingw32-gccでコンパイルする場合は、次のようにします。なおjtalk.dllはbinフォルダに配置されています。
-
-```bash:
-MINGW_ARCH=i686-w64-mingw32
-$MINGW_ARCH-gcc hello.c -L/usr/$MINGW_ARCH/bin -ljtalk -ohello
-```
-
-Cygwinのコンソール上から実行するには、hello.exeのすぐそばに、同じアーキテクチャでコンパイルしたjtalk.dllを配置します。
-通常のWindowsアプリケーションと同じように実行するには、同じアーキテクチャでビルドしたjtalk.dllが、同じフォルダかパスが通ったところに存在する必要があります。
-
 #### Windows MSYS2 MinGW-w64 gcc.exe による利用
 
-MSYS2上のMinGW-w64は、MSYS2 MinGW 32-bitとMSYS2 MinGW 64-bitの、どちらのコンソールを開くかによって環境を区別できるので、Cygwinより少し楽にできます。
+MSYS2上のMinGW-w64は、MSYS2 MinGW 32-bitとMSYS2 MinGW 64-bitの、どちらのコンソールを開くかによって環境を区別します。
 
 ```bash:
 gcc hello.c -L$MINGW_PREFIX/bin -ljtalk -ohello
@@ -723,8 +658,8 @@ CUIとGUIかどうかで対立するサンプルがあるときは、CUIの方�
 
 ここではLuaJITでの例を紹介します。
 
-[LuaJIT](http://luajit.org/)は、[本家Lua](https://www.lua.org/)との大きな違いの一つに、
-標準内蔵されているFFIの機能があります。
+[LuaJIT](http://luajit.org/)は、[本家Lua](https://www.lua.org/)との大きな違いとして、
+標準内蔵されているFFI機能があります。
 これを利用して簡単に共有ライブラリを利用するLuaプログラムを書くことができます。
 
 C言語による先の例をLuaJITで書くと次のようになります。
@@ -766,10 +701,13 @@ API関数をラップしてJavaおよびJavaVM言語から利用しやすい形�
 この JTalkJna.java を``build_jtalk_jar``スクリプトで単純なjarファイルにした jtalk.jar を import して使います。
 残念ながら、jtalk.jar は JavaSpeechAPI の実装ではありません。
 
-Java関連のプログラムは、gradleでビルドするようにしています。ローカルに配置した後、ffi/java/に移動して、``./gradlew build``とすると、jarの生成とすべてのサンプルをコンパイルします。もちろんJavaの開発環境が構築しておく必要があります。例えば、Windowsだと前述のchocolateyを使って、``choco install openjdk``などとして。
-サンプルを実行するには、``./gradlew javaSample:run``とします。windowsの場合は、この実行前に 最新のjtalk.dllをffi/java/に置いておき、``./gradlew javaSample:copydll``でコピーしてから実行します。サンプルのプロジェクトは他に、kotlinSample、groovySample、scalaSampleがあります。
+Java関連のプログラムは、gradleでビルドするようにしています。ローカルに配置した後、ffi/java/に移動して、``./gradlew build``とすると、jarの生成とすべてのサンプルをコンパイルします。
+もちろんJavaの開発環境を構築しておく必要があります。例えば、Windowsだと前述のchocolateyを使って、``choco install openjdk``などとして。
+サンプルを実行するには、``./gradlew javaSample:run``とします。
+windowsの場合は、この実行前に 最新のjtalk.dllをffi/java/に置いておき、``./gradlew javaSample:copydll``でコピーしてから実行します。
+サンプルのプロジェクトは他に、kotlinSample、groovySample、scalaSample、javaSwingSample があります。
 
-JTalkJnaの内容は、
+JTalkJnaの内容は、ダウンロードして、
 [JTalkJna-JavaDoc](http://htmlpreview.github.io/?https://github.com/rosmarinus/jtalkdll/blob/master/ffi/java/javadoc/index.html)
 を見てください。
 
@@ -1163,17 +1101,6 @@ voice_dir = ..\\voice
 dic_dir = ..\\dic
 ```
 
-## 現在分かっている不具合
-
-実用上問題の無いレベルにはなってきたとは思っていますが、未だにいくつか問題が存在しています。
-
-* ffi/csharp/jtd_cs.csはmacOSのmonoでは、実行できません。コアダンプを出力してエラー終了します。理由は分かりません。
-
-* ubuntu 32bitにおいて、ffi/csharp/jtd_cs.cs と ffi/csharp/jtd_cppqt.cpp では何度か発声させると、portaudioがメモリ不足のエラーを起こし、異常終了はしませんが、声が出なくなります。
-
-* ubuntu 64bitにおいて、ffi/python/jtd_py.py と ffi/ruby/jtd_rb.rbは、実行するとコアダンプを出力してエラー終了します。調べると問題はstrdupで起きています。そこでstrdupを同等のC言語による処理で置き換えるとエラーは起きなくなります。現在そうやって jpcommon_label.c、jpcommon_node.c、njd_node.c にコードを埋め込んで対処しています。
-
-総合すると、何らかのメモリーリークが予想されますが特定できていません。
 
 ## ライセンス
 

@@ -4,7 +4,7 @@
 #           http://www.mmdagent.jp/                                 #
 # ----------------------------------------------------------------- #
 #                                                                   #
-#  Copyright (c) 2009-2015  Nagoya Institute of Technology          #
+#  Copyright (c) 2009-2018  Nagoya Institute of Technology          #
 #                           Department of Computer Science          #
 #                                                                   #
 # Some rights reserved.                                             #

@@ -80,7 +80,7 @@ for speaker in ${speakers[@]}; do
         mkdir $dir/$speaker
         unzip ${file}.zip ${file}/Voice/$speaker/*.*
         mv ${file}/Voice/$speaker/*.* $dir/$speaker
-        #rm -r ${file}
+        rm -r ${file}
     fi
 done
 

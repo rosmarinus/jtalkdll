@@ -1,6 +1,6 @@
 ===============================================================================
-                          HTS Voice "Mei" version 1.4
-                           release December 25, 2013
+                          HTS Voice "Mei" version 1.5
+                           release December 25, 2018
 
 
 The work is released as a part of MMDAgent (http://www.mmdagent.jp/).
@@ -15,7 +15,7 @@ The work is released as a part of MMDAgent (http://www.mmdagent.jp/).
 #           http://www.mmdagent.jp/                                 #
 # ----------------------------------------------------------------- #
 #                                                                   #
-#  Copyright (c) 2009-2015  Nagoya Institute of Technology          #
+#  Copyright (c) 2009-2018  Nagoya Institute of Technology          #
 #                           Department of Computer Science          #
 #                                                                   #
 # Some rights reserved.                                             #

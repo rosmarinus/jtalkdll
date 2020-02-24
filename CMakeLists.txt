@@ -78,16 +78,16 @@ if(mingw_build)
     set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
     set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
     set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-
-    message("-- Target: ${target_arch}")
-    message("-- CC: ${CMAKE_C_COMPILER}")
-    message("-- CXX: ${CMAKE_CXX_COMPILER}")
-    message("-- AS: ${CMAKE_AS}")
-    message("-- AR: ${CMAKE_AR}")
-    message("-- RANLIB: ${CMAKE_RANLIB}")
-    message("-- STRIP:  ${CMAKE_STRIP}")
-    message("-- Find Root Path: ${CMAKE_FIND_ROOT_PATH}")
 endif()
+
+message("-- Target: ${target_arch}")
+message("-- CC: ${CMAKE_C_COMPILER}")
+message("-- CXX: ${CMAKE_CXX_COMPILER}")
+message("-- AS: ${CMAKE_AS}")
+message("-- AR: ${CMAKE_AR}")
+message("-- RANLIB: ${CMAKE_RANLIB}")
+message("-- STRIP:  ${CMAKE_STRIP}")
+message("-- Find Root Path: ${CMAKE_FIND_ROOT_PATH}")
 
 
 ### set install directory
@@ -113,22 +113,30 @@ endif()
 
 
 ### set install prefix
-if(MSVC AND WIN32)
-    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
-elseif(MINGW)
-    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
-    #set(CMAKE_INSTALL_PREFIX "${mingw_prefix}")
-elseif(CYGWIN)
-    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
-    #set(CMAKE_INSTALL_PREFIX "/usr/${target_arch}")
+if(NOT BIN_INSTALL_PREFIX)
+	if(MSVC AND WIN32)
+	    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+	elseif(MINGW)
+	    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+	    #set(CMAKE_INSTALL_PREFIX "${mingw_prefix}")
+	elseif(CYGWIN)
+	    set(CMAKE_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+	    #set(CMAKE_INSTALL_PREFIX "/usr/${target_arch}")
+	else()
+	    set(CMAKE_INSTALL_PREFIX ${BASE_PATH})
+	endif()
 else()
-    set(CMAKE_INSTALL_PREFIX ${BASE_PATH})
+    set(CMAKE_INSTALL_PREFIX ${BIN_INSTALL_PREFIX})
 endif()
+message("-- CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
 
 ### data install prefix
-set(MACRO_DATA_INSTALL_PREFIX ${INSTALL_BASE_PATH}${PROJECT_FOLDER})
-set(DATA_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+if(NOT DATA_INSTALL_PREFIX)
+    set(MACRO_DATA_INSTALL_PREFIX ${INSTALL_BASE_PATH}${PROJECT_FOLDER})
+    set(DATA_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
+endif()
+message("-- DATA_INSTALL_PREFIX=${DATA_INSTALL_PREFIX}")
 
 
 ### mecab const
@@ -237,15 +245,6 @@ message("-- Serial Number: ${JTALK_SERIAL}")
 message("-- Git Revision : ${GIT_REVISION}")
 
 
-# look for mecab-dict-index.exe
-find_program(MECAB_DICT_INDEX_EXISTS "mecab-dict-index.exe")
-if(MECAB_DICT_INDEX_EXISTS)
-message("MECAB_DICT_INDEX_EXISTS")
-else()
-message("MECAB_DICT_INDEX_NOT_EXISTS")
-endif()
-
-
 ### look for libiconv
 set(ENABLE_LICONV 0)
 if(UNIX)
@@ -322,16 +321,16 @@ if(MSVC AND WIN32)
     if(build_jtalkcom)
         set(jtalkcom_cli_compile_flags "-TP -clr -EHa")
         if(CMAKE_CL_64)
-            set(SNKFILE ${JTALK_PATH}/JTalkCOMx64Pub.snk)
+            set(SNKFILE ${JTALK_PATH}/JTalkCOMx64pub.snk)
         else()
-            set(SNKFILE ${JTALK_PATH}/JTalkCOMx86Pub.snk)
+            set(SNKFILE ${JTALK_PATH}/JTalkCOMx86pub.snk)
         endif()
         if(EXISTS ${SNKFILE})
             message("-- SNK File: ${SNKFILE}")
-            set(jtalkcom_cli_link_flags "-DELAYSIGN -KEYFILE:${SNKFILE}")
+            set(jtalkcom_cli_link_flags "-delaysign -KEYFILE:${SNKFILE}")
         endif()
     endif()
-    
+
     ### mecab cpp flgas
     set(def_flags "${def_flags} -DHAVE_WINDOWS_H")
     set(def_flags "${def_flags} -DASCII_HEADER")

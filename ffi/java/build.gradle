@@ -27,3 +27,6 @@ project(":groovySample") {
 
 project(":kotlinSample") {
 }
+
+project(":javaSwingSample") {
+}

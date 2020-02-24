@@ -74,7 +74,6 @@ if not exist "%build_dir%" mkdir %build_dir%
 cd %build_dir%
 cmake .. -G "NMake Makefiles" %param%
 rem nmake clean
-nmake
 nmake install
 cd ..
 

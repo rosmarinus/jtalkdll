@@ -1,6 +1,6 @@
 # open_jtalk用Cmake関連ファイル
 
-これは open_jtalk をビルドするための Cmake用 CMakeLists.txt 及び関連ファイルです。
+これは open_jtalk をビルドするための Cmake用 CMakeLists.txt、及び関連ファイルです。
 
 ## 目次
 
@@ -8,12 +8,12 @@
 
 * 概要
 * 動作環境
+* 使用するファイル
 * ダウンロード
 * ビルド
-* インストール内容
+* インストールの内容
 * 動作確認
-* 利用方法
-* 音響モデルデータ、辞書データの指定
+* アンインストール
 * ライセンス
 
 ## 概要
@@ -21,25 +21,24 @@
 open_jtalk そのものをビルドするファイル群です。
 先に作った jtalkdll の用の CmakeLists.txt から不必要なものを削り、アーカイブのダウンロードを追加したものです。
 
-このプロジェクトでは、オリジナルのファイル以外に、次に示す他のプロジェクトのファイルをダウンロードして利用します。
+このプロジェクトでは、次に示す他のプロジェクトのファイルをダウンロードして利用します。
+これらの外部プロジェクトはそれぞれのライセンスに従います。
 
 * [open_jtalk-1.11](http://open-jtalk.sourceforge.net/)
-* [open_jtalk_dic_utf_8-1.11](http://open-jtalk.sourceforge.net/)
 * [hts_voice_nitech_jp_atr503_m001-1.05](http://open-jtalk.sourceforge.net/)
 * [hts_engine_API-1.10](http://hts-engine.sourceforge.net/)
 * [htsvoice-tohoku-f01](https://github.com/icn-lab/htsvoice-tohoku-f01)
 * [mei takumi (MMDAgent)](http://www.mmdagent.jp/)
 
-これらの外部プロジェクトはそれぞれのライセンスに従います。
 
 ### 仕組み
 
-build.bat/buildスクリプトで以下の prepare、cmake、make(nmake)を呼び出します。
+build(.bat)スクリプトで以下の prepare、cmake、make(nmake) を呼び出します。
 * prepareスクリプトで、必要なアーカイブをダウンロード・展開します。
 * cmakeコマンドによってプラットフォームに合わせたMakefileを生成します。
 * それぞれのプラットフォームでmake そして make install を実行します。
   
-※ Windows MSVCでのビルドでは WSL(Windows Subsystem for Linux)上のbashを起動して、実行します。
+※ Windows MSVCでのビルドでは WSL(Windows Subsystem for Linux)上のbashを起動して、prepare を実行します。
 WSLがインストールされていない場合は、手作業で必要なアーカイブをダウンロードし、展開してください。
 
 ## 動作環境
@@ -52,45 +51,21 @@ WSLがインストールされていない場合は、手作業で必要なア�
 
 ## 使用するファイル
 
-githubの次のページにあるファイル群を使用します。
+次のページにあるファイル群を使用します。
 https://github.com/rosmarinus/jtalkdll/tree/master/extra/open_jtalk
 
-* build (build.bat) ... 実行スクリプト本体
+* build(.bat) ... ビルド実行スクリプト本体
 * prepare ... ダウンロード・展開スクリプト
 * CMakeLists.txt ... cmake設定ファイル
 * open_jtalk-1.11_mingw.patch ... MinGW用の修正情報
-* hello (hello.bat) ... 確認用のスクリプト
+* hello(.bat) ... 確認用のスクリプト
 * README.md ... このファイル
 
 ## ダウンロード
 
-上記のファイルをまとめた extra_open_jtalk.zip をダウンロードして、
-展開し、適当なところに配置します。
-
+上記のファイルをまとめた extra_open_jtalk.zip をダウンロードしてください。
 
 ## ビルド
-
-UbuntuなどのLinux、macOSでは、``bash build``を実行します。
-環境が整っていれば、実行ファイルやデータファイルの配置まで行います。
-
-違うバージョンが出たときや、インストール先を変更したい場合は、あらかじめ該当箇所を書き換えておいて下さい。
-なおインストール時にはsudoによる管理者権限による実行が行われます。パスワードを入力してください。
-
-Windows10 の VisualStudio でのビルドでは、バッチファイル ``build.bat``を実行します。
-WSLインストール済みでbashが利用できるときは、必要なアーカイブのダウンロードとその展開を自動化しています。
-bashが利用できないときは、必要なアーカイブのダウンロードと展開はbuild.batの実行前に済ませておいて下さい。
-
-コマンドラインで[CMake](https://cmake.org/)を使ってビルドします。
-CMakeは、ソフトウェアのビルドを自動化するツールです。
-一つの設定ファイルで、LinuxやmacOSだけでなく、WindowsのVC++のビルドも記述できるので、
-マルチプラットフォームで共有ライブラリを作る今回のプロジェクトに適しています。
-
-### CMakeLists.txtの設定
-
-このプロジェクトのCMakeLists.txtはコマンドラインでの利用を前提として作られています。
-コマンドラインでキャッシュ変数を指定して実行することもできますが、
-
-冒頭付近に次のようなコメントアウトしたsetコマンドがあり、これを必要に応じてアンコメントすることで設定を変えられます。
 
 ### Windows でのビルド
 
@@ -120,9 +95,9 @@ Visual Studio Build Topls 2019では、ワークロードで「C++ Build Tools�
 
 2020/02/22現在の最新版は2019ですが、将来、後継バージョンに移行してVisual Studio 2019 が入手できない可能性があります。
 そのとき、Visual Studio のインストール場所に大規模な変更が行われなければ、
-``build.bat``の冒頭にある``2019``の文字をそのバージョンに書き換えれば対応できる可能性があります。
+``build.bat``の冒頭付近にある``2019``の文字をそのバージョンに書き換えれば対応できる可能性があります。
 
-またVisual Studio は標準のインストール先にインストールされているとして、``build.bat``は記述されています。
+またVisual Studio は標準のインストール先にあるものとして、``build.bat``は記述されています。
 あえて違う場所にインストールしている場合は、``build.bat``はうまく動作しません。
 ``build.bat``を修正してインストール先に合わせるか、
 ```x64 Native Tools Command Prompt for VS 2019```等の開発用のコマンドプロンプトをスタートメニューから起動して、
@@ -133,39 +108,34 @@ Visual Studio Build Topls 2019では、ワークロードで「C++ Build Tools�
 [CMake](https://cmake.org/)がまだインストールされていない場合は、
 [ホームページ](https://cmake.org/)からダウンロードするか、[Chocolatey](https://chocolatey.org/)を使って、インストールします。
 ダウンロードしたインストーラでインストールする場合は、インストールオプションの画面でPATHを通すラジオボタンを必ずチェックしてください。
-コマンドラインから利用するためPATHが通っている必要があります。手作業で後からPATHを通してもかまいません。
+このときコマンドラインから利用するためPATHが通っている必要があります。手作業で後からPATHを通してもかまいません。
 [Chocolatey](https://chocolatey.org/)を利用する場合は、``choco install cmake``でインストールされます。
 
 ###### WSL
 
 ダウンロードと展開の自動化のために、WSLのbashを利用しています。わざわざこのためだけにインストールする必要はありません。
 インストールされている場合は、標準的なコマンドの他に、``wget``、``unzip``、``patch``が必要なので、
-まだ無ければ、``apt``や``zypper``などを使ってあらかじめ入れておいて下さい。
+``apt``や``zypper``などを使ってあらかじめ入れておいて下さい。
 
 
-WSLが無ければ、その代わりに必要なアーカイブを手作業でダウンロードし、展開する必要があります。
-
-以下、手作業での配置
-他のフォルダと並べて``voice``フォルダを作り、この中に展開されたフォルダーをまるごと入れて下さい。
-
-##### 手作業でのアーカイブの展開
+##### 必要なアーカイブの展開
 
 WSLをインストールしない場合は次の作業をおこなってください。
 
 次のアーカイブをダウンロードして同じ場所に展開して配置します。
 
 * [open_jtalk-1.11](http://open-jtalk.sourceforge.net/)
-* [open_jtalk_dic_utf_8-1.11](http://open-jtalk.sourceforge.net/)
-* [hts_voice_nitech_jp_atr503_m001-1.05](http://open-jtalk.sourceforge.net/)
 * [hts_engine_API-1.10](http://hts-engine.sourceforge.net/)
 
+さらに、同じ場所に``voice``フォルダを作り、その中に次のアーカイブをフォルダーごと展開します。
 
-```bash:
-git clone https://github.com/rosmarinus/jtalkdll.git
-```
+* [hts_voice_nitech_jp_atr503_m001-1.05](http://open-jtalk.sourceforge.net/)
 
-2020/02/22 現在の各ファイルのバージョンは上記の通りですが、最新版では違っているかもしれません。
-大規模な変更が行われない限り、prepareとCMakeLists.txt中のバージョン番号を書き換えることで対応できるでしょう。
+必要に応じて、音響モデルファイルをこのフォルダに追加しておきます。
+
+※2020/02/22 現在の各ファイルのバージョンは上記の通りですが、最新版では違っているかもしれません。
+最新のものを使いたいときは、prepareとCMakeLists.txt内のバージョン番号の部分を書き換えてください。
+大規模な変更が行われない限り対応できるでしょう。
 
 
 ### ビルド手順
@@ -177,9 +147,8 @@ git clone https://github.com/rosmarinus/jtalkdll.git
 * prepare
 * open_jtalk-1.11_mingw.patch
 
-テスト用に次のスクリプト
+テスト用のスクリプト
 * hello.bat/hello
-
 
 #### Windows MSVC でのビルド手順
 
@@ -189,25 +158,15 @@ extra/open_jtalkにある次の3つのファイルを使います。これを同
 * build.bat
 * prepare
 
-#### WSLがインストールされている場合
+##### WSLがインストールされている場合
 
 build.batを実行します。あとはインストールまでやってくれます。
 
-#### WSLがインストールされていない場合
+##### WSLがインストールされていない場合
 
-まず、ネット上から次のアーカイブをダウンロードします。
-
-open_jtalk-1.11.tar.gz
-hts_engine_API-1.10.tar.gz
-
-これらを同じ所に並べて、そのままの名前で展開します。
-
-また、同じ所に voiceフォルダを作り、hts_voice_nitech_jp_atr503_m001-1.05.tar.gz をその中に展開します。
+上記の「必要なアーカイブの展開」の手順通りに、アーカイブをダウンロードし、展開します。
 
 あとは、``build.bat``を実行すれば、インストールまでやってくれます。
-
-なお、別の音響ファイルを使いたい場合は、インストール後``c:\open_jtalk\voice``の中に展開してください。
-
 
 #### MSYS2 の MinGW-W64 を使ったビルド
 
@@ -234,21 +193,18 @@ pacman -S base-devel mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain
 
 ##### MSYS2でのビルド方法
 
-環境が整ったら、開発用のコンソールを開きます。64bit版を作りたいときは、Windowsのスタート画面からMSYS2 MinGW 64-bit、32bit版ならばMSYS2 MinGW 32-bitです。
+環境が整ったら、開発用のコンソールを開きます。
+64bit版を作りたいときは、Windowsのスタート画面から``MSYS2 MinGW 64-bit``、
+32bit版ならば``MSYS2 MinGW 32-bit``です。
 
-ビルドには次の4つのファイルを使います。
-* build
-* prepare
-* open_jtalk-1.11_mingw.patch
-* CMakeLists.txt
-
+上記の``build``などがあるところをカレントディレクトリにして、
+下記コマンドを実行すると、インストールまでやってくれます。
 
 ```bash:
 bash build
 ```
 
-
-### macOS
+### macOS でのビルド
 
 #### 準備
 
@@ -262,7 +218,7 @@ xcode-select --install
 ```
 
 次に、macOS用のパッケージマネージャーHomebrewをインストールします。
-これを使わないcmakeをインストール方法もありますが、今回はこれを使います。
+Homebrewを使わないcmakeをインストール方法もありますが、今回はこれを使います。
 インストールの仕方と、使い方は、[Homebrew](https://brew.sh/index_ja.html)にあります。
 
 ようやく、cmakeのインストールです。
@@ -273,7 +229,7 @@ brew install cmake
 
 #### macOSでのビルド及びインストール
 
-次のコマンドを入力します。
+上記のファイルのあるところで端末を開いて、次のコマンドを入力します。
 ビルドが終了し、インストールが始まると、管理者パスワードが求められます。
 
 ```bash:
@@ -282,7 +238,7 @@ bash build
 
 ### Ubuntu
 
-Ubuntuでの方法を示します。
+Linuxの例としてUbuntuでの方法を示します。
 他のlinuxディストリビューションでも同様の処理を行えば、生成できるはずです。
 
 #### Ubuntuでの準備
@@ -297,14 +253,14 @@ sudo apt install wget unzip cmake build-essential
 
 #### Ubuntuでのビルド及びインストール
 
-スクリプトのある場所で次のコマンドを入力します。
+スクリプトのある場所で端末を開き、次のコマンドを入力します。
 ビルドが終了し、インストールが始まると、管理者パスワードが求められます。
 
 ```bash:
 bash build
 ```
 
-## インストール内容
+## インストールの内容
 
 ### インストールされるファイル
 
@@ -320,10 +276,12 @@ bash build
 音響モデルファイルを格納するフォルダ
 * C:\open_jtalk\voice
 
-MeCab形式の辞書ファイルを格納するフォルダ（文字セットによってどれか一つ）
+MeCab形式の辞書ファイルを格納するフォルダ（文字セットによってどれか一つ、既定はdic_utf_8）
 * C:\open_jtalk\dic_utf_8
 * C:\open_jtalk\dic_shift_jis
 * C:\open_jtalk\dic_euc_jp
+
+※MinGWでは、実行ファイルは上記の他にMinGWのファイルシステムの中にもインストールされます。
 
 #### macOs, Ubuntu
 
@@ -335,7 +293,7 @@ MeCab形式の辞書ファイルを格納するフォルダ（文字セットに
 音響モデルファイルを格納するフォルダ
 * /usr/local/OpenJTalk/voice
 
-MeCab形式の辞書ファイルを格納するフォルダ（文字セットによってどれか一つ）
+MeCab形式の辞書ファイルを格納するフォルダ（文字セットによってどれか一つ、既定はdic_utf_8）
 * /usr/local/OpenJTalk/dic_utf_8
 * /usr/local/OpenJTalk/dic_shift_jis
 * /usr/local/OpenJTalk/dic_euc_jp
@@ -348,8 +306,8 @@ macOS、Linuxでの標準のインストール先は、実行ファイルは``/u
 データフォルダは``/usr/local/OpenJTalk/``です。
 
 変更するには、次のキャッシュ変数をCMakeLists.txtの冒頭で定義しておきます。
-実行ファイルのインストール先は```CMAKE_INSTALL_PREFIX```のbin、
-データフォルダのインストール先は```DATA_INSTALL_PREFIX```です。
+実行ファイルのインストール先は``INSTALL_PREFIX``のbin、
+データフォルダのインストール先は``DATA_INSTALL_PREFIX``です。
 
 ### 文字セットの変更
 
@@ -358,14 +316,14 @@ macOS、Linuxでの標準のインストール先は、実行ファイルは``/u
 
 #### Windows10
 
-```build.bat```の冒頭付近にある次の行で、utf_8、shift_jis、euc_jpを指定します。
+``build.bat``の冒頭付近にある次の行で、utf_8、shift_jis、euc_jpを指定します。
 ```bash
 set param="-Dcharset=utf_8"
 ```
 
 #### MinGW、macOS、Linux
 
-```build```スクリプトの冒頭付近にある次の行の2行目で配列の番号で文字コードを指定します。
+``build``スクリプトの冒頭付近にある次の行の2行目で配列の番号で文字コードを指定します。
 
 ```bash:
 charsets=( "utf_8" "shift_jis" "euc_jp" )
@@ -374,10 +332,13 @@ charset=${charsets[0]}
 ## 動作確認
 
 ビルドがうまくいったかを確認するためのスクリプトを用意しています。
-* hello.bat/hello
+* hello(.bat)
 
 Windowsならば、hello.batをダブルクリックします。
-Windows以外では次のようにタイプし、エンターします。
+（MinGWでも、MinGWのコンソールから実行するのではなく、hello.batをダブルクリックします。
+helloスクリプトはLinuxやmacOS向けのデータの配置で書かれているためです。）
+
+Windows以外ではhelloを使います。次のようにタイプし、エンターします。
 
 ```bash:
 bash hello
@@ -386,9 +347,8 @@ bash hello
 実行すると、``test.wav``という名の音声ファイルが作成されます。
 これを再生して確認して下さい。
 
-文字コードを変更した場合、インストール先を変更した場合、
-データフォルダを変更した場合は、
-スクリプトの内容や、保存する文字コードをそれに合わせて変えてください。
+文字コードを変更した場合、インストール先を変更した場合、データフォルダを変更した場合などは、
+hello(.bat)のスクリプトの内容や保存する文字コードをそれに合わせて入力してください。
 
 
 ## アンインストール
@@ -404,10 +364,7 @@ cd build.dir
 xargs rm < install_manifest.txt
 ```
 
-
 ## ライセンス
 
-* このプロジェクトにあるオリジナルのファイルのライセンスは、[MIT ライセンス](https://opensource.org/licenses/MIT)とします。
-* このリポジトリのファイルには、オリジナルのファイル以外に、他のプロジェクトのファイルを含んでいます。
-そのまま使っているものもあれば、一部修正を加えているものもあります。
-他のプロジェクト由来のファイルは、それぞれのライセンスに従います。
+* [MIT ライセンス](https://opensource.org/licenses/MIT)です。
+* このスクリプトに呼び出されて、作成される実行ファイル、データファイルにおいては、それぞれのライセンスに従います。
