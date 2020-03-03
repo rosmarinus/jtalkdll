@@ -705,7 +705,7 @@ Java関連のプログラムは、gradleでビルドするようにしていま�
 もちろんJavaの開発環境を構築しておく必要があります。例えば、Windowsだと前述のchocolateyを使って、``choco install openjdk``などとして。
 サンプルを実行するには、``./gradlew javaSample:run``とします。
 windowsの場合は、この実行前に 最新のjtalk.dllをffi/java/に置いておき、``./gradlew javaSample:copydll``でコピーしてから実行します。
-サンプルのプロジェクトは他に、kotlinSample、groovySample、scalaSample、javaSwingSample があります。
+サンプルのプロジェクトは他に、kotlinSample、groovySample、scalaSample、javaSwingSample、javaFXSample があります。
 
 JTalkJnaの内容は、ダウンロードして、
 [JTalkJna-JavaDoc](http://htmlpreview.github.io/?https://github.com/rosmarinus/jtalkdll/blob/master/ffi/java/javadoc/index.html)
