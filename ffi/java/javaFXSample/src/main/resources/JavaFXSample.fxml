@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<BorderPane fx:controller="JavaFXSampleController"
+maxHeight="300" maxWidth="300" minHeight="300" minWidth="300" prefHeight="300.0" prefWidth="300.0"
+    xmlns="http://javafx.com/javafx/11.0.1"
+    xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <HBox prefHeight="30.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+            <children>
+                <ComboBox fx:id="comboBox" prefHeight="25.0" prefWidth="300.0" BorderPane.alignment="CENTER" >
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                    </HBox.margin>
+                </ComboBox>
+                <Pane prefHeight="25.0" prefWidth="50.0" HBox.hgrow="ALWAYS" />
+                <Button fx:id="buttonReference" minWidth="70.0" mnemonicParsing="false"  onAction="#referenceVoices" 
+					text="参照">
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <TextArea fx:id="textArea" prefHeight="100.0" prefWidth="300.0" BorderPane.alignment="CENTER" text="何か入力してください。" onKeyPressed="#keyPressed" />
+    </center>
+    <bottom>
+        <HBox prefHeight="30.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="buttonRead" minWidth="70.0" mnemonicParsing="false"  onAction="#readText"
+					text="発声">
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                    </HBox.margin>
+                </Button>
+                <Pane prefHeight="25.0" prefWidth="50.0" HBox.hgrow="ALWAYS" />
+                <Button fx:id="buttonPause" minWidth="70.0" mnemonicParsing="false"  onAction="#pauseReading"
+					text="一時停止">
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                    </HBox.margin>
+                </Button>
+                <Pane prefHeight="25.0" prefWidth="50.0" HBox.hgrow="ALWAYS" />
+                <Button fx:id="buttonStop" minWidth="70.0" mnemonicParsing="false"  onAction="#stopReading"
+					text="停止">
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+    </bottom>
+</BorderPane>

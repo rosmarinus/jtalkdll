@@ -4,6 +4,7 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Callback;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +12,6 @@ import java.util.EventListener;
 import java.util.EventObject;
 import java.util.List;
 import javax.swing.event.EventListenerList;
-import com.github.rosmarinus.jtalk.VoiceFileInfo;
 
 /**
  * jtalk.dllをJNAを使ってアクセスするクラス
@@ -100,6 +100,13 @@ public class JTalkJna {
         }
         // public static class ByValue extends HTSVoiceList implements Structure.ByValue
         // { }
+    }
+
+    /**
+     * 読み上げ完了時に発動されるメソッドを持ったインターフェイス
+     */
+    public interface OnSpeakingFinishedCallbackProc extends Callback {
+        public void invoke();
     }
 
     /**
@@ -198,6 +205,8 @@ public class JTalkJna {
         void openjtalk_wait(Pointer handle, int duration);
 
         Boolean openjtalk_speakToFile(Pointer handle, String text, String file);
+
+        void openjtalk_setOnFinishedCallback(Pointer handle, OnSpeakingFinishedCallbackProc callback);
 
         // int openjtalk_getCharCode(String text);
     }
@@ -1077,6 +1086,29 @@ public class JTalkJna {
         }
         if (!API.INSTANCE.openjtalk_speakToFile(handle, text, file)) {
             throw new Exception("音声ファイルの作成中にエラーが発生しました。");
+        }
+    }
+
+    /**
+     * 完了時に実行するメソッドを登録する。読み上げ中には登録できない 既に登録中の時は、置き換える。
+     * 
+     * @param proc コールバックインターフェイス
+     * @throws Exception オブジェクトポインタがNULLなどの例外
+     */
+    public void setOnSpeakingFinishedCallback(OnSpeakingFinishedCallbackProc proc) throws Exception {
+        if (!isSpeaking()) {
+            API.INSTANCE.openjtalk_setOnFinishedCallback(handle, proc);
+        }
+    }
+
+    /**
+     * 完了時に実行するメソッドを削除する。読み上げ中には削除できない。
+     * 
+     * @throws Exception オブジェクトポインタがNULLなどの例外
+     */
+    public void clearOnSpeakingFinishedCallback() throws Exception {
+        if (!isSpeaking()) {
+            API.INSTANCE.openjtalk_setOnFinishedCallback(handle, null);
         }
     }
 }

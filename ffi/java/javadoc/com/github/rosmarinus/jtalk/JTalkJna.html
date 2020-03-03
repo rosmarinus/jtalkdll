@@ -19,7 +19,7 @@
 <script type="text/javascript" src="../../../../script-dir/jquery-ui.js"></script>
 </head>
 <body class="class-declaration">
-<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":10,"i61":10,"i62":10,"i63":10,"i64":10,"i65":10};
+<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":10,"i61":10,"i62":10,"i63":10,"i64":10,"i65":10,"i66":10,"i67":10};
 var tabs = {65535:["t0","\u3059\u3079\u3066\u306E\u30E1\u30BD\u30C3\u30C9"],2:["t2","\u30A4\u30F3\u30B9\u30BF\u30F3\u30B9\u30FB\u30E1\u30BD\u30C3\u30C9"],8:["t4","concrete\u30E1\u30BD\u30C3\u30C9"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -133,13 +133,20 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="JTalkJna.OnSpeakingFinishedCallbackProc.html" title="com.github.rosmarinus.jtalk内のインタフェース">JTalkJna.OnSpeakingFinishedCallbackProc</a></span></code></th>
+<td class="colLast">
+<div class="block">読み上げ完了時に発動されるメソッドを持ったインターフェイス</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="JTalkJna.VoiceListChangedEvent.html" title="com.github.rosmarinus.jtalk内のクラス">JTalkJna.VoiceListChangedEvent</a></span></code></th>
 <td class="colLast">
 <div class="block">音響モデルファイルのリストの変化イベントクラス</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static interface&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="JTalkJna.VoiceListChangedListener.html" title="com.github.rosmarinus.jtalk内のインタフェース">JTalkJna.VoiceListChangedListener</a></span></code></th>
 <td class="colLast">
@@ -255,432 +262,446 @@ java.lang.String&nbsp;voiceDirPath)</code></th>
 </tr>
 <tr class="rowColor" id="i1">
 <td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#clearOnSpeakingFinishedCallback()">clearOnSpeakingFinishedCallback</a></span>()</code></th>
+<td class="colLast">
+<div class="block">完了時に実行するメソッドを削除する。</div>
+</td>
+</tr>
+<tr class="altColor" id="i2">
+<td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#fireVoiceListChanged()">fireVoiceListChanged</a></span>()</code></th>
 <td class="colLast">
 <div class="block">音響モデルファイルのリストが変化したときの処理を行う</div>
 </td>
 </tr>
-<tr class="altColor" id="i2">
+<tr class="rowColor" id="i3">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getA()">getA</a></span>()</code></th>
 <td class="colLast">
 <div class="block">オールパス値(Alpha)を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i3">
+<tr class="altColor" id="i4">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getAdditionalHalfTone()">getAdditionalHalfTone</a></span>()</code></th>
 <td class="colLast">
 <div class="block">追加ハーフトーン(Fm)を取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i4">
+<tr class="rowColor" id="i5">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getAlpha()">getAlpha</a></span>()</code></th>
 <td class="colLast">
 <div class="block">オールパス値(Alpha)を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i5">
+<tr class="altColor" id="i6">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getB()">getB</a></span>()</code></th>
 <td class="colLast">
 <div class="block">ポストフィルター係数(Beta)を取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i6">
+<tr class="rowColor" id="i7">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getBeta()">getBeta</a></span>()</code></th>
 <td class="colLast">
 <div class="block">ポストフィルター係数(Beta)を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i7">
+<tr class="altColor" id="i8">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getDic()">getDic</a></span>()</code></th>
 <td class="colLast">
 <div class="block">辞書ディレクトリを取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i8">
+<tr class="rowColor" id="i9">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getFm()">getFm</a></span>()</code></th>
 <td class="colLast">
 <div class="block">追加ハーフトーン(Fm)を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i9">
+<tr class="altColor" id="i10">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getFperiod()">getFperiod</a></span>()</code></th>
 <td class="colLast">
 <div class="block">フレームピリオド(P)を取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i10">
+<tr class="rowColor" id="i11">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getG()">getG</a></span>()</code></th>
 <td class="colLast">
 <div class="block">ボリューム(G)を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i11">
+<tr class="altColor" id="i12">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getGvWeightForLogF0()">getGvWeightForLogF0</a></span>()</code></th>
 <td class="colLast">
 <div class="block">F0系列内変動重み(Jf)を取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i12">
+<tr class="rowColor" id="i13">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getGvWeightForSpectrum()">getGvWeightForSpectrum</a></span>()</code></th>
 <td class="colLast">
 <div class="block">スペクトラム系列内変動の重み(Jm)を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i13">
+<tr class="altColor" id="i14">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getJf()">getJf</a></span>()</code></th>
 <td class="colLast">
 <div class="block">F0系列内変動重み(Jf)を取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i14">
+<tr class="rowColor" id="i15">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getJm()">getJm</a></span>()</code></th>
 <td class="colLast">
 <div class="block">スペクトラム系列内変動の重み(Jm)を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i15">
+<tr class="altColor" id="i16">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getMsdThreshold()">getMsdThreshold</a></span>()</code></th>
 <td class="colLast">
 <div class="block">有声 / 無声境界値(U)を取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i16">
+<tr class="rowColor" id="i17">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getP()">getP</a></span>()</code></th>
 <td class="colLast">
 <div class="block">フレームピリオド(P)を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i17">
+<tr class="altColor" id="i18">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getR()">getR</a></span>()</code></th>
 <td class="colLast">
 <div class="block">スピーチ速度(R)を取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i18">
+<tr class="rowColor" id="i19">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getS()">getS</a></span>()</code></th>
 <td class="colLast">
 <div class="block">サンプリング周波数(S)を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i19">
+<tr class="altColor" id="i20">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getSamplingFrequency()">getSamplingFrequency</a></span>()</code></th>
 <td class="colLast">
 <div class="block">サンプリング周波数(S)を取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i20">
+<tr class="rowColor" id="i21">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getSpeed()">getSpeed</a></span>()</code></th>
 <td class="colLast">
 <div class="block">スピーチ速度(R)を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i21">
+<tr class="altColor" id="i22">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getU()">getU</a></span>()</code></th>
 <td class="colLast">
 <div class="block">有声 / 無声境界値(U)を取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i22">
+<tr class="rowColor" id="i23">
 <td class="colFirst"><code><a href="VoiceFileInfo.html" title="com.github.rosmarinus.jtalk内のクラス">VoiceFileInfo</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getVoice()">getVoice</a></span>()</code></th>
 <td class="colLast">
 <div class="block">現在の音響モデル情報を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i23">
+<tr class="altColor" id="i24">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getVoiceDir()">getVoiceDir</a></span>()</code></th>
 <td class="colLast">
 <div class="block">現在の音響モデルディレクトリを取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i24">
+<tr class="rowColor" id="i25">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getVoiceName()">getVoiceName</a></span>()</code></th>
 <td class="colLast">
 <div class="block">現在の音響モデル名を取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i25">
+<tr class="altColor" id="i26">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getVoicePath()">getVoicePath</a></span>()</code></th>
 <td class="colLast">
 <div class="block">現在の音響モデルファイルのパスを取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i26">
+<tr class="rowColor" id="i27">
 <td class="colFirst"><code>java.util.ArrayList&lt;<a href="VoiceFileInfo.html" title="com.github.rosmarinus.jtalk内のクラス">VoiceFileInfo</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getVoices()">getVoices</a></span>()</code></th>
 <td class="colLast">
 <div class="block">音響モデルディレクトリにある全ての音響モデルファイルのリストを取得する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i27">
+<tr class="altColor" id="i28">
 <td class="colFirst"><code>double</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getVolume()">getVolume</a></span>()</code></th>
 <td class="colLast">
 <div class="block">ボリューム(G)を取得する</div>
 </td>
 </tr>
-<tr class="altColor" id="i28">
+<tr class="rowColor" id="i29">
 <td class="colFirst"><code>java.lang.Boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isFinished()">isFinished</a></span>()</code></th>
 <td class="colLast">
 <div class="block">非同期発声が完了したかどうか</div>
 </td>
 </tr>
-<tr class="rowColor" id="i29">
+<tr class="altColor" id="i30">
 <td class="colFirst"><code>java.lang.Boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isPaused()">isPaused</a></span>()</code></th>
 <td class="colLast">
 <div class="block">非同期発声が一時停止しているかどうか</div>
 </td>
 </tr>
-<tr class="altColor" id="i30">
+<tr class="rowColor" id="i31">
 <td class="colFirst"><code>java.lang.Boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isSpeaking()">isSpeaking</a></span>()</code></th>
 <td class="colLast">
 <div class="block">非同期発声しているかどうか</div>
 </td>
 </tr>
-<tr class="rowColor" id="i31">
+<tr class="altColor" id="i32">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#pause()">pause</a></span>()</code></th>
 <td class="colLast">
 <div class="block">非同期発声を一時停止する</div>
 </td>
 </tr>
-<tr class="altColor" id="i32">
+<tr class="rowColor" id="i33">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeVoiceListChangedListener(com.github.rosmarinus.jtalk.JTalkJna.VoiceListChangedListener)">removeVoiceListChangedListener</a></span>&#8203;(<a href="JTalkJna.VoiceListChangedListener.html" title="com.github.rosmarinus.jtalk内のインタフェース">JTalkJna.VoiceListChangedListener</a>&nbsp;listener)</code></th>
 <td class="colLast">
 <div class="block">音響モデルファイルの変化リスナーを削除する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i33">
+<tr class="altColor" id="i34">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#resume()">resume</a></span>()</code></th>
 <td class="colLast">
 <div class="block">非同期発声の一時停止を再開する</div>
 </td>
 </tr>
-<tr class="altColor" id="i34">
+<tr class="rowColor" id="i35">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setA(double)">setA</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">オールパス値(Alpha)を設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i35">
+<tr class="altColor" id="i36">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setAdditionalHalfTone(double)">setAdditionalHalfTone</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">追加ハーフトーン(Fm)を設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i36">
+<tr class="rowColor" id="i37">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setAlpha(double)">setAlpha</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">オールパス値(Alpha)を設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i37">
+<tr class="altColor" id="i38">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setB(double)">setB</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">ポストフィルター係数(Beta)を設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i38">
+<tr class="rowColor" id="i39">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setBeta(double)">setBeta</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">ポストフィルター係数(Beta)を設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i39">
+<tr class="altColor" id="i40">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setDic(java.lang.String)">setDic</a></span>&#8203;(java.lang.String&nbsp;path)</code></th>
 <td class="colLast">
 <div class="block">辞書ディレクトリを設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i40">
+<tr class="rowColor" id="i41">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setFm(double)">setFm</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">追加ハーフトーン(Fm)を設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i41">
+<tr class="altColor" id="i42">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setFperiod(int)">setFperiod</a></span>&#8203;(int&nbsp;i)</code></th>
 <td class="colLast">
 <div class="block">フレームピリオド(P)を設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i42">
+<tr class="rowColor" id="i43">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setG(double)">setG</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">ボリューム(G)を設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i43">
+<tr class="altColor" id="i44">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setGvWeightForLogF0(double)">setGvWeightForLogF0</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">F0系列内変動重み(Jf)を設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i44">
+<tr class="rowColor" id="i45">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setGvWeightForSpectrum(double)">setGvWeightForSpectrum</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">スペクトラム系列内変動の重み(Jm)を設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i45">
+<tr class="altColor" id="i46">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setJf(double)">setJf</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">F0系列内変動重み(Jf)を設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i46">
+<tr class="rowColor" id="i47">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setJm(double)">setJm</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">スペクトラム系列内変動の重み(Jm)を設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i47">
+<tr class="altColor" id="i48">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setMsdThreshold(double)">setMsdThreshold</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">有声 / 無声境界値(U)を設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i48">
+<tr class="rowColor" id="i49">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setOnSpeakingFinishedCallback(com.github.rosmarinus.jtalk.JTalkJna.OnSpeakingFinishedCallbackProc)">setOnSpeakingFinishedCallback</a></span>&#8203;(<a href="JTalkJna.OnSpeakingFinishedCallbackProc.html" title="com.github.rosmarinus.jtalk内のインタフェース">JTalkJna.OnSpeakingFinishedCallbackProc</a>&nbsp;proc)</code></th>
+<td class="colLast">
+<div class="block">完了時に実行するメソッドを登録する。</div>
+</td>
+</tr>
+<tr class="altColor" id="i50">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setP(int)">setP</a></span>&#8203;(int&nbsp;i)</code></th>
 <td class="colLast">
 <div class="block">フレームピリオド(P)を設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i49">
+<tr class="rowColor" id="i51">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setR(double)">setR</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">スピーチ速度(R)を設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i50">
+<tr class="altColor" id="i52">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setS(int)">setS</a></span>&#8203;(int&nbsp;i)</code></th>
 <td class="colLast">
 <div class="block">サンプリング周波数(S)を設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i51">
+<tr class="rowColor" id="i53">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setSamplingFrequency(int)">setSamplingFrequency</a></span>&#8203;(int&nbsp;i)</code></th>
 <td class="colLast">
 <div class="block">サンプリング周波数(S)を設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i52">
+<tr class="altColor" id="i54">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setSpeed(double)">setSpeed</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">スピーチ速度(R)を設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i53">
+<tr class="rowColor" id="i55">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setU(double)">setU</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">有声 / 無声境界値(U)を設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i54">
+<tr class="altColor" id="i56">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setVoice(com.github.rosmarinus.jtalk.VoiceFileInfo)">setVoice</a></span>&#8203;(<a href="VoiceFileInfo.html" title="com.github.rosmarinus.jtalk内のクラス">VoiceFileInfo</a>&nbsp;arg)</code></th>
 <td class="colLast">
 <div class="block">音響モデル情報によって現在の音響モデルを設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i55">
+<tr class="rowColor" id="i57">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setVoice(java.lang.String)">setVoice</a></span>&#8203;(java.lang.String&nbsp;path)</code></th>
 <td class="colLast">
 <div class="block">音響モデルファイルのパスによって現在の音響モデルを設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i56">
+<tr class="altColor" id="i58">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setVoiceDir(java.lang.String)">setVoiceDir</a></span>&#8203;(java.lang.String&nbsp;path)</code></th>
 <td class="colLast">
 <div class="block">音響モデルディレクトリを設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i57">
+<tr class="rowColor" id="i59">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setVoiceName(java.lang.String)">setVoiceName</a></span>&#8203;(java.lang.String&nbsp;name)</code></th>
 <td class="colLast">
 <div class="block">音響モデル名で現在の音響モデルを設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i58">
+<tr class="altColor" id="i60">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setVoicePath(java.lang.String)">setVoicePath</a></span>&#8203;(java.lang.String&nbsp;path)</code></th>
 <td class="colLast">
 <div class="block">音響モデルファイルのパスによって現在の音響モデルを設定する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i59">
+<tr class="rowColor" id="i61">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setVolume(double)">setVolume</a></span>&#8203;(double&nbsp;f)</code></th>
 <td class="colLast">
 <div class="block">ボリューム(G)を設定する</div>
 </td>
 </tr>
-<tr class="altColor" id="i60">
+<tr class="altColor" id="i62">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#speakAsync(java.lang.String)">speakAsync</a></span>&#8203;(java.lang.String&nbsp;text)</code></th>
 <td class="colLast">
 <div class="block">非同期発声をする</div>
 </td>
 </tr>
-<tr class="rowColor" id="i61">
+<tr class="rowColor" id="i63">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#speakSync(java.lang.String)">speakSync</a></span>&#8203;(java.lang.String&nbsp;text)</code></th>
 <td class="colLast">
 <div class="block">同期発声する</div>
 </td>
 </tr>
-<tr class="altColor" id="i62">
+<tr class="altColor" id="i64">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#speakToFile(java.lang.String,java.lang.String)">speakToFile</a></span>&#8203;(java.lang.String&nbsp;text,
 java.lang.String&nbsp;file)</code></th>
@@ -688,21 +709,21 @@ java.lang.String&nbsp;file)</code></th>
 <div class="block">文字列の音声をwav形式でファイルに保存する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i63">
+<tr class="rowColor" id="i65">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stop()">stop</a></span>()</code></th>
 <td class="colLast">
 <div class="block">非同期発声を強制停止する</div>
 </td>
 </tr>
-<tr class="altColor" id="i64">
+<tr class="altColor" id="i66">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#wait(int)">wait</a></span>&#8203;(int&nbsp;duration)</code></th>
 <td class="colLast">
 <div class="block">指定時間待機する</div>
 </td>
 </tr>
-<tr class="rowColor" id="i65">
+<tr class="rowColor" id="i67">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#waitUntilDone()">waitUntilDone</a></span>()</code></th>
 <td class="colLast">
@@ -1663,6 +1684,32 @@ java.lang.String&nbsp;file)</span>
 <dd><code>file</code> - 保存ファイル名</dd>
 <dt><span class="throwsLabel">例外:</span></dt>
 <dd><code>java.lang.Exception</code> - ファイル書き込みエラーなどの例外</dd>
+</dl>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="setOnSpeakingFinishedCallback(com.github.rosmarinus.jtalk.JTalkJna.OnSpeakingFinishedCallbackProc)">setOnSpeakingFinishedCallback</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setOnSpeakingFinishedCallback</span>&#8203;(<span class="arguments"><a href="JTalkJna.OnSpeakingFinishedCallbackProc.html" title="com.github.rosmarinus.jtalk内のインタフェース">JTalkJna.OnSpeakingFinishedCallbackProc</a>&nbsp;proc)</span>
+                                   throws <span class="exceptions">java.lang.Exception</span></div>
+<div class="block">完了時に実行するメソッドを登録する。読み上げ中には登録できない 既に登録中の時は、置き換える。</div>
+<dl>
+<dt><span class="paramLabel">パラメータ:</span></dt>
+<dd><code>proc</code> - コールバックインターフェイス</dd>
+<dt><span class="throwsLabel">例外:</span></dt>
+<dd><code>java.lang.Exception</code> - オブジェクトポインタがNULLなどの例外</dd>
+</dl>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="clearOnSpeakingFinishedCallback()">clearOnSpeakingFinishedCallback</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">clearOnSpeakingFinishedCallback</span>()
+                                     throws <span class="exceptions">java.lang.Exception</span></div>
+<div class="block">完了時に実行するメソッドを削除する。読み上げ中には削除できない。</div>
+<dl>
+<dt><span class="throwsLabel">例外:</span></dt>
+<dd><code>java.lang.Exception</code> - オブジェクトポインタがNULLなどの例外</dd>
 </dl>
 </section>
 </li>

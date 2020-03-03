@@ -63,7 +63,7 @@ extern (C) {
 	void openjtalk_waitUntilDone(OpenJTalk* oj);
 	void openjtalk_wait(OpenJTalk* oj, int duration);
 	bool openjtalk_speakToFile(OpenJTalk* oj, char* text, char* file);
-	void openjtalk_setVerbose(OpenJTalk* oj, bool sw);
+	void openjtalk_setVerbose(bool sw);
 	void openjtalk_test(OpenJTalk* oj, void *text);
 }
 
@@ -368,7 +368,7 @@ private:
 
 	void verbose(bool sw) {
 		checkOpenjtalkObject();
-		openjtalk_setVerbose(oj,sw);
+		openjtalk_setVerbose(sw);
 	}
 
 

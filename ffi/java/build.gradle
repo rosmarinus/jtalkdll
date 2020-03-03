@@ -3,6 +3,10 @@ buildscript{
     ext.jarVersion="0.9.0"
 }
 
+plugins {
+    id 'java'
+}
+
 allprojects{
     repositories { 
         jcenter() 
@@ -10,7 +14,7 @@ allprojects{
 }
 
 wrapper {
-    gradleVersion = '6.1'
+    gradleVersion = '6.2.1'
 }
 
 project(":jtalkJar") {
@@ -30,3 +34,7 @@ project(":kotlinSample") {
 
 project(":javaSwingSample") {
 }
+
+project(":javaFXSample") {
+}
+

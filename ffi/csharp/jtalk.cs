@@ -53,7 +53,7 @@ namespace JTalkDll
     };
 
 
-        public class JTalkTTS : IDisposable
+    public class JTalkTTS : IDisposable
     {
         private const String dll = "jtalk";
 

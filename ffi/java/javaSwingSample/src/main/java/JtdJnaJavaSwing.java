@@ -1,14 +1,10 @@
 import com.github.rosmarinus.jtalk.JTalkJna;
-import com.sun.jna.Platform;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -20,11 +16,10 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.LayoutFocusTraversalPolicy;
-import javax.swing.SwingUtilities;
-
 
 public class JtdJnaJavaSwing extends JFrame {
 
+    private static final long serialVersionUID = 7585716142494363391L;
     JComboBox<String> comboBox;
     JTextArea textArea;
     JScrollPane scrollpane;
@@ -33,6 +28,9 @@ public class JtdJnaJavaSwing extends JFrame {
     JTalkJna tts;
 
     class MyFocusPolicy extends LayoutFocusTraversalPolicy {
+
+        private static final long serialVersionUID = 1L;
+
         @Override
         public Component getComponentAfter(Container container, Component component) {
             if (component == comboBox) {
@@ -79,27 +77,25 @@ public class JtdJnaJavaSwing extends JFrame {
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
         tts.getVoices().forEach(v -> model.addElement(v.name));
 
-        tts.addVoiceListChangedListener( event -> {
-                try {
-                    model.removeAllElements();
-                    String name = tts.getVoiceName();
-                    tts.getVoices().forEach(v -> model.addElement(v.name));
-                    comboBox.setSelectedItem(name);
-                } catch (Exception e) {
-                }
+        tts.addVoiceListChangedListener(event -> {
+            try {
+                model.removeAllElements();
+                String name = tts.getVoiceName();
+                tts.getVoices().forEach(v -> model.addElement(v.name));
+                comboBox.setSelectedItem(name);
+            } catch (Exception e) {
             }
-        );
+        });
 
         comboBox = new JComboBox<String>(model);
         comboBox.setPreferredSize(new Dimension(218, 20));
         comboBox.setMaximumRowCount(16);
-        comboBox.addActionListener( event -> {
-                try {
-                    tts.setVoiceName((String) comboBox.getSelectedItem());
-                } catch (Exception e) {
-                }
+        comboBox.addActionListener(event -> {
+            try {
+                tts.setVoiceName((String) comboBox.getSelectedItem());
+            } catch (Exception e) {
             }
-        );
+        });
         GridBagConstraints gbcComboBox = new GridBagConstraints();
         gbcComboBox.gridy = 0;
         gbcComboBox.gridx = 0;
@@ -113,31 +109,26 @@ public class JtdJnaJavaSwing extends JFrame {
 
         textArea = new JTextArea("何か入力してください。");
         textArea.selectAll();
-        textArea.addKeyListener(
-            new KeyListener() {
-                public void keyPressed(KeyEvent event) {
-                    try {
-                        if (event.getKeyCode() == KeyEvent.VK_TAB) {
-
-                            int mod = event.getModifiersEx();
-                            if ((event.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) {
-                                comboBox.requestFocusInWindow();
-                            } else {
-                                buttonSay.requestFocusInWindow();
-                            }
+        textArea.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent event) {
+                try {
+                    if (event.getKeyCode() == KeyEvent.VK_TAB) {
+                        if ((event.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) {
+                            comboBox.requestFocusInWindow();
+                        } else {
+                            buttonSay.requestFocusInWindow();
                         }
-                    } catch (Exception e) {
                     }
-                }
-
-                public void keyTyped(KeyEvent event) {
-                }
-
-                public void keyReleased(KeyEvent event) {
+                } catch (Exception e) {
                 }
             }
-        );
 
+            public void keyTyped(KeyEvent event) {
+            }
+
+            public void keyReleased(KeyEvent event) {
+            }
+        });
 
         scrollpane = new JScrollPane(textArea);
         scrollpane.setPreferredSize(new Dimension(218, 50));
@@ -154,42 +145,40 @@ public class JtdJnaJavaSwing extends JFrame {
 
         buttonSay = new JButton("発声");
         buttonSay.setPreferredSize(new Dimension(98, 25));
-        buttonSay.addActionListener( event -> {
+        buttonSay.addActionListener(event -> {
+            try {
+                String text = textArea.getText();
+                tts.speakAsync(text);
+            } catch (Exception e) {
+            }
+        });
+
+        buttonSay.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent event) {
                 try {
-                    String text = textArea.getText();
-                    tts.speakAsync(text);
+                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                        Robot robot = new Robot();
+                        robot.keyPress(KeyEvent.VK_SPACE);
+                        event.consume();
+                    }
                 } catch (Exception e) {
                 }
             }
-        );
 
-        buttonSay.addKeyListener(
-            new KeyListener() {
-                public void keyPressed(KeyEvent event) {
-                    try {
-                        if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                            Robot robot = new Robot();
-                            robot.keyPress(KeyEvent.VK_SPACE);
-                            event.consume();
-                        }
-                    } catch (Exception e) {
-                    }
-                }
+            public void keyTyped(KeyEvent event) {
+            }
 
-                public void keyTyped(KeyEvent event) {}
- 
-                public void keyReleased(KeyEvent event) {
-                    try {
-                        if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                            Robot robot = new Robot();
-                            robot.keyRelease(KeyEvent.VK_SPACE);
-                            event.consume();
-                        }
-                    } catch (Exception e) {
+            public void keyReleased(KeyEvent event) {
+                try {
+                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                        Robot robot = new Robot();
+                        robot.keyRelease(KeyEvent.VK_SPACE);
+                        event.consume();
                     }
+                } catch (Exception e) {
                 }
             }
-        );
+        });
 
         GridBagConstraints gbcButtonSay = new GridBagConstraints();
         gbcButtonSay.gridy = 2;
@@ -203,41 +192,38 @@ public class JtdJnaJavaSwing extends JFrame {
 
         buttonStop = new JButton("停止");
         buttonStop.setPreferredSize(new Dimension(98, 25));
-        buttonStop.addActionListener( event -> {
+        buttonStop.addActionListener(event -> {
+            try {
+                if (tts.isSpeaking()) {
+                    tts.stop();
+                }
+            } catch (Exception e) {
+            }
+        });
+        buttonStop.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent event) {
                 try {
-                    if (tts.isSpeaking()) {
-                        tts.stop();
+                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                        Robot robot = new Robot();
+                        robot.keyPress(KeyEvent.VK_SPACE);
                     }
                 } catch (Exception e) {
                 }
             }
-        );
-        buttonStop.addKeyListener(
-            new KeyListener() {
-                public void keyPressed(KeyEvent event) {
-                    try {
-                        if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                            Robot robot = new Robot();
-                            robot.keyPress(KeyEvent.VK_SPACE);
-                        }
-                    } catch (Exception e) {
-                    }
-                }
 
-                public void keyTyped(KeyEvent event) {
-                }
+            public void keyTyped(KeyEvent event) {
+            }
 
-                public void keyReleased(KeyEvent event) {
-                    try {
-                        if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                            Robot robot = new Robot();
-                            robot.keyRelease(KeyEvent.VK_SPACE);
-                        }
-                    } catch (Exception e) {
+            public void keyReleased(KeyEvent event) {
+                try {
+                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                        Robot robot = new Robot();
+                        robot.keyRelease(KeyEvent.VK_SPACE);
                     }
+                } catch (Exception e) {
                 }
             }
-        );
+        });
 
         GridBagConstraints gbcButtonStop = new GridBagConstraints();
         gbcButtonStop.gridy = 2;
@@ -257,7 +243,7 @@ public class JtdJnaJavaSwing extends JFrame {
         JFrame frame = new JtdJnaJavaSwing();
         frame.setVisible(true);
         frame.setBounds(200, 200, 240, 150);
-        frame.setResizable(false);
+        // frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }

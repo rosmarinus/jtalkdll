@@ -1118,7 +1118,7 @@ std::string JTalk::Utf8ToSjis(const char *source)
 void JTalk::setVerbose(bool sw)
 {
 	JTalk::check_openjtalk_object();
-	openjtalk_setVerbose(m_openjtalk, sw);
+	openjtalk_setVerbose(sw);
 }
 
 // テスト（何もなければ、聞こえますか？と発声テスト）
