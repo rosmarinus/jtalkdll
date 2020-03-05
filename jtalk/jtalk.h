@@ -261,6 +261,9 @@ OPENJTALK_DLL_API double OPENJTALK_CONVENTION openjtalk_get_g(OpenJTalk *oj);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setDic(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setDicSjis(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setDicU16(OpenJTalk *oj, const char16_t *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setDic2(OpenJTalk *oj, const char *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setDicSjis2(OpenJTalk *oj, const char *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setDicU162(OpenJTalk *oj, const char16_t *path);
 
 // 辞書フォルダの取得
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getDic(OpenJTalk *oj, char *path);
@@ -272,6 +275,9 @@ OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getDicU16(OpenJTalk *
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceDir(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceDirSjis(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceDirU16(OpenJTalk *oj, const char16_t *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceDir2(OpenJTalk *oj, const char *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceDirSjis2(OpenJTalk *oj, const char *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceDirU162(OpenJTalk *oj, const char16_t *path);
 
 // 現在の音響モデルファイルディレクトリの取得
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceDir(OpenJTalk *oj, char *path);
@@ -283,7 +289,9 @@ OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoiceDirU16(OpenJT
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoice(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceSjis(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceU16(OpenJTalk *oj, const char16_t *path);
-
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoice2(OpenJTalk *oj, const char *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceSjis2(OpenJTalk *oj, const char *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceU162(OpenJTalk *oj, const char16_t *path);
 // 現在の音響モデルファイルの取得
 // pathは確実に長さMAX_PATHの配列
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoice(OpenJTalk *oj, char *path);
@@ -293,6 +301,9 @@ OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoiceU16(OpenJTalk
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceName(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceNameSjis(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceNameU16(OpenJTalk *oj, const char16_t *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceName2(OpenJTalk *oj, const char *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceNameSjis2(OpenJTalk *oj, const char *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceNameU162(OpenJTalk *oj, const char16_t *path);
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceName(OpenJTalk *oj, char *path);
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceNameSjis(OpenJTalk *oj, char *path);
@@ -301,6 +312,9 @@ OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoiceNameU16(OpenJ
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoicePath(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoicePathSjis(OpenJTalk *oj, const char *path);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoicePathU16(OpenJTalk *oj, const char16_t *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoicePath2(OpenJTalk *oj, const char *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoicePathSjis2(OpenJTalk *oj, const char *path);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoicePathU162(OpenJTalk *oj, const char16_t *path);
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoicePath(OpenJTalk *oj, char *path);
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoicePathSjis(OpenJTalk *oj, char *path);
@@ -340,12 +354,15 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_stop(OpenJTalk *oj);
 // 非同期発声が発声中かどうか（一時停止中は偽）
 // 一時停止の可能性がないときは、openjtalk_isFinishedの否定。
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_isSpeaking(OpenJTalk *oj);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_isSpeaking2(OpenJTalk *oj);
 
 // 一時停止中かどうか
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_isPaused(OpenJTalk *oj);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_isPaused2(OpenJTalk *oj);
 
 // 非同期発声が終了したかどうか。なお初回発声前は呼び出す意味が無いが、結果は便宜上真とする。
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_isFinished(OpenJTalk *oj);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_isFinished2(OpenJTalk *oj);
 
 // 完了時に実行する関数の登録。一つだけが登録できる、リセットはNULLを登録する。
 // 再生スレッドからの呼び出しなので、競合しないよう取り扱い注意
@@ -362,6 +379,9 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_wait(OpenJTalk *oj, int du
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_speakToFile(OpenJTalk *oj, const char *text, const char *file);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_speakToFileSjis(OpenJTalk *oj, const char *text, const char *file);
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_speakToFileU16(OpenJTalk *oj, const char16_t *text, const char16_t *file);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_speakToFile2(OpenJTalk *oj, const char *text, const char *file);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_speakToFileSjis2(OpenJTalk *oj, const char *text, const char *file);
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_speakToFileU162(OpenJTalk *oj, const char16_t *text, const char16_t *file);
 
 // エラーコードを取得
 OPENJTALK_DLL_API OpenjtalkErrors OPENJTALK_CONVENTION openjtalk_getErrorCode(OpenJTalk *oj);

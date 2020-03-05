@@ -1,10 +1,11 @@
 package com.github.rosmarinus.jtalk;
 
+import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.Callback;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -166,21 +167,31 @@ public class JTalkJna {
 
         double openjtalk_getVolume(Pointer handle);
 
-        Boolean openjtalk_setDic(Pointer handle, String path);
+        boolean openjtalk_setDic(Pointer handle, String path);
+
+        int openjtalk_setDic2(Pointer handle, String path);
 
         String openjtalk_getDic(Pointer handle, byte[] path);
 
-        Boolean openjtalk_setVoiceDir(Pointer handle, String path);
+        boolean openjtalk_setVoiceDir(Pointer handle, String path);
+
+        int openjtalk_setVoiceDir2(Pointer handle, String path);
 
         String openjtalk_getVoiceDir(Pointer handle, byte[] path);
 
-        Boolean openjtalk_setVoice(Pointer handle, String path);
+        boolean openjtalk_setVoice(Pointer handle, String path);
 
-        Boolean openjtalk_setVoicePath(Pointer handle, String path);
+        int openjtalk_setVoice2(Pointer handle, String path);
+
+        boolean openjtalk_setVoicePath(Pointer handle, String path);
+
+        int openjtalk_setVoicePath2(Pointer handle, String path);
 
         String openjtalk_getVoicePath(Pointer handle, byte[] path);
 
-        Boolean openjtalk_setVoiceName(Pointer handle, String path);
+        boolean openjtalk_setVoiceName(Pointer handle, String path);
+
+        int openjtalk_setVoiceName2(Pointer handle, String path);
 
         String openjtalk_getVoiceName(Pointer handle, byte[] path);
 
@@ -194,19 +205,29 @@ public class JTalkJna {
 
         void openjtalk_stop(Pointer handle);
 
-        Boolean openjtalk_isSpeaking(Pointer handle);
+        boolean openjtalk_isSpeaking(Pointer handle);
 
-        Boolean openjtalk_isPaused(Pointer handle);
+        int openjtalk_isSpeaking2(Pointer handle);
 
-        Boolean openjtalk_isFinished(Pointer handle);
+        boolean openjtalk_isPaused(Pointer handle);
+
+        int openjtalk_isPaused2(Pointer handle);
+
+        boolean openjtalk_isFinished(Pointer handle);
+
+        int openjtalk_isFinished2(Pointer handle);
 
         void openjtalk_waitUntilDone(Pointer handle);
 
         void openjtalk_wait(Pointer handle, int duration);
 
-        Boolean openjtalk_speakToFile(Pointer handle, String text, String file);
+        boolean openjtalk_speakToFile(Pointer handle, String text, String file);
+
+        int openjtalk_speakToFile2(Pointer handle, String text, String file);
 
         void openjtalk_setOnFinishedCallback(Pointer handle, OnSpeakingFinishedCallbackProc callback);
+
+        void openjtalk_setVerbose(boolean sw);
 
         // int openjtalk_getCharCode(String text);
     }
@@ -790,8 +811,14 @@ public class JTalkJna {
         if (!file.exists()) {
             throw new Exception("辞書フォルダが見つかりません。");
         }
-        if (!API.INSTANCE.openjtalk_setDic(handle, path)) {
-            throw new Exception("辞書フォルダを設定できません。UTF-8向けの辞書ではないかもしれません。");
+        if (Platform.isMac()) {
+            if (API.INSTANCE.openjtalk_setDic2(handle, path) == 0) {
+                throw new Exception("辞書フォルダを設定できません。UTF-8向けの辞書ではないかもしれません。");
+            }
+        } else {
+            if (!API.INSTANCE.openjtalk_setDic(handle, path)) {
+                throw new Exception("辞書フォルダを設定できません。UTF-8向けの辞書ではないかもしれません。");
+            }
         }
     }
 
@@ -823,8 +850,14 @@ public class JTalkJna {
         if (!file.exists()) {
             throw new Exception("音響モデルフォルダが見つかりません。");
         }
-        if (!API.INSTANCE.openjtalk_setVoiceDir(handle, path)) {
-            throw new Exception("音響モデルフォルダを設定できません。");
+        if (Platform.isMac()) {
+            if (API.INSTANCE.openjtalk_setVoiceDir2(handle, path) == 0) {
+                throw new Exception("音響モデルフォルダを設定できません。");
+            }
+        } else {
+            if (!API.INSTANCE.openjtalk_setVoiceDir(handle, path)) {
+                throw new Exception("音響モデルフォルダを設定できません。");
+            }
         }
         generateVoiceList();
         fireVoiceListChanged();
@@ -854,8 +887,14 @@ public class JTalkJna {
         if (path == "") {
             throw new Exception("音響モデルを示す文字列が空です。");
         }
-        if (!API.INSTANCE.openjtalk_setVoicePath(handle, path)) {
-            throw new Exception("音響モデルを設定できません。");
+        if (Platform.isMac()) {
+            if (API.INSTANCE.openjtalk_setVoicePath2(handle, path) == 0) {
+                throw new Exception("音響モデルを設定できません。");
+            }
+        } else {
+            if (!API.INSTANCE.openjtalk_setVoicePath(handle, path)) {
+                throw new Exception("音響モデルを設定できません。");
+            }
         }
     }
 
@@ -883,8 +922,14 @@ public class JTalkJna {
         if (name == "") {
             throw new Exception("音響モデルを示す文字列が空です。");
         }
-        if (!API.INSTANCE.openjtalk_setVoiceName(handle, name)) {
-            throw new Exception("音響モデルを設定できません。");
+        if (Platform.isMac()) {
+            if (API.INSTANCE.openjtalk_setVoiceName2(handle, name) == 0) {
+                throw new Exception("音響モデルを設定できません。");
+            }
+        } else {
+            if (!API.INSTANCE.openjtalk_setVoiceName(handle, name)) {
+                throw new Exception("音響モデルを設定できません。");
+            }
         }
     }
 
@@ -912,8 +957,14 @@ public class JTalkJna {
         if (path == "") {
             throw new Exception("音響モデルを示す文字列が空です。");
         }
-        if (!API.INSTANCE.openjtalk_setVoice(handle, path)) {
-            throw new Exception("音響モデルを設定できません。");
+        if (Platform.isMac()) {
+            if (API.INSTANCE.openjtalk_setVoice2(handle, path) == 0) {
+                throw new Exception("音響モデルを設定できません。");
+            }
+        } else {
+            if (!API.INSTANCE.openjtalk_setVoice(handle, path)) {
+                throw new Exception("音響モデルを設定できません。");
+            }
         }
     }
 
@@ -931,8 +982,14 @@ public class JTalkJna {
         if (arg.path == "") {
             throw new Exception("音響モデルを示す文字列が空です。");
         }
-        if (!API.INSTANCE.openjtalk_setVoice(handle, arg.path)) {
-            throw new Exception("音響モデルを設定できません。");
+        if (Platform.isMac()) {
+            if (API.INSTANCE.openjtalk_setVoice2(handle, arg.path) == 0) {
+                throw new Exception("音響モデルを設定できません。");
+            }
+        } else {
+            if (!API.INSTANCE.openjtalk_setVoice(handle, arg.path)) {
+                throw new Exception("音響モデルを設定できません。");
+            }
         }
     }
 
@@ -1017,9 +1074,13 @@ public class JTalkJna {
      * @return 発声しているかどうかの真偽値
      * @throws Exception オブジェクトポインタがNULLなどの例外
      */
-    public Boolean isSpeaking() throws Exception {
+    public boolean isSpeaking() throws Exception {
         checkOpenjtalkObject();
-        return API.INSTANCE.openjtalk_isSpeaking(handle);
+        if (Platform.isMac()) {
+            return API.INSTANCE.openjtalk_isSpeaking2(handle) != 0;
+        } else {
+            return API.INSTANCE.openjtalk_isSpeaking(handle);
+        }
     }
 
     /**
@@ -1028,9 +1089,13 @@ public class JTalkJna {
      * @return 一時停止しているかどうかの真偽値
      * @throws Exception オブジェクトポインタがNULLなどの例外
      */
-    public Boolean isPaused() throws Exception {
+    public boolean isPaused() throws Exception {
         checkOpenjtalkObject();
-        return API.INSTANCE.openjtalk_isPaused(handle);
+        if (Platform.isMac()) {
+            return API.INSTANCE.openjtalk_isPaused2(handle) != 0;
+        } else {
+            return API.INSTANCE.openjtalk_isPaused(handle);
+        }
     }
 
     /**
@@ -1039,9 +1104,13 @@ public class JTalkJna {
      * @return 完了したかどうかの真偽値
      * @throws Exception オブジェクトポインタがNULLなどの例外
      */
-    public Boolean isFinished() throws Exception {
+    public boolean isFinished() throws Exception {
         checkOpenjtalkObject();
-        return API.INSTANCE.openjtalk_isFinished(handle);
+        if (Platform.isMac()) {
+            return API.INSTANCE.openjtalk_isFinished2(handle) != 0;
+        } else {
+            return API.INSTANCE.openjtalk_isFinished(handle);
+        }
     }
 
     /**
@@ -1084,8 +1153,14 @@ public class JTalkJna {
         if (file == "") {
             throw new Exception("ファイル名文字列が空です。");
         }
-        if (!API.INSTANCE.openjtalk_speakToFile(handle, text, file)) {
-            throw new Exception("音声ファイルの作成中にエラーが発生しました。");
+        if (Platform.isMac()) {
+            if (API.INSTANCE.openjtalk_speakToFile2(handle, text, file) == 0) {
+                throw new Exception("音声ファイルの作成中にエラーが発生しました。");
+            }
+        } else {
+            if (!API.INSTANCE.openjtalk_speakToFile(handle, text, file)) {
+                throw new Exception("音声ファイルの作成中にエラーが発生しました。");
+            }
         }
     }
 
@@ -1110,5 +1185,14 @@ public class JTalkJna {
         if (!isSpeaking()) {
             API.INSTANCE.openjtalk_setOnFinishedCallback(handle, null);
         }
+    }
+
+    /**
+     * くどく動作報告を行うかどうか
+     * 
+     * @param flag 真ならば行う、偽ならば行わない。
+     */
+    public void setVerbose(boolean flag) {
+        API.INSTANCE.openjtalk_setVerbose(flag);
     }
 }

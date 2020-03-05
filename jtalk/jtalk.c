@@ -1,7 +1,9 @@
 ﻿#ifndef JTALK_C
 #define JTALK_C
 #ifdef __cplusplus
-#define JTALK_C_START extern "C" {
+#define JTALK_C_START \
+	extern "C"        \
+	{
 #define JTALK_C_END }
 #else
 #define JTALK_C_START
@@ -66,7 +68,8 @@ JTALK_C_START;
 */
 
 // エンコード型
-typedef enum {
+typedef enum
+{
 	OPENJTALKCHARSET_UTF_8,
 	OPENJTALKCHARSET_SHIFT_JIS,
 	OPENJTALKCHARSET_UTF_16,
@@ -229,7 +232,6 @@ bool check_dic_utf_8(const char *path);
 bool set_nearby_dic_path(OpenJTalk *oj, const char *path);
 bool set_nearby_voice_dir_path(OpenJTalk *oj, const char *path);
 
-
 /*****************************************************************
 ** 単純補助関数
 */
@@ -381,7 +383,7 @@ bool JTalkData_initialize(OpenJTalk *oj)
 	{
 		set_nearby_dic_path(oj, g_current_path);
 	}
-	
+
 	// 未確定ならば、カレントディレクトリの周囲の音響モデルフォルダを探す
 	if (strlen(oj->dn_voice_dir_path) == 0)
 	{
@@ -419,7 +421,7 @@ bool JTalkData_initialize(OpenJTalk *oj)
 		{
 			set_nearby_dic_path(oj, g_dll_path);
 		}
-		
+
 		// 未確定ならば、カレントディレクトリの周囲の音響モデルフォルダを探す
 		if (strlen(oj->dn_voice_dir_path) == 0)
 		{
@@ -442,7 +444,7 @@ bool JTalkData_initialize(OpenJTalk *oj)
 	{
 		set_default_dic_path(oj);
 	}
-	
+
 	// まだ未確定ならば、省略値にする
 	if (strlen(oj->dn_voice_dir_path) == 0)
 	{
@@ -496,7 +498,8 @@ void JTalkData_Clear(OpenJTalk *oj)
 */
 
 #if defined(ICONV_ENABLE)
-typedef enum {
+typedef enum
+{
 	CS_SHIFT_JIS,
 	CS_UTF_8,
 	CS_UTF_16LE
@@ -1801,8 +1804,8 @@ HtsVoiceFilelist *get_file_or_directory_list(const char *path, const char *wildc
 		{
 			continue;
 		}
-		counter_of_file_or_directory_list ++;
-	
+		counter_of_file_or_directory_list++;
+
 		if (strlen(path) + 1 + strlen(entry->d_name) + 2 > MAX_PATH)
 		{
 			continue;
@@ -2194,10 +2197,11 @@ return_true:
 	}
 	char *s = temp;
 	char *d = r;
-	while ((*d++ = *s++) != '\0') {}
+	while ((*d++ = *s++) != '\0')
+	{
+	}
 	return r;
 }
-
 
 // 設定ファイルの情報から辞書ディレクトリを決定
 bool set_config_dic_dir(OpenJTalk *oj, const char *path)
@@ -2244,7 +2248,7 @@ bool set_config_dic_dir(OpenJTalk *oj, const char *path)
 	char full[MAX_PATH];
 	clear_path_string(full, MAX_PATH);
 
-	get_fullpath(temp,full);
+	get_fullpath(temp, full);
 
 	if (!check_dic_utf_8(full))
 	{
@@ -2302,12 +2306,11 @@ bool set_config_voice_dir(OpenJTalk *oj, const char *path)
 	char full[MAX_PATH];
 	clear_path_string(full, MAX_PATH);
 
-	get_fullpath(temp,full);
+	get_fullpath(temp, full);
 
 	strcpy(oj->dn_voice_dir_path, full);
 	return true;
 }
-
 
 // 設定ファイルからの音響モデルファイル設定
 bool set_config_voice(OpenJTalk *oj, const char *path)
@@ -2371,13 +2374,12 @@ bool set_config_voice(OpenJTalk *oj, const char *path)
 
 return_true:
 	clear_path_string(full, MAX_PATH);
-	get_fullpath(temp,full);
+	get_fullpath(temp, full);
 
 	strcpy(oj->fn_voice_path, full);
 	Open_JTalk_load_voice(oj->open_jtalk, full);
 	return true;
 }
-
 
 // 指定位置の近くの辞書ディレクトリを決定
 bool set_nearby_dic_path(OpenJTalk *oj, const char *path)
@@ -2406,7 +2408,7 @@ bool set_nearby_dic_path(OpenJTalk *oj, const char *path)
 
 	// その親ディレクトリから可能性のあるフォルダを探す
 	char parent[MAX_PATH];
-	get_dir_path(path,parent);
+	get_dir_path(path, parent);
 	if (parent != NULL && strlen(parent) != 0)
 	{
 		for (const char **d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
@@ -2456,7 +2458,7 @@ bool set_nearby_voice_dir_path(OpenJTalk *oj, const char *path)
 
 	// その親ディレクトリから可能性のあるフォルダを探す
 	char parent[MAX_PATH];
-	get_dir_path(path,parent);
+	get_dir_path(path, parent);
 	if (parent != NULL && strlen(parent) != 0)
 	{
 		for (const char **d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
@@ -2473,7 +2475,6 @@ return_true:
 	strcpy(oj->dn_voice_dir_path, temp);
 	return true;
 }
-
 
 // 音響モデルファイル設定
 bool set_voice(OpenJTalk *oj, const char *path)
@@ -2664,7 +2665,6 @@ return_true:
 	return true;
 }
 
-
 bool set_voice_dir_path(OpenJTalk *oj, const char *path)
 {
 	if (!oj)
@@ -2707,10 +2707,9 @@ bool set_voice_dir_path(OpenJTalk *oj, const char *path)
 
 				if (exists_dir(temp2))
 				{
-					get_fullpath(temp2,temp);
+					get_fullpath(temp2, temp);
 					goto return_true;
 				}
-
 			}
 		}
 	}
@@ -2816,7 +2815,7 @@ bool set_voice_dir_and_voice(OpenJTalk *oj, const char *path)
 	{
 		return true;
 	}
-	
+
 	return set_default_voice(oj);
 }
 
@@ -2881,7 +2880,6 @@ exit_false:
 	return false;
 }
 
-
 bool set_dic_path(OpenJTalk *oj, const char *path)
 {
 	if (!oj)
@@ -2922,7 +2920,7 @@ bool set_dic_path(OpenJTalk *oj, const char *path)
 
 				if (exists_dir(temp2))
 				{
-					get_fullpath(temp2,temp);
+					get_fullpath(temp2, temp);
 					goto check_charset;
 				}
 			}
@@ -3153,7 +3151,7 @@ void speak_async(OpenJTalk *oj)
 	{
 		if (g_psd->counter == 0)
 		{
-			fprintf(stderr, "非同期発声開始\n");
+			fprintf(stderr, "非同期発声開始！\n");
 		}
 		else
 		{
@@ -3342,7 +3340,8 @@ typedef struct SectionList_t
 	char *name;
 } SectionList;
 
-typedef enum {
+typedef enum
+{
 	VTYPE_NONE,
 	VTYPE_STRING,
 	VTYPE_BOOLEAN,
@@ -4397,7 +4396,6 @@ bool get_ini_data(OpenJTalk *oj)
 	return true;
 }
 
-
 // 指定フォルダに設定ファイルがあるか調べ、その位置を記録する。
 bool set_ini_path(OpenJTalk *oj, const char *dir)
 {
@@ -4412,10 +4410,10 @@ bool set_ini_path(OpenJTalk *oj, const char *dir)
 	}
 
 	char temp[MAX_PATH];
-	clear_path_string(temp,MAX_PATH);
-	strcpy(temp,dir);
-	strcat(temp,G_SLASH_CHAR);
-	strcat(temp,G_INI_NAME);
+	clear_path_string(temp, MAX_PATH);
+	strcpy(temp, dir);
+	strcat(temp, G_SLASH_CHAR);
+	strcat(temp, G_INI_NAME);
 
 	if (!exists_file(temp))
 	{
@@ -4714,11 +4712,11 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION jtalkdll_copyright()
 	fprintf(stderr, "%s, Open JTalk Dynamic Link Libraries \n", DLL_NAME);
 	if (strlen(GIT_REV))
 	{
-		fprintf(stderr, "version %d.%d.%d revision(%s)\n", VER_MAJOR, VER_MINOR ,VER_BUILD, GIT_REV);
+		fprintf(stderr, "version %d.%d.%d revision(%s)\n", VER_MAJOR, VER_MINOR, VER_BUILD, GIT_REV);
 	}
 	else
 	{
-		fprintf(stderr, "version %d.%d.%d\n", VER_MAJOR, VER_MINOR ,VER_BUILD);
+		fprintf(stderr, "version %d.%d.%d\n", VER_MAJOR, VER_MINOR, VER_BUILD);
 	}
 	fprintf(stderr, "https://github.com/rosmarinus/jtalkdll.git\n");
 	fprintf(stderr, "Copyright (C) 2017 takayan\n");
@@ -5090,12 +5088,20 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_pause(OpenJTalk *oj)
 		return;
 	}
 
+	if (g_verbose)
+	{
+		fprintf(stderr, "[PAUSE処理開始]\n");
+	}
 	g_psd->pause = true;
 	do
 	{
 		sleep_internal(100);
 	} while (g_psd->speaking);
 	g_psd->pause = false;
+	if (g_verbose)
+	{
+		fprintf(stderr, "[PAUSE処理終了]\n");
+	}
 }
 
 OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_resume(OpenJTalk *oj)
@@ -5141,6 +5147,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_isSpeaking(OpenJTalk *oj)
 	}
 	return g_psd->speaking;
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_isSpeaking2(OpenJTalk *oj)
+{
+	return openjtalk_isSpeaking(oj);
+}
 
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_isPaused(OpenJTalk *oj)
 {
@@ -5151,6 +5161,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_isPaused(OpenJTalk *oj)
 	}
 	return g_psd->paused;
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_isPaused2(OpenJTalk *oj)
+{
+	return openjtalk_isPaused(oj);
+}
 
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_isFinished(OpenJTalk *oj)
 {
@@ -5160,6 +5174,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_isFinished(OpenJTalk *oj)
 		return false;
 	}
 	return g_psd->finished;
+}
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_isFinished2(OpenJTalk *oj)
+{
+	return openjtalk_isFinished(oj);
 }
 
 OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_waitUntilDone(OpenJTalk *oj)
@@ -5685,6 +5703,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceDirSjis(OpenJTalk 
 	}
 	return set_voice_dir_and_voice(oj, temp);
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceDirSjis2(OpenJTalk *oj, const char *path)
+{
+	return openjtalk_setVoiceDirSjis(oj, path);
+}
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceDirSjis(OpenJTalk *oj, char *path)
 {
@@ -5739,6 +5761,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceDir(OpenJTalk *oj,
 		return false;
 	}
 	return set_voice_dir_and_voice(oj, temp);
+}
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceDir2(OpenJTalk *oj, const char *path)
+{
+	return openjtalk_setVoiceDirSjis(oj, path);
 }
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceDir(OpenJTalk *oj, char *path)
@@ -5795,6 +5821,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceDirU16(OpenJTalk *
 	}
 	return set_voice_dir_and_voice(oj, temp);
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceDirU162(OpenJTalk *oj, const char16_t *path)
+{
+	return openjtalk_setVoiceDirU16(oj, path);
+}
 
 OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoiceDirU16(OpenJTalk *oj, char16_t *path)
 {
@@ -5849,6 +5879,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setDicSjis(OpenJTalk *oj, 
 		return false;
 	}
 	return set_dic_path(oj, temp);
+}
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setDicSjis2(OpenJTalk *oj, const char *path)
+{
+	return openjtalk_setDicSjis(oj, path);
 }
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getDicSjis(OpenJTalk *oj, char *path)
@@ -5905,6 +5939,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setDic(OpenJTalk *oj, cons
 	}
 	return set_dic_path(oj, temp);
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setDic2(OpenJTalk *oj, const char *path)
+{
+	return openjtalk_setDic(oj, path);
+}
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getDic(OpenJTalk *oj, char *path)
 {
@@ -5959,6 +5997,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setDicU16(OpenJTalk *oj, c
 		return false;
 	}
 	return set_dic_path(oj, temp);
+}
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setDicU162(OpenJTalk *oj, const char16_t *path)
+{
+	return openjtalk_setDicU16(oj, path);
 }
 
 OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getDicU16(OpenJTalk *oj, char16_t *path)
@@ -6022,6 +6064,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoicePathSjis(OpenJTalk
 	}
 	return set_voice_path(oj, temp);
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoicePathSjis2(OpenJTalk *oj, const char *path)
+{
+	return openjtalk_setVoicePathSjis(oj, path);
+}
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoicePathSjis(OpenJTalk *oj, char *path)
 {
@@ -6075,6 +6121,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoicePath(OpenJTalk *oj
 		return false;
 	}
 	return set_voice_path(oj, temp);
+}
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoicePath2(OpenJTalk *oj, const char *path)
+{
+	return openjtalk_setVoicePath(oj, path);
 }
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoicePath(OpenJTalk *oj, char *path)
@@ -6130,6 +6180,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoicePathU16(OpenJTalk 
 		return false;
 	}
 	return set_voice_path(oj, temp);
+}
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoicePathU162(OpenJTalk *oj, const char16_t *path)
+{
+	return openjtalk_setVoicePathU16(oj, path);
 }
 
 OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoicePathU16(OpenJTalk *oj, char16_t *path)
@@ -6194,6 +6248,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceNameSjis(OpenJTalk
 
 	return set_voice_name(oj, temp);
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceNameSjis2(OpenJTalk *oj, const char *path)
+{
+	return openjtalk_setVoiceNameSjis(oj, path);
+}
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceNameSjis(OpenJTalk *oj, char *path)
 {
@@ -6237,6 +6295,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceName(OpenJTalk *oj
 
 	return set_voice_name(oj, temp);
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceName2(OpenJTalk *oj, const char *path)
+{
+	return openjtalk_setVoiceName(oj, path);
+}
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceName(OpenJTalk *oj, char *path)
 {
@@ -6273,6 +6335,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceNameU16(OpenJTalk 
 		return false;
 	}
 	return set_voice_name(oj, temp);
+}
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceNameU162(OpenJTalk *oj, const char16_t *path)
+{
+	return openjtalk_setVoiceNameU16(oj, path);
 }
 
 OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoiceNameU16(OpenJTalk *oj, char16_t *path)
@@ -6319,6 +6385,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceSjis(OpenJTalk *oj
 	}
 	return set_voice(oj, temp);
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceSjis2(OpenJTalk *oj, const char *path)
+{
+	return openjtalk_setVoiceSjis(oj, path);
+}
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceSjis(OpenJTalk *oj, char *path)
 {
@@ -6356,6 +6426,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoice(OpenJTalk *oj, co
 	}
 	return set_voice(oj, temp);
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoice2(OpenJTalk *oj, const char *path)
+{
+	return openjtalk_setVoice(oj, path);
+}
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoice(OpenJTalk *oj, char *path)
 {
@@ -6387,6 +6461,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceU16(OpenJTalk *oj,
 		return false;
 	}
 	return set_voice(oj, temp);
+}
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceU162(OpenJTalk *oj, const char16_t *path)
+{
+	return openjtalk_setVoiceU16(oj, path);
 }
 
 OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoiceU16(OpenJTalk *oj, char16_t *path)
@@ -6646,6 +6724,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_speakToFileSjis(OpenJTalk 
 	fclose(wavfp);
 	return result;
 }
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_speakToFileSjis2(OpenJTalk *oj, const char *textSjis, const char *fileSjis)
+{
+	return openjtalk_speakToFileSjis(oj, textSjis, fileSjis);
+}
 
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_speakToFile(OpenJTalk *oj, const char *text, const char *file_utf8)
 {
@@ -6684,6 +6766,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_speakToFile(OpenJTalk *oj,
 	bool result = generate_wavFile(oj, text, wavfp);
 	fclose(wavfp);
 	return result;
+}
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_speakToFile2(OpenJTalk *oj, const char *text, const char *file_utf8)
+{
+	return openjtalk_speakToFile(oj, text, file_utf8);
 }
 
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_speakToFileU16(OpenJTalk *oj, const char16_t *text, const char16_t *file)
@@ -6731,6 +6817,10 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_speakToFileU16(OpenJTalk *
 	}
 	fclose(wavfp);
 	return result;
+}
+OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_speakToFileU162(OpenJTalk *oj, const char16_t *text, const char16_t *file)
+{
+	return openjtalk_speakToFileU16(oj, text, file);
 }
 
 // 実行中のOSの取得
@@ -6900,7 +6990,7 @@ BOOL WINAPI DllMain(HINSTANCE hInstDLL, DWORD dwReason, LPVOID lpReserved)
 // WindowsでラップしたC++/CLIのコードからdll自身の位置を設定する
 void set_current_dll_path(const char *path)
 {
-	if (path!=NULL && strlen(path)<=MAX_PATH)
+	if (path != NULL && strlen(path) <= MAX_PATH)
 	{
 		if (g_verbose)
 		{
