@@ -63,7 +63,7 @@ https://github.com/rosmarinus/jtalkdll/tree/master/extra/open_jtalk
 
 ## ダウンロード
 
-上記のファイルをまとめた [openjtalk_build_scripts](https://github.com/rosmarinus/jtalkdll/releases/tag/untagged-4bed8bef0b05aae7f6b9) をダウンロードしてください。
+上記のファイルをまとめた [openjtalk_build_scripts](https://github.com/rosmarinus/jtalkdll/releases/download/v0.0.65/openjtalk_build_scripts-0.0.65.zip) をダウンロードしてください。
 
 Windowsでリポジトリから直接ファイルをダウンロードする場合は、設定によってバッチファイルの改行コードがCRLFではないときがあります。
 これではうまく実行できないので、エディタで保存し直したりして、改行コードを書き換えてください。
