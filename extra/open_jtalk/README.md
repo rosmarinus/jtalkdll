@@ -63,7 +63,7 @@ https://github.com/rosmarinus/jtalkdll/tree/master/extra/open_jtalk
 
 ## ダウンロード
 
-上記のファイルをまとめた extra_open_jtalk.zip をダウンロードしてください。
+上記のファイルをまとめた [openjtalk_build_scripts](https://github.com/rosmarinus/jtalkdll/releases/tag/untagged-4bed8bef0b05aae7f6b9) をダウンロードしてください。
 
 Windowsでリポジトリから直接ファイルをダウンロードする場合は、設定によってバッチファイルの改行コードがCRLFではないときがあります。
 これではうまく実行できないので、エディタで保存し直したりして、改行コードを書き換えてください。
@@ -310,7 +310,7 @@ macOS、Linuxでの標準のインストール先は、実行ファイルは``/u
 データフォルダは``/usr/local/OpenJTalk/``です。
 
 変更するには、次のキャッシュ変数をCMakeLists.txtの冒頭で定義しておきます。
-実行ファイルのインストール先は``INSTALL_PREFIX``のbin、
+実行ファイルのインストール先は``BIN_INSTALL_PREFIX``のbin、
 データフォルダのインストール先は``DATA_INSTALL_PREFIX``です。
 
 ### 文字セットの変更
@@ -371,4 +371,4 @@ xargs rm < install_manifest.txt
 ## ライセンス
 
 * [MIT ライセンス](https://opensource.org/licenses/MIT)です。
-* このスクリプトに呼び出されて、作成される実行ファイル、データファイルにおいては、それぞれのライセンスに従います。
+* このスクリプトに呼び出されて、作成される実行ファイル、データファイルは、それぞれのライセンスに従います。
