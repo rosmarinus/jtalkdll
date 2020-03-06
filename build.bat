@@ -21,7 +21,6 @@ if %PROCESSOR_ARCHITECTURE% == x86 (
 	set BATNAME=vcvars64
 )
 :arch_skip
-
 rem ****************************************
 rem call vcvars.bat
 rem ****************************************
@@ -46,7 +45,6 @@ goto :exit
 :call_batch
 call %BAT%
 cd /d %~dp0
-
 rem ****************************************
 rem search cmake.exe
 rem ****************************************
@@ -56,7 +54,6 @@ if errorlevel 9009 (
 	echo インストールしているのに見つからなければ、PATHを通してください。
 	goto :exit
 )
-
 rem ****************************************
 rem check cli compilablity
 rem ****************************************
@@ -83,7 +80,6 @@ rem nmake
 echo nmake install
 nmake install
 cd ..
-
 rem ****************************************
 rem exit
 rem ****************************************

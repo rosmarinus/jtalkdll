@@ -1,6 +1,7 @@
 @echo off
 setlocal
-set param="-Dcharset=utf_8" "-DCMAKE_INSTALL_PREFIX=c:/open" "-DDATA_INSTALL_PREFIX=c:/open"
+set param="-Dcharset=utf_8"
+rem set param="-Dcharset=utf_8" "-DBIN_INSTALL_PREFIX=c:/open_jtalk" "-DDATA_INSTALL_PREFIX=c:/open_jtalk"
 set VER=2019
 rem download & decompression
 bash prepare>NUL
