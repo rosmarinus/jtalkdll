@@ -5,3 +5,4 @@ set DLL=jtalk
 if not exist "%DLL%.dll" goto :eof
 "%RADSTUDIO_PATH%\bin\implib.exe" %DLL%bcc.lib %DLL%.dll
 "%RADSTUDIO_PATH%\bin\%BCC%" jtd_bcc.cpp jtalkbcc.cpp %DLL%bcc.lib
+

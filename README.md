@@ -8,6 +8,7 @@
 
 * 概要
 * 動作環境
+* フォルダ構成
 * ダウンロード
 * ビルド
 * インストール内容
@@ -56,6 +57,20 @@ jtalk.c は内部で portaudio を呼び出すことでマルチプラットフ�
 * macOS Catalina
 * Ubuntu 18.10 (他のLinuxディストリビューションは未確認)
 
+## ディレクトリ構成
+
+このリポジトリのディレクトリ構成は次の通りです。
+
+```ディレクトリ
+├── jtalk     ..... このプロジェクトの本体 jtalkdll ソースファイル
+├── hts_engine_API-1.10     ..... hts_engine_API ソースファイル
+├── open_jtalk-1.11     ..... open_jtalk ソースファイル（ほんの少し修正）
+├── portaudio     ..... portaudioソースファイル
+├── voice     ..... 音響モデル用のフォルダ
+├── ffi     ..... いろいろな言語から利用するためのインターフェイスファイルとサンプル
+└── extra/open_jtalk     ..... open_jtalk だけをビルドするスクリプト
+```
+
 ## ダウンロード
 
 Windows VC++ によるビルド済みファイルと、それで使用する辞書、音響モデルファイルは、[Releaseページ](https://github.com/rosmarinus/jtalkdll/releases) からダウンロードできます。
@@ -93,6 +108,7 @@ Windowsでバッチファイルを使ってビルドするときは、変更す�
 [MSYS2](http://www.msys2.org/)上の
 [MinGW-w64](http://mingw-w64.org/doku.php)のgccコンパイラによるビルド方法を以下に示します。
 どちらで作っていいか分からないときは、MSVCでビルドしてください。
+ソースのダウンロードの方法によっては、バッチファイルの改行コードがCRLF(Windows)ではなくなっているかもしれません。予め確認してCRLFではないときは、エディタでCRLFで保存しなおしてください。
 
 #### MSVCを使ったビルド
 
