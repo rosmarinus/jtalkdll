@@ -56,7 +56,6 @@ goto :exit
 :call_batch
 call %BAT%
 cd /d %~dp0
-
 rem ****************************************
 rem search cmake.exe
 rem ****************************************
@@ -77,7 +76,6 @@ cmake .. -G "NMake Makefiles" %param%
 rem nmake clean
 nmake install
 cd ..
-
 rem ****************************************
 rem exit
 rem ****************************************

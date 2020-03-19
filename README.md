@@ -1,6 +1,6 @@
 # jtalkdll
 
-これは音声合成システムOpen JTalk使って手軽に音声合成プログラミングするためのDLLです。
+これは音声合成システムOpen JTalk使って手軽に音声合成プログラミングするための共有ライブラリです。
 
 ## 目次
 
@@ -55,7 +55,7 @@ jtalk.c は内部で portaudio を呼び出すことでマルチプラットフ�
 
 * Windows 10
 * macOS Catalina
-* Ubuntu 18.10 (他のLinuxディストリビューションは未確認)
+* Ubuntu 19.10 (他のLinuxディストリビューションは未確認)
 
 ## ディレクトリ構成
 
@@ -415,6 +415,18 @@ MSVCのみ
 * MeCab辞書ファイル ... /usr/local/OpenJTalk/dic_utf_8
 * 音響モデルファイル ... /usr/local/OpenJTalk/voice
 
+### インストール先の変更
+
+上記のように、MSVC、MinGWでの標準のインストール先は、実行ファイル、dllは``C:\open_jtalk\bin\``、
+データフォルダは``C:\open_jtalk\``です。
+macOS、Linuxでの標準のインストール先は、実行ファイル、ライブラリは``/usr/local/bin/``、
+データフォルダは``/usr/local/OpenJTalk/``です。
+
+変更するには、次のキャッシュ変数をCMakeLists.txtの冒頭で定義しておきます。
+実行ファイルのインストール先は``BIN_INSTALL_PREFIX``のbin、
+データフォルダのインストール先は``DATA_INSTALL_PREFIX``です。
+
+
 ## <a name="validation">動作確認</a>
 
 対象のプラットフォームにおいて上記の方法でビルドが成功したら、以下の方法で動作確認ができます。
@@ -624,6 +636,7 @@ C#、
 [Objective-C](https://developer.apple.com/jp/xcode/)、
 [Python](https://www.python.org/)、
 [Ruby](https://www.ruby-lang.org/ja/)、
+[Rust](https://www.rust-lang.org/ja/)、
 [Swift](https://www.apple.com/jp/swift/)、
 VisualBASIC、
 WSH(
@@ -631,9 +644,9 @@ WSH(
   VBScript
 )
 です。
-C++からの利用はFFIとは言えませんが、仲介するヘッダファイルとサンプルプログラムは、ffiフォルダに配置しています。
+C++からの利用するためのヘッダファイルとサンプルプログラムも、ffiフォルダに配置しています。
 一部のプラットフォーム限定の言語もありますが、できる限りマルチプラットフォームで実行できるようにしています。
-Objective-CとSwiftはmacOS限定の言語ではありませんが、現在macOSでのみ動作します。
+Objective-CとSwiftは、現在macOSでのみ動作します。
 
 それぞれの言語には、上記のjtd_cと同等のコンソールプログラムを用意しています。
 
@@ -645,7 +658,8 @@ Objective-CとSwiftはmacOS限定の言語ではありませんが、現在macOS
 [ffi/csharp/jtd_cs.cs](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/csharp/jtd_cs.cs), 
 [ffi/csharp/jtd_csm.cs](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/csharp/jtd_csm.cs), 
 [ffi/delphi/jtd_delphi.dproj](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/delphi/jtd_delphi.dproj), 
-[ffi/java/JtdJnaJavaSwing.java](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/java/JtdJnaJavaSwing.java), 
+[ffi/java/javaSwingSample/src/main/java/JtdJnaJavaSwing.java](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/java/javaSwingSample/src/main/java/JtdJnaJavaSwing.java), 
+[ffi/java/javaFXSample/src/main/java/JavaFXSample.java](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/java/javaFXSample/src/main/java/JavaFXSample.java), 
 [ffi/python/jtd_qt5.py](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/python/jtd_qt5.py), 
 [ffi/vb/jtd_vb.vb](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/vb/jtd_vb.vb), 
 [ffi/vb/jtd_vbm.vb](https://github.com/rosmarinus/jtalkdll/blob/master/ffi/vb/jtd_vbm.vb)
@@ -657,14 +671,14 @@ CUIとGUIかどうかで対立するサンプルがあるときは、CUIの方�
 
 それぞれの言語は、できるだけ最新の言語環境を構築して実行してください。
 * 例えば Ubuntu の aptでインストールされる julia では is_unix や unsafe_string などが使えない古いものなので(2017/11/1時点)、
-* julia で使うには、ホームページから v0.60以降をダウンロードして利用してください。
+* julia で使うには、ホームページから v1.31以降をダウンロードして利用してください。
 * それから、ffi/cpp/jtd_cppqt.cpp, ffi/python/jtd_qt5.pyは[QT5](https://www.qt.io/)を用いたサンプルです。
 * ビルド・実行には言語環境の他に、[Qt](https://www1.qt.io/download-open-source/)が必要になります。
 * また、JavaではC言語のDLLを利用するために[jna](https://github.com/java-native-access/jna)を利用しています。
 * node.jsではnode-ffi-napiモジュールを利用しています。しかし、現時点(2020.2.11)でこれ自体が環境によってうまくインストールできません。
+* rustの実行ファイルをWindowsでビルドする時は、jtalk.libにリネームしたインポートライブラリを適切な場所に配置してください。
 
 ビルドする手順が複雑なものには、接頭辞'build_'を付けたスクリプトを用意しています。
-実行する手順が複雑なものには、接頭辞'run_'を付けたスクリプトを用意しています。
 これらのスクリプト内のフォルダ名やバージョン番号は環境に合わせて適宜書き換えてください。
 単にコンパイラやインタプリタの引数にすればいいものには実行スクリプトは用意していません。
 

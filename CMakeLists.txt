@@ -11,6 +11,8 @@ set(CMAKE_BUILD_TYPE Release)
 #set(target_arch x86_64)
 #set(build_jtalkcom TRUE)
 set(install_open_jtalk TRUE)
+#set(BIN_INSTALL_PREFIX "/c/open_jtalk")
+#set(DATA_INSTALL_PREFIX "/c/open_jtalk")
 
 
 ### archive file version
@@ -133,7 +135,6 @@ message("-- CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
 ### data install prefix
 if(NOT DATA_INSTALL_PREFIX)
-    set(MACRO_DATA_INSTALL_PREFIX ${INSTALL_BASE_PATH}${PROJECT_FOLDER})
     set(DATA_INSTALL_PREFIX ${BASE_PATH}${PROJECT_FOLDER})
 endif()
 message("-- DATA_INSTALL_PREFIX=${DATA_INSTALL_PREFIX}")
@@ -315,7 +316,7 @@ if(MSVC AND WIN32)
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DVER_MINOR=${JTALK_MINOR_NUM}")
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DVER_BUILD=${JTALK_BUILD_NUM}")
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DGIT_REV=\"\\\"${GIT_REVISION}\\\"\"")
-    set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DINSTALL_PATH=\"\\\"${MACRO_DATA_INSTALL_PREFIX}\\\"\"")
+    set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DINSTALL_PATH=\"\\\"${DATA_INSTALL_PREFIX}\\\"\"")
 
     ### jtalkcom c++/cli flgas
     if(build_jtalkcom)
@@ -357,7 +358,7 @@ else()
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DVER_MINOR=${JTALK_MINOR_NUM}")
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DVER_BUILD=${JTALK_BUILD_NUM}")
     set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DGIT_REV=\"\\\"${GIT_REVISION}\\\"\"")
-    set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DINSTALL_PATH=\"\\\"${MACRO_DATA_INSTALL_PREFIX}\\\"\"")
+    set(jtalk_c_compile_flags "${jtalk_c_compile_flags} -DINSTALL_PATH=\"\\\"${DATA_INSTALL_PREFIX}\\\"\"")
 
     ### mecab cpp flgas
     set(def_flags "${def_flags} -DHAVE_CONFIG_H  -DHAVE_UNISTD_H")

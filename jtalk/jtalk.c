@@ -25,12 +25,13 @@ JTALK_C_START;
 /*****************************************************************
 ** インクルード
 */
-
 #include "openjtalk.h"
 #include "jtalk.h"
+#include <locale.h>
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #include <malloc.h>
 #include <direct.h>
+#include <stdarg.h>
 #else
 #include <unistd.h>
 #include <string.h>
@@ -158,7 +159,6 @@ typedef struct OpenJTalk_tag
 /*****************************************************************
 ** 文字列定数
 */
-
 #if defined(_WIN32)
 const char *G_SLASH_CHAR = "\\";
 #else
@@ -175,15 +175,15 @@ const char *G_SECTION_NAME = u8"open_jtalk_config";
 const char *G_DEFAULT_DIC_DIR_NAMES[] = {"dic_utf_8*", "dic*", "open_jtalk_dic_utf_8-*", NULL};
 const char *G_DEFAULT_VOICE_DIR_NAMES[] = {"voice", "voice*", "hts_voice*", NULL};
 
-// データのインストール先
-const char *G_DN_INSTALL_PATH = INSTALL_PATH;
-
 /*****************************************************************
 ** 大域変数
 */
 
 // 出力冗長
 bool g_verbose = false;
+
+// データのインストール先
+char g_data_install_path[MAX_PATH];
 
 // 実行ファイルのパス
 char g_current_path[MAX_PATH];
@@ -218,22 +218,24 @@ char g_dll_path[MAX_PATH];
 ** 前方宣言
 */
 
-bool set_ini_path(OpenJTalk *oj, const char *dir);
+bool check_dic_utf_8(const char *path);
 bool get_ini_data(OpenJTalk *oj);
-bool set_dic_path(OpenJTalk *oj, const char *path);
-bool set_voice(OpenJTalk *oj, const char *path);
-bool set_voice_name(OpenJTalk *oj, const char *path);
-bool set_voice_path(OpenJTalk *oj, const char *path);
-bool set_voice_dir_path(OpenJTalk *oj, const char *path);
+bool normalize_back_slash(const char *path, char *dest);
+bool normalize_forward_slash(const char *path, char *dest);
 bool set_default_dic_path(OpenJTalk *oj);
 bool set_default_voice(OpenJTalk *oj);
 bool set_default_voice_dir_path(OpenJTalk *oj);
-bool check_dic_utf_8(const char *path);
+bool set_dic_path(OpenJTalk *oj, const char *path);
+bool set_ini_path(OpenJTalk *oj, const char *dir);
 bool set_nearby_dic_path(OpenJTalk *oj, const char *path);
 bool set_nearby_voice_dir_path(OpenJTalk *oj, const char *path);
+bool set_voice(OpenJTalk *oj, const char *path);
+bool set_voice_dir_path(OpenJTalk *oj, const char *path);
+char *sjistou8_path(const char *source, char *dest);
+char *u8tosjis(const char *source);
 
 /*****************************************************************
-** 単純補助関数
+** デバッグ用関数
 */
 
 void writelog(char *str)
@@ -247,6 +249,82 @@ void writelog(char *str)
 	fputs(str, log);
 	fclose(log);
 }
+
+void console_message_integer(const char *mes, int num)
+{
+#if defined(_WIN32)
+	char *temp = u8tosjis(mes);
+	if (temp == NULL)
+	{
+		g_lastError = OPENJTALKERROR_CHARSET_CONVERTING_ERROR;
+		return;
+	}
+	fprintf(stderr, temp, num);
+	free(temp);
+#else
+	fprintf(stderr, mes, num);
+#endif
+}
+
+void console_message_float(const char *mes, double num)
+{
+#if defined(_WIN32)
+	char *temp = u8tosjis(mes);
+	if (temp == NULL)
+	{
+		g_lastError = OPENJTALKERROR_CHARSET_CONVERTING_ERROR;
+		return;
+	}
+	fprintf(stderr, temp, num);
+	free(temp);
+#else
+	fprintf(stderr, mes, num);
+#endif
+}
+
+void console_message_string(const char *mes, char *str)
+{
+#if defined(_WIN32)
+	char *temp1 = u8tosjis(mes);
+	if (temp1 == NULL)
+	{
+		g_lastError = OPENJTALKERROR_CHARSET_CONVERTING_ERROR;
+		return;
+	}
+	char *temp2 = u8tosjis(str);
+	if (temp2 == NULL)
+	{
+		free(temp1);
+		g_lastError = OPENJTALKERROR_CHARSET_CONVERTING_ERROR;
+		return;
+	}
+	fprintf(stderr, temp1, temp2);
+	free(temp2);
+	free(temp1);
+#else
+	fprintf(stderr, mes, str);
+#endif
+}
+
+void console_message(const char *mes)
+{
+#if defined(_WIN32)
+	char *temp = u8tosjis(mes);
+	if (temp == NULL)
+	{
+		g_lastError = OPENJTALKERROR_CHARSET_CONVERTING_ERROR;
+		return;
+	}
+	fprintf(stderr, temp);
+	free(temp);
+#else
+	fprintf(stderr, "%s\n", mes);
+#endif
+}
+
+/*****************************************************************
+** 単純補助関数
+*/
 
 void clear_path_string(char *str, size_t len)
 {
@@ -318,15 +396,27 @@ size_t GetUTF8Length(char firstbyte)
 	{
 		return 4;
 	}
-	// else if ((firstbyte & 0xfc) == 0xf8)
-	// {
-	// 	return 5;
-	// }
-	// else if ((firstbyte & 0xfe) == 0xfc)
-	// {
-	// 	return 6;
-	// }
+	else if ((firstbyte & 0xfc) == 0xf8)
+	{
+		return 5;
+	}
+	else if ((firstbyte & 0xfe) == 0xfc)
+	{
+		return 6;
+	}
 	return 0;
+}
+
+size_t GetSJISLength(char firstbyte)
+{
+	if (((unsigned char)firstbyte >= 0x81 && (unsigned char)firstbyte <= 0x9f) || ((unsigned char)firstbyte >= 0xe0 && (unsigned char)firstbyte <= 0xfc))
+	{
+		return 2;
+	}
+	else
+	{
+		return 1;
+	}
 }
 
 /******************************************************************
@@ -374,7 +464,7 @@ bool JTalkData_initialize(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "カレントフォルダに設定ファイルはありません。\n");
+			console_message(u8"カレントフォルダに設定ファイルはありません。\n");
 		}
 	}
 
@@ -399,6 +489,7 @@ bool JTalkData_initialize(OpenJTalk *oj)
 		}
 	}
 
+// Windowsだけの特別の処理
 #if defined(_WIN32)
 	// カレントフォルダに設定ファイルがなかったときだけ解釈する
 	if (!current_ini)
@@ -412,7 +503,7 @@ bool JTalkData_initialize(OpenJTalk *oj)
 		{
 			if (g_verbose)
 			{
-				fprintf(stderr, "共有ライブラリのあるフォルダに設定ファイルはありません。\n");
+				console_message(u8"共有ライブラリのあるフォルダに設定ファイルはありません。\n");
 			}
 		}
 
@@ -439,6 +530,29 @@ bool JTalkData_initialize(OpenJTalk *oj)
 	}
 #endif
 
+	// データフォルダマクロ変数INSTALL_PATH
+	// スラッシュをバックスラッシュに整える
+	clear_path_string(g_data_install_path, MAX_PATH);
+	if (strlen(INSTALL_PATH) < MAX_PATH)
+	{
+#if defined(_WIN32) && !defined(__MINGW32__)
+		char str_temp[MAX_PATH];
+		sjistou8_path(INSTALL_PATH, str_temp);
+		normalize_back_slash(str_temp, g_data_install_path);
+#elif defined(__MINGW32__)
+		char str_temp[MAX_PATH];
+		sjistou8_path(INSTALL_PATH, str_temp);
+		//u8tou8_path(INSTALL_PATH, str_temp);
+		normalize_back_slash(str_temp, g_data_install_path);
+#else
+		strcpy(g_data_install_path, INSTALL_PATH);
+#endif
+		if (g_verbose)
+		{
+			console_message_string(u8"ディレクトリ区切り文字の正規化： %s\n", g_data_install_path);
+		}
+	}
+
 	// まだ未確定ならば、省略値にする
 	if (strlen(oj->dn_dic_path) == 0)
 	{
@@ -462,7 +576,7 @@ bool JTalkData_initialize(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "辞書ディレクトリが見つかりません。\n");
+			console_message(u8"設定ファイルの辞書ディレクトリが見つかりません。\n");
 		}
 		return false;
 	}
@@ -472,14 +586,14 @@ bool JTalkData_initialize(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "音響モデルファイルが見つかりません。\n");
+			console_message(u8"音響モデルファイルが見つかりません。\n");
 		}
 		return false;
 	}
 
 	if (g_verbose)
 	{
-		fprintf(stderr, "\n");
+		console_message("\n");
 	}
 	return true;
 }
@@ -1078,26 +1192,7 @@ char16_t *u16tou16_path(const char16_t *source, char16_t *dest)
 ** split_path の実装
 */
 
-char *point_basename_sjis(const char *path)
-{
-	const char *b = path;
-	const char *p;
-	for (p = b; *p; p++)
-	{
-		if (((unsigned char)*p >= 0x81 && (unsigned char)*p <= 0x9f) || ((unsigned char)*p >= 0xe0 && (unsigned char)*p <= 0xfc))
-		{
-			p++;
-			continue;
-		}
-		if ((*p == *G_BACKSLASH_CHAR) || (*p == *G_FORWARD_SLASH_CHAR))
-		{
-			b = p + 1;
-		}
-	}
-	return (char *)b;
-}
-
-char *point_basename_u8(const char *path)
+char *point_basename(const char *path)
 {
 	const char *b = path;
 	const char *p;
@@ -1115,15 +1210,6 @@ char *point_basename_u8(const char *path)
 		}
 	}
 	return (char *)b;
-}
-
-char *point_basename(const char *path)
-{
-#if (defined(_WIN32) && !defined(__CYGWIN__))
-	return point_basename_sjis(path);
-#else
-	return point_basename_u8(path);
-#endif
 }
 
 bool has_driveletter(const char *path)
@@ -1180,89 +1266,42 @@ char *get_dir(const char *path, char *dest)
 	return dest;
 }
 
-char *get_fname_sjis(const char *path, char *dest)
-{
-	if (dest == NULL)
-	{
-		return NULL;
-	}
-	char temp[MAX_PATH];
-	char *p = temp;
-	strcpy(temp, point_basename_sjis(path));
-	while (strchr(temp, '.') != NULL)
-	{
-		if (strlen(p) < 2)
-		{
-			break;
-		}
-		if (*p)
-		{
-			p += strlen(p);
-			while (*p != '.')
-			{
-				--p;
-			}
-			if (!*p)
-			{
-				--p;
-				break;
-			}
-			else
-			{
-				*p = '\0';
-			}
-		}
-	}
-	clear_path_string(dest, MAX_PATH);
-	strcpy(dest, temp);
-	return dest;
-}
-
-char *get_fname_u8(const char *path, char *dest)
-{
-	if (dest == NULL)
-	{
-		return NULL;
-	}
-	char temp[MAX_PATH];
-	char *p = temp;
-	strcpy(temp, point_basename_u8(path));
-	while (strchr(temp, '.') != NULL)
-	{
-		if (strlen(p) < 2)
-		{
-			break;
-		}
-		if (*p)
-		{
-			p += strlen(p);
-			while (*p != '.')
-			{
-				--p;
-			}
-			if (!*p)
-			{
-				--p;
-				break;
-			}
-			else
-			{
-				*p = '\0';
-			}
-		}
-	}
-	clear_path_string(dest, MAX_PATH);
-	strcpy(dest, temp);
-	return dest;
-}
-
 char *get_fname(const char *path, char *dest)
 {
-#if (defined(_WIN32) && !defined(__CYGWIN__))
-	return get_fname_sjis(path, dest);
-#else
-	return get_fname_u8(path, dest);
-#endif
+	if (dest == NULL)
+	{
+		return NULL;
+	}
+	char temp[MAX_PATH];
+	char *p = temp;
+	strcpy(temp, point_basename(path));
+	while (strchr(temp, '.') != NULL)
+	{
+		if (strlen(p) < 2)
+		{
+			break;
+		}
+		if (*p)
+		{
+			p += strlen(p);
+			while (*p != '.')
+			{
+				--p;
+			}
+			if (!*p)
+			{
+				--p;
+				break;
+			}
+			else
+			{
+				*p = '\0';
+			}
+		}
+	}
+	clear_path_string(dest, MAX_PATH);
+	strcpy(dest, temp);
+	return dest;
 }
 
 char *get_ext(const char *path, char *dest)
@@ -1351,11 +1390,35 @@ char *get_dir_path(const char *path, char *dist)
 bool exists_file(const char *name)
 {
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	if (PathFileExistsA(name) == false)
+	char16_t temp[MAX_PATH];
+	char16_t *res = u8tou16_path(name, temp);
+	if (res == NULL)
 	{
 		return false;
 	}
-	return !PathIsDirectoryA(name);
+	if (PathFileExistsW(temp) == false)
+	{
+		return false;
+	}
+	return !PathIsDirectoryW(temp);
+#elif defined(__MINGW32__)
+	char temp2[MAX_PATH];
+	char *res = u8tosjis_path(name, temp2);
+	if (res == NULL)
+	{
+		return false;
+	}
+	int fd = open(temp2, O_RDONLY);
+	if (fd <= 0)
+	{
+		return false;
+	}
+	close(fd);
+	if (fd <= 0)
+	{
+		return false;
+	}
+	return true;
 #else
 	int fd = open(name, O_RDONLY);
 	if (fd <= 0)
@@ -1390,14 +1453,38 @@ bool exists_dir(const char *path)
 		}
 	}
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	if (PathFileExistsA(path) == false)
+	char16_t temp2[MAX_PATH];
+	if (u8tou16_path(path, temp2) == NULL)
 	{
 		return false;
 	}
-	return PathIsDirectoryA(path);
-#else
+	if (PathFileExistsW(temp2) == false)
+	{
+		return false;
+	}
+	return PathIsDirectoryW(temp2);
+#elif defined(__MINGW32__)
+	char temp4[MAX_PATH];
+	char *res = u8tosjis_path(path, temp4);
+	if (res == NULL)
+	{
+		return false;
+	}
 	struct stat sb;
-	if (stat(path, &sb) == -1)
+	if (stat(temp4, &sb) == -1)
+	{
+		return false;
+	}
+	if (S_ISDIR(sb.st_mode))
+	{
+		return true;
+	}
+	return false;
+#else
+	char temp3[MAX_PATH];
+	normalize_forward_slash(path, temp3);
+	struct stat sb;
+	if (stat(temp3, &sb) == -1)
 	{
 		return false;
 	}
@@ -1521,7 +1608,7 @@ int closedir(DIR *dir)
 
 size_t get_step_filechar(const unsigned char *s)
 {
-#if (defined(_WIN32) && !defined(__CYGWIN__))
+#if (defined(_WIN32))
 	unsigned char c = s[0];
 	if ((c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc))
 	{
@@ -1628,7 +1715,18 @@ bool search_directory_or_file(const char *path, const char *wildcard, bool isDir
 		return false;
 	}
 	DIR *dir;
+	char opendirpath[MAX_PATH];
+	clear_path_string(opendirpath, MAX_PATH);
+#if defined(_WIN32)
+	char *res = u8tosjis_path(path, opendirpath);
+	if (res == NULL)
+	{
+		return false;
+	}	
+	if ((dir = opendir(opendirpath)) == NULL)
+#else
 	if ((dir = opendir(path)) == NULL)
+#endif
 	{
 		return false;
 	}
@@ -1681,7 +1779,18 @@ bool search_file_recursive(const char *path, const char *wildcard, char *result,
 		return false;
 	}
 	DIR *dir;
+	char opendirpath[MAX_PATH];
+	clear_path_string(opendirpath, MAX_PATH);
+#if defined(_WIN32)
+	char *res = u8tosjis_path(path, opendirpath);
+	if (res == NULL)
+	{
+		return false;
+	}
+	if ((dir = opendir(opendirpath)) == NULL)
+#else
 	if ((dir = opendir(path)) == NULL)
+#endif
 	{
 		return false;
 	}
@@ -1786,8 +1895,18 @@ HtsVoiceFilelist *get_file_or_directory_list(const char *path, const char *wildc
 		return top;
 	}
 	DIR *dir;
-
+	char opendirpath[MAX_PATH];
+	clear_path_string(opendirpath, MAX_PATH);
+#if defined(_WIN32)
+	char *res = u8tosjis_path(path, opendirpath);
+	if (res == NULL)
+	{
+		return NULL;
+	}
+	if ((dir = opendir(opendirpath)) == NULL)
+#else
 	if ((dir = opendir(path)) == NULL)
+#endif
 	{
 		return top;
 	}
@@ -1844,9 +1963,9 @@ HtsVoiceFilelist *get_file_or_directory_list(const char *path, const char *wildc
 			{
 			case OPENJTALKCHARSET_SHIFT_JIS:
 //data->charset = OPENJTALKCHARSET_SHIFT_JIS;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-				data->path = sjistosjis(temp);
-				data->name = sjistosjis(entry->d_name);
+#if defined(_WIN32)
+				data->path = u8tosjis(temp);
+				data->name = u8tosjis(entry->d_name);
 #else
 				data->path = u8tosjis(temp);
 				data->name = u8tosjis(entry->d_name);
@@ -1854,9 +1973,9 @@ HtsVoiceFilelist *get_file_or_directory_list(const char *path, const char *wildc
 				break;
 			case OPENJTALKCHARSET_UTF_8:
 //data->charset = OPENJTALKCHARSET_UTF_8;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-				data->path = sjistou8(temp);
-				data->name = sjistou8(entry->d_name);
+#if defined(_WIN32)
+				data->path = u8tou8(temp);
+				data->name = u8tou8(entry->d_name);
 #else
 				data->path = u8tou8(temp);
 				data->name = u8tou8(entry->d_name);
@@ -1864,9 +1983,9 @@ HtsVoiceFilelist *get_file_or_directory_list(const char *path, const char *wildc
 				break;
 			case OPENJTALKCHARSET_UTF_16:
 //data->charset = OPENJTALKCHARSET_UTF_16;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-				data->pathU16 = sjistou16(temp);
-				data->nameU16 = sjistou16(entry->d_name);
+#if defined(_WIN32)
+				data->pathU16 = u8tou16(temp);
+				data->nameU16 = u8tou16(entry->d_name);
 #else
 				data->pathU16 = u8tou16(temp);
 				data->nameU16 = u8tou16(entry->d_name);
@@ -1893,7 +2012,7 @@ HtsVoiceFilelist *get_file_or_directory_list(const char *path, const char *wildc
 
 bool get_fullpath(const char *path, char *dest)
 {
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32)
 	if (_fullpath(dest, path, MAX_PATH) == NULL)
 #else
 	if (realpath(path, dest) == NULL)
@@ -1973,7 +2092,7 @@ bool is_relative(const char *path)
 	return false;
 }
 
-bool change_extension(const char *path, const char *ext, char *dest)
+bool change_extension_u8(const char *path, const char *ext, char *dest)
 {
 	clear_path_string(dest, MAX_PATH);
 	if (path == NULL || ext == NULL || dest == NULL)
@@ -1992,60 +2111,96 @@ bool change_extension(const char *path, const char *ext, char *dest)
 	return true;
 }
 
-char *make_fullpath(const char *base_directory, const char *source, char *fullpath)
+bool normalize_back_slash(const char *path, char *dest)
 {
-	if (fullpath == NULL)
+	if (path == NULL || dest == NULL)
 	{
-		return NULL;
+		return false;
 	}
-	if (base_directory == NULL)
+
+	const char *p = path;
+	char *q = dest;
+	if (has_driveletter(path))
 	{
-		if (get_fullpath(source, fullpath))
+		*q++ = *p++;
+		*q++ = *p++;
+	}
+	if ((*p == *G_BACKSLASH_CHAR) || (*p == *G_FORWARD_SLASH_CHAR))
+	{
+		p++;
+		*q++ = *G_BACKSLASH_CHAR;
+	}
+
+	while (*p)
+	{
+		size_t step = GetUTF8Length(*p);
+		if (step > 1)
 		{
-			return fullpath;
+			while (step--)
+			{
+				*q++ = *p++;
+			}
+		}
+		else if ((*p == *G_BACKSLASH_CHAR) || (*p == *G_FORWARD_SLASH_CHAR))
+		{
+			p++;
+			*q++ = *G_BACKSLASH_CHAR;
 		}
 		else
 		{
-			return NULL;
+			*q++ = *p++;
 		}
 	}
-	clear_path_string(fullpath, MAX_PATH);
-	get_fullpath(base_directory, fullpath);
-	add_slash(fullpath);
-	if (strlen(source) == 0)
-	{
-		return NULL;
-	}
-	char drive[MAX_PATH];
-	char dir[MAX_PATH];
-	char fname[MAX_PATH];
-	char ext[MAX_PATH];
-	split_path(source, drive, dir, fname, ext);
-	if (((strlen(dir) > 1) && (dir[0] == G_BACKSLASH_CHAR[0])) || ((strlen(dir) > 1) && (dir[0] == G_FORWARD_SLASH_CHAR[0])))
-	{
-		if (strlen(drive) != 0)
-		{
-			if (get_fullpath(source, fullpath))
-			{
-				return fullpath;
-			}
-			else
-			{
-				return NULL;
-			}
-		}
-		else
-		{
-			get_drive(base_directory, drive);
-			strcat(strcat(strcat(strcpy(fullpath, drive), dir), fname), ext);
-		}
-	}
-	else
-	{
-		strcat(strcat(strcat(fullpath, dir), fname), ext);
-	}
-	return fullpath;
+	*q = '\0';
+
+	return true;
 }
+
+bool normalize_forward_slash(const char *path, char *dest)
+{
+	if (path == NULL || dest == NULL)
+	{
+		return false;
+	}
+
+	const char *p = path;
+	char *q = dest;
+	if (has_driveletter(path))
+	{
+		*q++ = *p++;
+		*q++ = *p++;
+	}
+	if ((*p == *G_BACKSLASH_CHAR) || (*p == *G_FORWARD_SLASH_CHAR))
+	{
+		p++;
+		*q++ = *G_FORWARD_SLASH_CHAR;
+	}
+
+	while (*p)
+	{
+		size_t step = GetUTF8Length(*p);
+		if (step > 1)
+		{
+			while (step--)
+			{
+				*q++ = *p++;
+			}
+		}
+		else if ((*p == *G_BACKSLASH_CHAR) || (*p == *G_FORWARD_SLASH_CHAR))
+		{
+			p++;
+			*q++ = *G_FORWARD_SLASH_CHAR;
+		}
+		else
+		{
+			*q++ = *p++;
+		}
+	}
+	*q = '\0';
+
+	return true;
+}
+
 
 bool get_current_path(char *path)
 {
@@ -2063,7 +2218,7 @@ bool set_current_path()
 	bool res = get_current_path(g_current_path);
 	if (g_verbose)
 	{
-		fprintf(stderr, "カレントパス: %s\n", g_current_path);
+		console_message_string(u8"Current Path: %s\n", g_current_path);
 	}
 	if (res)
 	{
@@ -2204,8 +2359,21 @@ return_true:
 }
 
 // 設定ファイルの情報から辞書ディレクトリを決定
-bool set_config_dic_dir(OpenJTalk *oj, const char *path)
+bool set_config_dic_dir(OpenJTalk *oj, const char *path_original)
 {
+	if (g_verbose)
+	{
+		console_message(u8"設定ファイルの情報から辞書ディレクトリを決定\n");
+	}
+
+	char path[MAX_PATH];
+	clear_path_string(path, MAX_PATH);
+#if defined(_WIN32)
+	normalize_back_slash(path_original, path);
+#else
+	strcpy(path, path_original);
+#endif
+
 	if (!oj)
 	{
 		return false;
@@ -2221,6 +2389,11 @@ bool set_config_dic_dir(OpenJTalk *oj, const char *path)
 
 	if (is_relative(path))
 	{
+		if (g_verbose)
+		{
+			console_message_string(u8"設定ファイルの辞書ディレクトリ指定は相対指定です。: %s\n", path);
+		}
+
 		if (g_ini_dir == NULL || strlen(g_ini_dir) == 0)
 		{
 			return false;
@@ -2237,33 +2410,80 @@ bool set_config_dic_dir(OpenJTalk *oj, const char *path)
 	}
 	else
 	{
+		if (g_verbose)
+		{
+			console_message_string(u8"設定ファイルの辞書ディレクトリ指定は相対指定ではありません。: %s\n", path);
+		}
 		strcpy(temp, path);
 	}
 
 	if (!exists_dir(temp))
 	{
+		if (g_verbose)
+		{
+			console_message_string(u8"設定ファイルで指定された辞書ディレクトリは存在しません。:  %s\n", path);
+		}
 		return false;
+	}
+	else
+	{
+		if (g_verbose)
+		{
+			console_message_string(u8"設定ファイルで指定された辞書ディレクトリは実在します。: %s\n", path);
+		}
 	}
 
 	char full[MAX_PATH];
+	char full2[MAX_PATH];
 	clear_path_string(full, MAX_PATH);
-
+	clear_path_string(full2, MAX_PATH);
 	get_fullpath(temp, full);
+	if (g_verbose)
+	{
+		console_message_string(u8"辞書ディレクトリのフルパス: %s\n", full);
+	}
 
 	if (!check_dic_utf_8(full))
 	{
+		console_message(u8"辞書ファイルの設定に失敗しました。\n");
 		return false;
 	}
 
+#if defined(_WIN32)
+#else
+#endif
+	if (g_verbose)
+	{
+		console_message_string(u8"辞書ディレクトリのフルパス： %s\n", full);
+	}
 	strcpy(oj->dn_dic_path, full);
+#if defined(_WIN32)
+	char temp2[MAX_PATH];
+	clear_path_string(temp2, MAX_PATH);
+	u8tosjis_path(full, temp2);
+	Open_JTalk_load_dic(oj->open_jtalk, temp2);
+#else
 	Open_JTalk_load_dic(oj->open_jtalk, full);
-
+#endif
 	return true;
 }
 
 // 設定ファイルの情報から音響モデルディレクトリを決定
-bool set_config_voice_dir(OpenJTalk *oj, const char *path)
+bool set_config_voice_dir(OpenJTalk *oj, const char *path_original)
 {
+	if (g_verbose)
+	{
+		console_message(u8"設定ファイルの情報から音響モデルディレクトリを決定\n");
+	}
+
+	char path[MAX_PATH];
+	clear_path_string(path, MAX_PATH);
+#if defined(_WIN32)
+	normalize_back_slash(path_original, path);
+#else
+	strcpy(path, path_original);
+#endif
+
 	if (!oj)
 	{
 		return false;
@@ -2279,6 +2499,11 @@ bool set_config_voice_dir(OpenJTalk *oj, const char *path)
 
 	if (is_relative(path))
 	{
+		if (g_verbose)
+		{
+			console_message_string(u8"音響モデルディレクトリ指定は相対指定です。： %s\n", path);
+		}
+
 		if (g_ini_dir == NULL || strlen(g_ini_dir) == 0)
 		{
 			return false;
@@ -2295,26 +2520,50 @@ bool set_config_voice_dir(OpenJTalk *oj, const char *path)
 	}
 	else
 	{
+		if (g_verbose)
+		{
+			console_message_string(u8"音響モデルディレクトリ指定は相対指定ではありません。： %s\n", path);
+		}
 		strcpy(temp, path);
 	}
 
 	if (!exists_dir(temp))
 	{
+		if (g_verbose)
+		{
+			console_message_string(u8"指定された音響モデルディレクトリは存在しません。： %s\n", temp);
+		}
 		return false;
 	}
 
 	char full[MAX_PATH];
 	clear_path_string(full, MAX_PATH);
-
 	get_fullpath(temp, full);
+	if (g_verbose)
+	{
+		console_message_string(u8"指定された音響モデルディレクトリのフルパス： %s\n", full);
+	}
 
 	strcpy(oj->dn_voice_dir_path, full);
 	return true;
 }
 
 // 設定ファイルからの音響モデルファイル設定
-bool set_config_voice(OpenJTalk *oj, const char *path)
+bool set_config_voice(OpenJTalk *oj, const char *path_original)
 {
+	if (g_verbose)
+	{
+		console_message(u8"設定ファイルの情報から音響モデルファイルを決定\n");
+	}
+
+	char path[MAX_PATH];
+	clear_path_string(path, MAX_PATH);
+#if defined(_WIN32)
+	normalize_back_slash(path_original, path);
+#else
+	strcpy(path, path_original);
+#endif
+
 	if (!oj)
 	{
 		return false;
@@ -2330,6 +2579,11 @@ bool set_config_voice(OpenJTalk *oj, const char *path)
 
 	if (is_name_only(path))
 	{
+		if (g_verbose)
+		{
+			console_message_string(u8"音響モデルファイルは名前のみの指定です。： %s\n", path);
+		}
+
 		if (strlen(path) + strlen(G_VOICE_EXT) + 1 > MAX_PATH)
 		{
 			return false;
@@ -2347,6 +2601,11 @@ bool set_config_voice(OpenJTalk *oj, const char *path)
 
 	if (is_relative(path))
 	{
+		if (g_verbose)
+		{
+			console_message_string(u8"音響モデルファイル指定は相対指定です： %s\n", path);
+		}
+
 		if (g_ini_dir == NULL || strlen(g_ini_dir) == 0)
 		{
 			return false;
@@ -2363,21 +2622,35 @@ bool set_config_voice(OpenJTalk *oj, const char *path)
 	}
 	else
 	{
+		if (g_verbose)
+		{
+			console_message_string(u8"音響モデルファイル指定は相対指定ではありません： %s\n", path);
+		}
 		strcpy(temp, path);
 	}
 
 	if (!exists_file(temp))
 	{
+		if (g_verbose)
+		{
+			console_message_string(u8"指定された音響モデルファイルは存在しません： %s\n", temp);
+		}
 		return false;
 	}
-	char full[MAX_PATH];
 
+	char full[MAX_PATH];
 return_true:
 	clear_path_string(full, MAX_PATH);
 	get_fullpath(temp, full);
-
 	strcpy(oj->fn_voice_path, full);
+#if defined(_WIN32)
+	char temp2[MAX_PATH];
+	clear_path_string(temp2, MAX_PATH);
+	u8tosjis_path(full, temp2);
+	Open_JTalk_load_voice(oj->open_jtalk, temp2);
+#else
 	Open_JTalk_load_voice(oj->open_jtalk, full);
+#endif
 	return true;
 }
 
@@ -2427,7 +2700,15 @@ check_charset:
 		return false;
 	}
 	strcpy(oj->dn_dic_path, temp);
+#if defined(_WIN32)
+	char temp2[MAX_PATH];
+	clear_path_string(temp2, MAX_PATH);
+	u8tosjis_path(temp, temp2);
+	Open_JTalk_load_dic(oj->open_jtalk, temp2);
+#else
 	Open_JTalk_load_dic(oj->open_jtalk, temp);
+#endif
+
 	return true;
 }
 
@@ -2567,7 +2848,14 @@ bool set_voice(OpenJTalk *oj, const char *path)
 
 return_true:
 	strcpy(oj->fn_voice_path, temp);
+#if defined(_WIN32)
+	char temp2[MAX_PATH];
+	clear_path_string(temp2, MAX_PATH);
+	u8tosjis_path(temp, temp2);
+	Open_JTalk_load_voice(oj->open_jtalk, temp2);
+#else
 	Open_JTalk_load_voice(oj->open_jtalk, temp);
+#endif
 	return true;
 }
 
@@ -2607,7 +2895,14 @@ bool set_voice_name(OpenJTalk *oj, const char *name)
 
 return_true:
 	strcpy(oj->fn_voice_path, temp);
+#if defined(_WIN32)
+	char temp2[MAX_PATH];
+	clear_path_string(temp2, MAX_PATH);
+	u8tosjis_path(temp, temp2);
+	Open_JTalk_load_voice(oj->open_jtalk, temp2);
+#else
 	Open_JTalk_load_voice(oj->open_jtalk, temp);
+#endif
 	return true;
 }
 
@@ -2661,7 +2956,14 @@ bool set_voice_path(OpenJTalk *oj, const char *path)
 
 return_true:
 	strcpy(oj->fn_voice_path, temp);
+#if defined(_WIN32)
+	char temp2[MAX_PATH];
+	clear_path_string(temp2, MAX_PATH);
+	u8tosjis_path(temp, temp2);
+	Open_JTalk_load_voice(oj->open_jtalk, temp2);
+#else
 	Open_JTalk_load_voice(oj->open_jtalk, temp);
+#endif
 	return true;
 }
 
@@ -2732,11 +3034,11 @@ bool set_default_voice_dir_path(OpenJTalk *oj)
 	clear_path_string(temp, MAX_PATH);
 
 	// 標準のインストールフォルダから可能性のある名前を探す
-	if (G_DN_INSTALL_PATH != NULL && strlen(G_DN_INSTALL_PATH) != 0)
+	if (g_data_install_path != NULL && strlen(g_data_install_path) != 0)
 	{
 		for (const char **d = G_DEFAULT_VOICE_DIR_NAMES; *d != NULL; d++)
 		{
-			if (search_directory(G_DN_INSTALL_PATH, *d, temp))
+			if (search_directory(g_data_install_path, *d, temp))
 			{
 				goto return_true;
 			}
@@ -2780,12 +3082,18 @@ bool set_default_voice(OpenJTalk *oj)
 			goto return_true;
 		}
 	}
-
 	return false;
 
 return_true:
 	strcpy(oj->fn_voice_path, temp);
+#if defined(_WIN32)
+	char temp2[MAX_PATH];
+	clear_path_string(temp2, MAX_PATH);
+	u8tosjis_path(temp, temp2);
+	Open_JTalk_load_voice(oj->open_jtalk, temp2);
+#else
 	Open_JTalk_load_voice(oj->open_jtalk, temp);
+#endif
 	return true;
 }
 
@@ -2833,15 +3141,19 @@ bool check_dic_utf_8(const char *path)
 	}
 	char file[MAX_PATH];
 	clear_path_string(file, MAX_PATH);
-
-	if (7 + 1 + strlen(path) + 1 > MAX_PATH)
+#if defined(_WIN32)
+	u8tosjis_path(path, file);
+#else
+	u8tou8_path(path, file);
+#endif
+	if (7 + 1 + strlen(file) + 1 > MAX_PATH)
 	{
 		return false;
 	}
 
-	strcpy(file, path);
 	strcat(file, G_SLASH_CHAR);
 	strcat(file, "unk.dic");
+
 	FILE *fp = fopen(file, "rb");
 	if (!fp)
 	{
@@ -2853,7 +3165,12 @@ bool check_dic_utf_8(const char *path)
 		return false;
 	}
 	char str[6];
-	fgets(str, 6, fp);
+	char *res = fgets(str, 6, fp);
+	if( res == NULL )
+	{
+		fclose(fp);
+		return false;
+	}
 	fclose(fp);
 	char *p = str;
 	if (*p != 'U' && *p != 'u')
@@ -2875,7 +3192,7 @@ bool check_dic_utf_8(const char *path)
 exit_false:
 	if (g_verbose)
 	{
-		fprintf(stderr, "this dic is not in utf-8: %s\n", path);
+		console_message_string(u8"this dic is not in utf-8: %s\n", (char*)path);
 	}
 	return false;
 }
@@ -2929,12 +3246,19 @@ bool set_dic_path(OpenJTalk *oj, const char *path)
 	return false;
 
 check_charset:
-	if (!check_dic_utf_8(temp))
+	if (!*temp)
 	{
 		return false;
 	}
 	strcpy(oj->dn_dic_path, temp);
+#if defined(_WIN32)
+	char temp2[MAX_PATH];
+	clear_path_string(temp2, MAX_PATH);
+	u8tosjis_path(temp, temp2);
+	Open_JTalk_load_dic(oj->open_jtalk, temp2);
+#else
 	Open_JTalk_load_dic(oj->open_jtalk, temp);
+#endif
 	return true;
 }
 
@@ -2954,11 +3278,11 @@ bool set_default_dic_path(OpenJTalk *oj)
 	clear_path_string(temp, MAX_PATH);
 
 	// 標準のインストールフォルダから可能性のある名前を探す。
-	if (G_DN_INSTALL_PATH != NULL && strlen(G_DN_INSTALL_PATH) != 0)
+	if (g_data_install_path != NULL && strlen(g_data_install_path) != 0)
 	{
 		for (const char **d = G_DEFAULT_DIC_DIR_NAMES; *d != NULL; d++)
 		{
-			if (search_directory(G_DN_INSTALL_PATH, *d, temp))
+			if (search_directory(g_data_install_path, *d, temp))
 			{
 				goto check_charset;
 			}
@@ -2972,7 +3296,14 @@ check_charset:
 		return false;
 	}
 	strcpy(oj->dn_dic_path, temp);
+#if defined(_WIN32)
+	char temp2[MAX_PATH];
+	clear_path_string(temp2, MAX_PATH);
+	u8tosjis_path(temp, temp2);
+	Open_JTalk_load_dic(oj->open_jtalk, temp2);
+#else
 	Open_JTalk_load_dic(oj->open_jtalk, temp);
+#endif
 	return true;
 }
 
@@ -2985,7 +3316,7 @@ void speak_sync(OpenJTalk *oj)
 {
 	if (g_verbose)
 	{
-		fprintf(stderr, "同期発声開始\n");
+		console_message(u8"同期発声開始\n");
 	}
 
 	g_psd->finished = false;
@@ -3051,7 +3382,7 @@ exit_func:
 
 	if (g_verbose)
 	{
-		fprintf(stderr, "同期発声完了\n\n");
+		console_message(u8"同期発声完了\n");
 	}
 }
 #else
@@ -3131,11 +3462,11 @@ static void speak_pa_finished(void *userData)
 	{
 		if (data->paused)
 		{
-			fprintf(stderr, "非同期発声一時停止\n\n");
+			console_message(u8"非同期発声一時停止\n");
 		}
 		else
 		{
-			fprintf(stderr, "非同期発声完了\n\n");
+			console_message(u8"非同期発声完了\n");
 		}
 	}
 
@@ -3151,11 +3482,11 @@ void speak_async(OpenJTalk *oj)
 	{
 		if (g_psd->counter == 0)
 		{
-			fprintf(stderr, "非同期発声開始！\n");
+			console_message(u8"非同期発声開始！\n");
 		}
 		else
 		{
-			fprintf(stderr, "非同期発声再開\n");
+			console_message(u8"非同期発声再開\n");
 		}
 	}
 
@@ -3259,18 +3590,7 @@ void synthesis(OpenJTalk *oj, const char *txt)
 
 	if (g_verbose)
 	{
-		char *temp = (char *)txt;
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-		temp = NULL;
-		temp = u8tosjis(txt);
-#endif
-		fprintf(stderr, "text\t: %s\n", temp);
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-		if (temp)
-		{
-			free(temp);
-		}
-#endif
+		console_message_string(u8"text： %s\n", (char*)txt);
 	}
 
 	g_psd->length = 0;
@@ -3298,7 +3618,7 @@ void synthesisU8(OpenJTalk *oj, const char *txt)
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	if (g_verbose)
 	{
-		fprintf(stderr, "charset\t: UTF-8\n");
+		console_message("charset: UTF-8\n");
 	}
 #endif
 	synthesis(oj, txt);
@@ -3306,10 +3626,10 @@ void synthesisU8(OpenJTalk *oj, const char *txt)
 
 void synthesisSjis(OpenJTalk *oj, const char *txt)
 {
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+#if defined(_WIN32)
 	if (g_verbose)
 	{
-		fprintf(stderr, "charset\t: SJIS\n");
+		console_message("charset: SJIS\n");
 	}
 #endif
 	char *txt_utf8 = sjistou8(txt);
@@ -3319,10 +3639,10 @@ void synthesisSjis(OpenJTalk *oj, const char *txt)
 
 void synthesisU16(OpenJTalk *oj, const char16_t *txt)
 {
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+#if defined(_WIN32)
 	if (g_verbose)
 	{
-		fprintf(stderr, "charset\t: UTF-16\n");
+		console_message("charset: UTF-16\n");
 	}
 #endif
 	char *txt_utf8 = u16tou8((char16_t *)txt);
@@ -3836,6 +4156,11 @@ char *ScanSection(ConfigScanner *sc)
 
 void ScanFile(ConfigScanner *sc)
 {
+	if (g_verbose)
+	{
+		console_message(u8"設定解析開始\n");
+	}
+
 	if (sc == NULL)
 	{
 		return;
@@ -3852,6 +4177,10 @@ void ScanFile(ConfigScanner *sc)
 			char *section = ScanSection(sc);
 			if (section)
 			{
+				if (g_verbose)
+				{
+					console_message_string(u8"config section： %s\n", section);
+				}
 				SectionList *sec = (SectionList *)malloc(sizeof(SectionList));
 				sec->name = section;
 				sec->succ = NULL;
@@ -3969,13 +4298,23 @@ char *get_contents(const char *name)
 	{
 		fseek(f, 0, SEEK_SET);
 	}
-	fread(buf, sizeof(char), size, f);
+	size_t  res = fread(buf, sizeof(char), size, f);
+	if ( res < size)
+	{
+		fclose(f);
+		return buf;
+	}
 	fclose(f);
 	return buf;
 }
 
 ConfigScanner *config_load(char *filename)
 {
+	if (g_verbose)
+	{
+		console_message(u8"設定ファイル読み込み\n");
+	}
+
 	char *text = get_contents(filename);
 	if (text == NULL)
 	{
@@ -4156,15 +4495,15 @@ bool get_ini_data(OpenJTalk *oj)
 		return false;
 	}
 
+	if (g_verbose)
+	{
+		console_message(u8"***** 設定ファイル解釈　開始 *****\n");
+	}
+
 	ConfigScanner *sc = config_load(g_ini_path);
 	if (sc == NULL)
 	{
 		return false;
-	}
-
-	if (g_verbose)
-	{
-		fprintf(stderr, "***** 設定ファイル解釈　開始 *****\n");
 	}
 
 	char *temp;
@@ -4174,7 +4513,7 @@ bool get_ini_data(OpenJTalk *oj)
 		{
 			if (g_verbose)
 			{
-				fprintf(stderr, "config voice_dir: %s\n", temp);
+				console_message_string(u8"config voice_dir： %s\n", temp);
 			}
 			set_config_voice_dir(oj, temp);
 		}
@@ -4182,7 +4521,7 @@ bool get_ini_data(OpenJTalk *oj)
 		{
 			if (g_verbose)
 			{
-				fprintf(stderr, "config voice_dir: 無視\n");
+				console_message(u8"config voice_dir: 無視\n");
 			}
 		}
 	}
@@ -4191,17 +4530,19 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (strlen(oj->dn_dic_path) == 0)
 		{
-			if (g_verbose)
+			if (!set_config_dic_dir(oj, temp))
 			{
-				printf("config dic_dir: %s\n", temp);
+				if (g_verbose)
+				{
+					console_message(u8"warning: 設定ファイルからの辞書ファイルの設定に失敗しました。\n");
+				}
 			}
-			set_config_dic_dir(oj, temp);
 		}
 		else
 		{
 			if (g_verbose)
 			{
-				printf("config dic_dir: 無視\n");
+				console_message(u8"config dic_dir: 無視\n");
 			}
 		}
 	}
@@ -4212,7 +4553,7 @@ bool get_ini_data(OpenJTalk *oj)
 		{
 			if (g_verbose)
 			{
-				fprintf(stderr, "config voice: %s\n", temp);
+				console_message_string(u8"config voice： %s\n", temp);
 			}
 			set_config_voice(oj, temp);
 		}
@@ -4220,7 +4561,7 @@ bool get_ini_data(OpenJTalk *oj)
 		{
 			if (g_verbose)
 			{
-				printf("config voice: 無視\n");
+				console_message(u8"config voice: 無視\n");
 			}
 		}
 	}
@@ -4230,7 +4571,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			printf("config sampling_frequency: %d\n", temp_int);
+			console_message_integer(u8"config sampling_frequency: %d\n", temp_int);
 		}
 		openjtalk_setSamplingFrequency(oj, temp_int);
 	}
@@ -4238,7 +4579,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config s: %d\n", temp_int);
+			console_message_integer(u8"config s: %d\n", temp_int);
 		}
 		openjtalk_setSamplingFrequency(oj, temp_int);
 	}
@@ -4246,7 +4587,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config fperiod: %d\n", temp_int);
+			console_message_integer(u8"config fperiod: %d\n", temp_int);
 		}
 		openjtalk_setFperiod(oj, temp_int);
 	}
@@ -4254,7 +4595,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config p: %d\n", temp_int);
+			console_message_integer(u8"config p: %d\n", temp_int);
 		}
 		openjtalk_setFperiod(oj, temp_int);
 	}
@@ -4264,7 +4605,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config alpha: %f\n", temp_double);
+			console_message_float(u8"config alpha: %f\n", temp_double);
 		}
 		openjtalk_setAlpha(oj, temp_double);
 	}
@@ -4272,7 +4613,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config a: %f\n", temp_double);
+			console_message_float(u8"config a: %f\n", temp_double);
 		}
 		openjtalk_setAlpha(oj, temp_double);
 	}
@@ -4280,7 +4621,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config beta: %f\n", temp_double);
+			console_message_float(u8"config beta: %f\n", temp_double);
 		}
 		openjtalk_setBeta(oj, temp_double);
 	}
@@ -4288,7 +4629,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config b: %f\n", temp_double);
+			console_message_float(u8"config b: %f\n", temp_double);
 		}
 		openjtalk_setBeta(oj, temp_double);
 	}
@@ -4296,7 +4637,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config speed: %f\n", temp_double);
+			console_message_float(u8"config speed: %f\n", temp_double);
 		}
 		openjtalk_setSpeed(oj, temp_double);
 	}
@@ -4304,7 +4645,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config r: %f\n", temp_double);
+			console_message_float(u8"config r: %f\n", temp_double);
 		}
 		openjtalk_setSpeed(oj, temp_double);
 	}
@@ -4312,7 +4653,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config additional_half_tone: %f\n", temp_double);
+			console_message_float(u8"config additional_half_tone: %f\n", temp_double);
 		}
 		openjtalk_setAdditionalHalfTone(oj, temp_double);
 	}
@@ -4320,7 +4661,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config fm: %f\n", temp_double);
+			console_message_float(u8"config fm: %f\n", temp_double);
 		}
 		openjtalk_setAdditionalHalfTone(oj, temp_double);
 	}
@@ -4328,7 +4669,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config msd_threshold: %f\n", temp_double);
+			console_message_float(u8"config msd_threshold: %f\n", temp_double);
 		}
 		openjtalk_setMsdThreshold(oj, temp_double);
 	}
@@ -4336,7 +4677,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config u: %f\n", temp_double);
+			console_message_integer(u8"config u: %f\n", temp_double);
 		}
 		openjtalk_setMsdThreshold(oj, temp_double);
 	}
@@ -4344,7 +4685,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config gv_weight_for_spectrum: %f\n", temp_double);
+			console_message_float(u8"config gv_weight_for_spectrum: %f\n", temp_double);
 		}
 		openjtalk_setGvWeightForSpectrum(oj, temp_double);
 	}
@@ -4352,7 +4693,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config jm: %f\n", temp_double);
+			console_message_float(u8"config jm： %f\n", temp_double);
 		}
 		openjtalk_setGvWeightForSpectrum(oj, temp_double);
 	}
@@ -4360,7 +4701,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config gv_weight_for_log_f0: %f\n", temp_double);
+			console_message_float(u8"config gv_weight_for_log_f0: %f\n", temp_double);
 		}
 		openjtalk_setGvWeightForLogF0(oj, temp_double);
 	}
@@ -4368,7 +4709,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config jf: %f\n", temp_double);
+			console_message_float(u8"config jf: %f\n", temp_double);
 		}
 		openjtalk_setGvWeightForLogF0(oj, temp_double);
 	}
@@ -4376,7 +4717,7 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config volume: %f\n", temp_double);
+			console_message_float(u8"config volume: %f\n", temp_double);
 		}
 		openjtalk_setVolume(oj, temp_double);
 	}
@@ -4384,14 +4725,14 @@ bool get_ini_data(OpenJTalk *oj)
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "config g: %f\n", temp_double);
+			console_message_float(u8"config g: %f\n", temp_double);
 		}
 		openjtalk_setVolume(oj, temp_double);
 	}
 	config_free(sc);
 	if (g_verbose)
 	{
-		fprintf(stderr, "***** 設定ファイル解釈　終了 *****\n\n");
+		console_message(u8"***** 設定ファイル解釈　終了 *****\n");
 	}
 	return true;
 }
@@ -4425,7 +4766,7 @@ bool set_ini_path(OpenJTalk *oj, const char *dir)
 
 	if (g_verbose)
 	{
-		fprintf(stderr, "設定ファイル: %s\n", g_ini_path);
+		console_message_string(u8"設定ファイル： %s\n", g_ini_path);
 	}
 	return true;
 }
@@ -4709,26 +5050,26 @@ OPENJTALK_DLL_API unsigned int OPENJTALK_CONVENTION openjtalk_getHTSVoiceCount(O
 // コピーライト情報を表示する
 OPENJTALK_DLL_API void OPENJTALK_CONVENTION jtalkdll_copyright()
 {
-	fprintf(stderr, "%s, Open JTalk Dynamic Link Libraries \n", DLL_NAME);
+	fprintf(stderr, u8"%s, Open JTalk Dynamic Link Libraries \n", DLL_NAME);
 	if (strlen(GIT_REV))
 	{
-		fprintf(stderr, "version %d.%d.%d revision(%s)\n", VER_MAJOR, VER_MINOR, VER_BUILD, GIT_REV);
+		fprintf(stderr, u8"version %d.%d.%d revision(%s)\n", VER_MAJOR, VER_MINOR, VER_BUILD, GIT_REV);
 	}
 	else
 	{
-		fprintf(stderr, "version %d.%d.%d\n", VER_MAJOR, VER_MINOR, VER_BUILD);
+		fprintf(stderr, u8"version %d.%d.%d\n", VER_MAJOR, VER_MINOR, VER_BUILD);
 	}
-	fprintf(stderr, "https://github.com/rosmarinus/jtalkdll.git\n");
-	fprintf(stderr, "Copyright (C) 2017 takayan\n");
-	fprintf(stderr, "All rights reserved.\n");
-	fprintf(stderr, "\n");
+	fprintf(stderr, u8"https://github.com/rosmarinus/jtalkdll.git\n");
+	fprintf(stderr, u8"Copyright (C) 2020 takayan\n");
+	fprintf(stderr, u8"All rights reserved.\n");
+	fprintf(stderr, u8"\n");
 	Open_JTalk_COPYRIGHT();
 
 	// portaudio
-	fprintf(stderr, "PortAudio Portable Real-Time Audio Library\n");
-	fprintf(stderr, "Copyright (c) 1999-2011 Ross Bencina and Phil Burk\n");
-	fprintf(stderr, "http://www.portaudio.com/\n");
-	fprintf(stderr, "\n");
+	fprintf(stderr, u8"PortAudio Portable Real-Time Audio Library\n");
+	fprintf(stderr, u8"Copyright (c) 1999-2011 Ross Bencina and Phil Burk\n");
+	fprintf(stderr, u8"http://www.portaudio.com/\n");
+	fprintf(stderr, u8"\n");
 }
 
 OpenJTalk *openjtalk_initialize_sub(const char *voice, const char *dic, const char *voiceDir)
@@ -4747,7 +5088,7 @@ OpenJTalk *openjtalk_initialize_sub(const char *voice, const char *dic, const ch
 	{
 		if (g_verbose)
 		{
-			fprintf(stderr, "PortAudioの初期化に失敗しました。\n");
+			console_message(u8"PortAudioの初期化に失敗しました。\n");
 		}
 		return NULL;
 	}
@@ -4804,7 +5145,7 @@ OPENJTALK_DLL_API OpenJTalk *OPENJTALK_CONVENTION openjtalk_initializeSjis(const
 	if (voice != NULL)
 	{
 #if defined(_WIN32)
-		sjistosjis_path(voice, voice_temp);
+		sjistou8_path(voice, voice_temp);
 #else
 		sjistou8_path(voice, voice_temp);
 #endif
@@ -4814,7 +5155,7 @@ OPENJTALK_DLL_API OpenJTalk *OPENJTALK_CONVENTION openjtalk_initializeSjis(const
 	if (dic != NULL)
 	{
 #if defined(_WIN32)
-		sjistosjis_path(dic, dic_temp);
+		sjistou8_path(dic, dic_temp);
 #else
 		sjistou8_path(dic, dic_temp);
 #endif
@@ -4824,7 +5165,7 @@ OPENJTALK_DLL_API OpenJTalk *OPENJTALK_CONVENTION openjtalk_initializeSjis(const
 	if (voiceDir != NULL)
 	{
 #if defined(_WIN32)
-		sjistosjis_path(voiceDir, voiceDir_temp);
+		sjistou8_path(voiceDir, voiceDir_temp);
 #else
 		sjistou8_path(voiceDir, voiceDir_temp);
 #endif
@@ -4843,7 +5184,7 @@ OPENJTALK_DLL_API OpenJTalk *OPENJTALK_CONVENTION openjtalk_initialize(const cha
 	if (voice != NULL)
 	{
 #if defined(_WIN32)
-		u8tosjis_path(voice, voice_temp);
+		u8tou8_path(voice, voice_temp);
 #else
 		u8tou8_path(voice, voice_temp);
 #endif
@@ -4853,7 +5194,7 @@ OPENJTALK_DLL_API OpenJTalk *OPENJTALK_CONVENTION openjtalk_initialize(const cha
 	if (dic != NULL)
 	{
 #if defined(_WIN32)
-		u8tosjis_path(dic, dic_temp);
+		u8tou8_path(dic, dic_temp);
 #else
 		u8tou8_path(dic, dic_temp);
 #endif
@@ -4863,7 +5204,7 @@ OPENJTALK_DLL_API OpenJTalk *OPENJTALK_CONVENTION openjtalk_initialize(const cha
 	if (voiceDir != NULL)
 	{
 #if defined(_WIN32)
-		u8tosjis_path(voiceDir, voiceDir_temp);
+		u8tou8_path(voiceDir, voiceDir_temp);
 #else
 		u8tou8_path(voiceDir, voiceDir_temp);
 #endif
@@ -4882,7 +5223,7 @@ OPENJTALK_DLL_API OpenJTalk *OPENJTALK_CONVENTION openjtalk_initializeU16(const 
 	if (voice != NULL)
 	{
 #if defined(_WIN32)
-		u16tosjis_path(voice, voice_temp);
+		u16tou8_path(voice, voice_temp);
 #else
 		u16tou8_path(voice, voice_temp);
 #endif
@@ -4892,7 +5233,7 @@ OPENJTALK_DLL_API OpenJTalk *OPENJTALK_CONVENTION openjtalk_initializeU16(const 
 	if (dic != NULL)
 	{
 #if defined(_WIN32)
-		u16tosjis_path(dic, dic_temp);
+		u16tou8_path(dic, dic_temp);
 #else
 		u16tou8_path(dic, dic_temp);
 #endif
@@ -4902,7 +5243,7 @@ OPENJTALK_DLL_API OpenJTalk *OPENJTALK_CONVENTION openjtalk_initializeU16(const 
 	if (voiceDir != NULL)
 	{
 #if defined(_WIN32)
-		u16tosjis_path(voiceDir, voiceDir_temp);
+		u16tou8_path(voiceDir, voiceDir_temp);
 #else
 		u16tou8_path(voiceDir, voiceDir_temp);
 #endif
@@ -5090,7 +5431,7 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_pause(OpenJTalk *oj)
 
 	if (g_verbose)
 	{
-		fprintf(stderr, "[PAUSE処理開始]\n");
+		console_message(u8"[PAUSE処理開始]\n");
 	}
 	g_psd->pause = true;
 	do
@@ -5100,7 +5441,7 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_pause(OpenJTalk *oj)
 	g_psd->pause = false;
 	if (g_verbose)
 	{
-		fprintf(stderr, "[PAUSE処理終了]\n");
+		console_message(u8"[PAUSE処理終了]\n");
 	}
 }
 
@@ -5692,8 +6033,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceDirSjis(OpenJTalk 
 	}
 
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = sjistou8_path(path, temp);
 #else
 	char *res = sjistou8_path(path, temp);
 #endif
@@ -5728,8 +6069,8 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceDirSjis(OpenJTalk
 		oj->errorCode = OPENJTALKERROR_PATH_STRING_IS_NULL_OR_EMPTY;
 		return NULL;
 	}
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistosjis_path(oj->dn_voice_dir_path, path);
+#if defined(_WIN32)
+	char *res = u8tosjis_path(oj->dn_voice_dir_path, path);
 #else
 	char *res = u8tosjis_path(oj->dn_voice_dir_path, path);
 #endif
@@ -5751,8 +6092,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceDir(OpenJTalk *oj,
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u8tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u8tou8_path(path, temp);
 #else
 	char *res = u8tou8_path(path, temp);
 #endif
@@ -5787,8 +6128,8 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceDir(OpenJTalk *oj
 		oj->errorCode = OPENJTALKERROR_PATH_STRING_IS_NULL_OR_EMPTY;
 		return NULL;
 	}
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistou8_path(oj->dn_voice_dir_path, path);
+#if defined(_WIN32)
+	char *res = u8tou8_path(oj->dn_voice_dir_path, path);
 #else
 	char *res = u8tou8_path(oj->dn_voice_dir_path, path);
 #endif
@@ -5810,8 +6151,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceDirU16(OpenJTalk *
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u16tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u16tou8_path(path, temp);
 #else
 	char *res = u16tou8_path(path, temp);
 #endif
@@ -5846,8 +6187,8 @@ OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoiceDirU16(OpenJT
 		oj->errorCode = OPENJTALKERROR_PATH_STRING_IS_NULL_OR_EMPTY;
 		return NULL;
 	}
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char16_t *res = sjistou16_path(oj->dn_voice_dir_path, path);
+#if defined(_WIN32)
+	char16_t *res = u8tou16_path(oj->dn_voice_dir_path, path);
 #else
 	char16_t *res = u8tou16_path(oj->dn_voice_dir_path, path);
 #endif
@@ -5869,8 +6210,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setDicSjis(OpenJTalk *oj, 
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = sjistou8_path(path, temp);
 #else
 	char *res = sjistou8_path(path, temp);
 #endif
@@ -5883,6 +6224,11 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setDicSjis(OpenJTalk *oj, 
 OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setDicSjis2(OpenJTalk *oj, const char *path)
 {
 	return openjtalk_setDicSjis(oj, path);
+}
+
+char *getlocale(int cat)
+{
+	return setlocale(cat, NULL);
 }
 
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getDicSjis(OpenJTalk *oj, char *path)
@@ -5905,8 +6251,8 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getDicSjis(OpenJTalk *oj,
 		oj->errorCode = OPENJTALKERROR_PATH_STRING_IS_NULL_OR_EMPTY;
 		return NULL;
 	}
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistosjis_path(oj->dn_dic_path, path);
+#if defined(_WIN32)
+	char *res = u8tosjis_path(oj->dn_dic_path, path);
 #else
 	char *res = u8tosjis_path(oj->dn_dic_path, path);
 #endif
@@ -5928,8 +6274,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setDic(OpenJTalk *oj, cons
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u8tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u8tou8_path(path, temp);
 #else
 	char *res = u8tou8_path(path, temp);
 #endif
@@ -5964,8 +6310,8 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getDic(OpenJTalk *oj, cha
 		oj->errorCode = OPENJTALKERROR_PATH_STRING_IS_NULL_OR_EMPTY;
 		return NULL;
 	}
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistou8_path(oj->dn_dic_path, path);
+#if defined(_WIN32)
+	char *res = u8tou8_path(oj->dn_dic_path, path);
 #else
 	char *res = u8tou8_path(oj->dn_dic_path, path);
 #endif
@@ -5987,8 +6333,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setDicU16(OpenJTalk *oj, c
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u16tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u16tou8_path(path, temp);
 #else
 	char *res = u16tou8_path(path, temp);
 #endif
@@ -6023,8 +6369,8 @@ OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getDicU16(OpenJTalk *
 		oj->errorCode = OPENJTALKERROR_PATH_STRING_IS_NULL_OR_EMPTY;
 		return NULL;
 	}
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char16_t *res = sjistou16_path(oj->dn_dic_path, path);
+#if defined(_WIN32)
+	char16_t *res = u8tou16_path(oj->dn_dic_path, path);
 #else
 	char16_t *res = u8tou16_path(oj->dn_dic_path, path);
 #endif
@@ -6053,8 +6399,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoicePathSjis(OpenJTalk
 	}
 
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = sjistou8_path(path, temp);
 #else
 	char *res = sjistou8_path(path, temp);
 #endif
@@ -6083,8 +6429,8 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoicePathSjis(OpenJTal
 		oj->errorCode = OPENJTALKERROR_PATH_STRING_IS_NULL_OR_EMPTY;
 		return NULL;
 	}
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistosjis_path(oj->fn_voice_path, path);
+#if defined(_WIN32)
+	char *res = u8tosjis_path(oj->fn_voice_path, path);
 #else
 	char *res = u8tosjis_path(oj->fn_voice_path, path);
 #endif
@@ -6111,8 +6457,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoicePath(OpenJTalk *oj
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u8tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u8tou8_path(path, temp);
 #else
 	char *res = u8tou8_path(path, temp);
 #endif
@@ -6147,8 +6493,8 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoicePath(OpenJTalk *o
 		oj->errorCode = OPENJTALKERROR_PATH_STRING_IS_NULL_OR_EMPTY;
 		return NULL;
 	}
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistou8_path(oj->fn_voice_path, path);
+#if defined(_WIN32)
+	char *res = u8tou8_path(oj->fn_voice_path, path);
 #else
 	char *res = u8tou8_path(oj->fn_voice_path, path);
 #endif
@@ -6170,8 +6516,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoicePathU16(OpenJTalk 
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u16tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u16tou8_path(path, temp);
 #else
 	char *res = u16tou8_path(path, temp);
 #endif
@@ -6206,8 +6552,8 @@ OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getVoicePathU16(OpenJ
 		oj->errorCode = OPENJTALKERROR_PATH_STRING_IS_NULL_OR_EMPTY;
 		return NULL;
 	}
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char16_t *res = sjistou16_path(oj->fn_voice_path, path);
+#if defined(_WIN32)
+	char16_t *res = u8tou16_path(oj->fn_voice_path, path);
 #else
 	char16_t *res = u8tou16_path(oj->fn_voice_path, path);
 #endif
@@ -6236,8 +6582,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceNameSjis(OpenJTalk
 	}
 
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = sjistou8_path(path, temp);
 #else
 	char *res = sjistou8_path(path, temp);
 #endif
@@ -6256,12 +6602,14 @@ OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceNameSjis2(OpenJTalk
 OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceNameSjis(OpenJTalk *oj, char *path)
 {
 	char temp[MAX_PATH];
-	char *res = openjtalk_getVoicePathSjis(oj, temp);
+	char temp0[MAX_PATH];
+	char *res = openjtalk_getVoicePath(oj, temp);
 	if (res == NULL)
 	{
 		return NULL;
 	}
-	return get_fname_sjis(temp, path);
+	get_fname(temp, temp0);
+	return u8tosjis_path(temp0, path);
 }
 
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceName(OpenJTalk *oj, const char *path)
@@ -6276,6 +6624,7 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceName(OpenJTalk *oj
 		oj->errorCode = OPENJTALKERROR_BUFFER_IS_NULL;
 		return false;
 	}
+
 	oj->errorCode = OPENJTALKERROR_NO_ERROR;
 	if (!path || strlen(path) == 0)
 	{
@@ -6283,8 +6632,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceName(OpenJTalk *oj
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u8tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u8tou8_path(path, temp);
 #else
 	char *res = u8tou8_path(path, temp);
 #endif
@@ -6292,7 +6641,6 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceName(OpenJTalk *oj
 	{
 		return false;
 	}
-
 	return set_voice_name(oj, temp);
 }
 OPENJTALK_DLL_API int OPENJTALK_CONVENTION openjtalk_setVoiceName2(OpenJTalk *oj, const char *path)
@@ -6308,7 +6656,7 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getVoiceName(OpenJTalk *o
 	{
 		return NULL;
 	}
-	return get_fname_u8(temp, path);
+	return get_fname(temp, path);
 }
 
 OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceNameU16(OpenJTalk *oj, const char16_t *path)
@@ -6325,8 +6673,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceNameU16(OpenJTalk 
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u16tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u16tou8_path(path, temp);
 #else
 	char *res = u16tou8_path(path, temp);
 #endif
@@ -6374,8 +6722,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceSjis(OpenJTalk *oj
 	}
 
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = sjistou8_path(path, temp);
 #else
 	char *res = sjistou8_path(path, temp);
 #endif
@@ -6415,8 +6763,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoice(OpenJTalk *oj, co
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u8tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u8tou8_path(path, temp);
 #else
 	char *res = u8tou8_path(path, temp);
 #endif
@@ -6451,8 +6799,8 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_setVoiceU16(OpenJTalk *oj,
 		return false;
 	}
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u16tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u16tou8_path(path, temp);
 #else
 	char *res = u16tou8_path(path, temp);
 #endif
@@ -6500,8 +6848,8 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getFullVoicePathSjis(Open
 	}
 
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = sjistosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = sjistou8_path(path, temp);
 #else
 	char *res = sjistou8_path(path, temp);
 #endif
@@ -6517,8 +6865,8 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getFullVoicePathSjis(Open
 		return NULL;
 	}
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res2 = sjistosjis_path(temp2, buffer);
+#if defined(_WIN32)
+	char *res2 = u8tosjis_path(temp2, buffer);
 #else
 	char *res2 = u8tosjis_path(temp2, buffer);
 #endif
@@ -6553,8 +6901,8 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getFullVoicePath(OpenJTal
 	}
 
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u8tosjis_path(path, buffer);
+#if defined(_WIN32)
+	char *res = u8tou8_path(path, buffer);
 #else
 	char *res = u8tou8_path(path, buffer);
 #endif
@@ -6569,8 +6917,8 @@ OPENJTALK_DLL_API char *OPENJTALK_CONVENTION openjtalk_getFullVoicePath(OpenJTal
 		return NULL;
 	}
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res2 = sjistou8_path(temp2, buffer);
+#if defined(_WIN32)
+	char *res2 = u8tou8_path(temp2, buffer);
 #else
 	char *res2 = u8tou8_path(temp2, buffer);
 #endif
@@ -6600,8 +6948,8 @@ OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getFullVoicePathU16(O
 	}
 
 	char temp[MAX_PATH];
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char *res = u16tosjis_path(path, temp);
+#if defined(_WIN32)
+	char *res = u16tou8_path(path, temp);
 #else
 	char *res = u16tou8_path(path, temp);
 #endif
@@ -6617,8 +6965,8 @@ OPENJTALK_DLL_API char16_t *OPENJTALK_CONVENTION openjtalk_getFullVoicePathU16(O
 		return NULL;
 	}
 
-#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	char16_t *res2 = sjistou16_path(temp2, buffer);
+#if defined(_WIN32)
+	char16_t *res2 = u8tou16_path(temp2, buffer);
 #else
 	char16_t *res2 = u8tou16_path(temp2, buffer);
 #endif
@@ -6647,13 +6995,13 @@ OPENJTALK_DLL_API void OPENJTALK_CONVENTION openjtalk_test(OpenJTalk *oj, void *
 		char *temp_char = (char *)text;
 		for (int i = 0; i <= 127; i++)
 		{
-			fprintf(stderr, "%02x ", temp_char[i] & 0xff);
+			fprintf(stderr, u8"%02x ", temp_char[i] & 0xff);
 			if (i % 16 == 15)
 			{
-				fprintf(stderr, "\n");
+				fprintf(stderr, u8"\n");
 			}
 		}
-		fprintf(stderr, "\n");
+		fprintf(stderr, u8"\n");
 
 		fprintf(stderr, u8"* encoding in UTF-16le\n");
 		char16_t *temp_char16 = (char16_t *)text;
@@ -6700,7 +7048,7 @@ OPENJTALK_DLL_API bool OPENJTALK_CONVENTION openjtalk_speakToFileSjis(OpenJTalk 
 		return false;
 	}
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-	FILE *wavfp = fopen(fileSjis, "wb");
+	FILE *wavfp = fopen(fileSjis, u8"wb");
 #else
 	char file_utf8[MAX_PATH];
 	if (!sjistou8_path(fileSjis, file_utf8))
