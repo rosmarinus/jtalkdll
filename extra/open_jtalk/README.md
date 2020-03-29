@@ -18,7 +18,7 @@
 
 ## 概要
 
-jtalkdllではなくopen_jtalk そのものをビルドするファイル群です。
+open_jtalk そのものをビルドするファイル群です。
 先に作った jtalkdll の用の CmakeLists.txt から不必要なものを削り、アーカイブのダウンロードスクリプトを追加したものです。
 
 次に示す他のプロジェクトのファイルをダウンロードして利用します。
@@ -33,12 +33,12 @@ jtalkdllではなくopen_jtalk そのものをビルドするファイル群で�
 
 ### 仕組み
 
-build(.bat)スクリプトで以下の prepare、cmake、make(nmake) を呼び出します。
-* prepareスクリプトで、必要なアーカイブをダウンロード・展開します。
+build(.bat)スクリプトで以下の prepare.sh、cmake、make(nmake) を呼び出します。
+* prepare.shスクリプトで、必要なアーカイブをダウンロード・展開します。
 * cmakeコマンドによってプラットフォームに合わせたMakefileを生成します。
 * それぞれのプラットフォームでmake そして make install を実行します。
   
-※ Windows MSVCでのビルドでは WSL(Windows Subsystem for Linux)上のbashを起動して、prepare を実行します。
+※ Windows MSVCでのビルドでは WSL(Windows Subsystem for Linux)上のbashを起動して、prepare.sh を実行します。
 WSLがインストールされていない場合は、手作業で必要なアーカイブをダウンロードし、展開してください。
 
 ## 動作環境
@@ -55,7 +55,7 @@ WSLがインストールされていない場合は、手作業で必要なア�
 https://github.com/rosmarinus/jtalkdll/tree/master/extra/open_jtalk
 
 * build(.bat) ... ビルド実行スクリプト本体
-* prepare ... ダウンロード・展開スクリプト
+* prepare.sh ... ダウンロード・展開スクリプト
 * CMakeLists.txt ... cmake設定ファイル
 * open_jtalk-1.11_mingw.patch ... MinGW用の修正情報
 * hello(.bat) ... 確認用のスクリプト
@@ -67,7 +67,7 @@ https://github.com/rosmarinus/jtalkdll/tree/master/extra/open_jtalk
 
 Windowsでリポジトリから直接ファイルをダウンロードする場合は、設定によってバッチファイルの改行コードがCRLFではないときがあります。
 これではうまく実行できないので、エディタで保存し直したりして、改行コードを書き換えてください。
-また、同様に prepareスクリプトの改行コードがCRLFになってしまっている時があります。この時は改行コードをLFに書き換えてください。
+また、同様に prepare.sh スクリプトの改行コードがCRLFになってしまっている時があります。この時は改行コードをLFに書き換えてください。
 
 ## ビルド
 
@@ -138,7 +138,7 @@ WSLをインストールしない場合は次の作業をおこなってくだ�
 必要に応じて、音響モデルファイルをこのフォルダに追加しておきます。
 
 ※2020/02/22 現在の各ファイルのバージョンは上記の通りですが、最新版では違っているかもしれません。
-最新のものを使いたいときは、prepareとCMakeLists.txt内のバージョン番号の部分を書き換えてください。
+最新のものを使いたいときは、prepare.shとCMakeLists.txt内のバージョン番号の部分を書き換えてください。
 大規模な変更が行われない限り対応できるでしょう。
 
 
@@ -148,7 +148,7 @@ WSLをインストールしない場合は次の作業をおこなってくだ�
 
 * CMakeLists.txt
 * build.bat/build
-* prepare
+* prepare.sh
 * open_jtalk-1.11_mingw.patch
 
 テスト用のスクリプト
@@ -160,7 +160,7 @@ extra/open_jtalkにある次の3つのファイルを使います。これを同
 
 * CMakeLists.txt
 * build.bat
-* prepare
+* prepare.sh
 
 ##### WSLがインストールされている場合
 
